@@ -154,6 +154,7 @@ export async function POST(req: NextRequest): Promise<Response> {
     });
     if (!r.ok) {
       const t = await r.text();
+      console.error("Resend error", r.status, t);
       return json({ ok: false, sent: false, error: t.slice(0, 300) }, 502);
     }
     return json({ ok: true, sent: true });
