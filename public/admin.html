@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Piazza en Obra — Panel de administración</title>
+<style>
+:root{--paper:#F4F1EB;--white:#fff;--ink:#1A1A18;--gray:#6E6A62;--gray-soft:#A7A198;--gold:#C8952A;--green:#4A7A5A;--red:#a24338;--sand:#E4D3C1;--line:rgba(26,26,24,0.12);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Archivo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased;}
+.wrap{max-width:960px;margin:0 auto;padding:28px clamp(16px,4vw,40px) 80px;}
+.top{display:flex;align-items:center;justify-content:space-between;padding:6px 0 22px;border-bottom:0.5px solid var(--line);margin-bottom:26px;}
+.brand{font-weight:800;letter-spacing:-0.02em;font-size:20px;}
+.brand span{font-size:11px;letter-spacing:0.06em;font-weight:700;}
+.brand b{font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gray-soft);display:block;margin-top:2px;}
+.btn{border:0.5px solid var(--ink);background:var(--ink);color:#fff;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:10px 16px;cursor:pointer;transition:opacity .2s,background .2s;}
+.btn:hover{opacity:.88;}
+.btn.ghost{background:transparent;color:var(--ink);}
+.btn.ok{background:var(--green);border-color:var(--green);}
+.btn.no{background:transparent;color:var(--red);border-color:var(--red);}
+.btn.sm{padding:8px 12px;font-size:10px;}
+/* login */
+#login{max-width:360px;margin:12vh auto;background:var(--white);border:0.5px solid var(--line);padding:36px 32px;text-align:center;}
+#login .brand{margin-bottom:22px;}
+#login h1{font-size:22px;font-weight:800;margin-bottom:6px;letter-spacing:-0.01em;}
+#login p{font-size:13px;color:var(--gray);margin-bottom:22px;}
+#login input{width:100%;border:0.5px solid var(--line);padding:14px 16px;font-size:15px;font-family:inherit;margin-bottom:12px;outline:none;}
+#login input:focus{border-color:var(--ink);}
+#login .btn{width:100%;padding:15px;}
+.err{color:var(--red);font-size:12px;font-weight:600;min-height:16px;margin-bottom:8px;}
+/* sections */
+.eyebrow{font-size:10px;font-weight:700;letter-spacing:0.24em;text-transform:uppercase;color:var(--gray);}
+h2{font-size:20px;font-weight:800;letter-spacing:-0.01em;margin:8px 0 16px;}
+.count{color:var(--gold);}
+.empty{background:var(--white);border:0.5px dashed var(--line);padding:26px;text-align:center;color:var(--gray);font-size:13px;}
+.card{background:var(--white);border:0.5px solid var(--line);padding:18px 20px;margin-bottom:12px;}
+.card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+.who{font-size:15px;font-weight:700;}
+.meta{font-size:12px;color:var(--gray);line-height:1.6;margin-top:4px;}
+.meta b{color:var(--ink);font-weight:600;}
+.actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.thumbs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 4px;}
+.thumbs a{display:block;width:96px;height:72px;border:0.5px solid var(--line);overflow:hidden;background:var(--sand);}
+.thumbs img{width:100%;height:100%;object-fit:cover;display:block;}
+.qty{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--gray);}
+.qty input{width:60px;border:0.5px solid var(--line);padding:8px;font-family:inherit;font-size:14px;text-align:center;outline:none;}
+.section{margin-bottom:40px;}
+.toast{position:fixed;right:20px;bottom:20px;background:var(--ink);color:#fff;padding:13px 18px;font-size:13px;box-shadow:0 20px 50px -24px rgba(0,0,0,.5);opacity:0;transform:translateY(12px);transition:.3s;}
+.toast.in{opacity:1;transform:translateY(0);}
+.hint{font-size:12px;color:var(--gray-soft);margin-top:4px;}
+</style>
+</head>
+<body>
+
+<div id="login">
+  <div class="brand">Piazza <span>EN OBRA</span><b>Panel de administración</b></div>
+  <h1>Acceso del equipo</h1>
+  <p>Ingresá la contraseña de administración.</p>
+  <div class="err" id="loginErr"></div>
+  <input id="pw" type="password" placeholder="Contraseña" autocomplete="current-password">
+  <button class="btn" id="loginBtn">Entrar</button>
+</div>
+
+<div id="panel" class="wrap" style="display:none">
+  <div class="top">
+    <div class="brand">Piazza <span>EN OBRA</span><b>Panel de administración</b></div>
+    <div class="actions">
+      <button class="btn ghost sm" id="refreshBtn">Actualizar</button>
+      <button class="btn ghost sm" id="outBtn">Salir</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <span class="eyebrow">Solicitudes de alta</span>
+    <h2>Altas pendientes <span class="count" id="mCount"></span></h2>
+    <div id="members"></div>
+  </div>
+
+  <div class="section">
+    <span class="eyebrow">Fotos de obra</span>
+    <h2>Cargas pendientes <span class="count" id="fCount"></span></h2>
+    <p class="hint">Aprobá la cantidad de fotos válidas: cada foto aprobada suma 10 puntos al miembro.</p>
+    <div id="fotos" style="margin-top:12px"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  var PW="";
+  function $(id){return document.getElementById(id);}
+  function toast(m){var t=$("toast");t.textContent=m;t.classList.add("in");setTimeout(function(){t.classList.remove("in");},2600);}
+  function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+  function fdate(s){try{var d=new Date(s);return d.toLocaleDateString("es-AR")+" "+d.toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit"});}catch(e){return "";}}
+
+  function api(body){
+    return fetch("/api/admin",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(Object.assign({pw:PW},body))}).then(function(r){return r.json();});
+  }
+
+  function login(){
+    PW=$("pw").value;
+    $("loginErr").textContent="";
+    api({action:"list"}).then(function(j){
+      if(!j.ok){ $("loginErr").textContent="Contraseña incorrecta."; PW=""; return; }
+      $("login").style.display="none"; $("panel").style.display="block";
+      renderData(j);
+    }).catch(function(){ $("loginErr").textContent="Error de conexión. Reintentá."; });
+  }
+  function refresh(){ api({action:"list"}).then(renderData).catch(function(){ toast("Error al actualizar"); }); }
+
+  function renderData(j){
+    if(!j || !j.ok) return;
+    // miembros
+    var mEl=$("members"); var ms=j.miembros||[];
+    $("mCount").textContent = ms.length? "· "+ms.length : "";
+    if(!ms.length){ mEl.innerHTML='<div class="empty">No hay altas pendientes.</div>'; }
+    else {
+      mEl.innerHTML="";
+      ms.forEach(function(m){
+        var d=document.createElement("div"); d.className="card";
+        d.innerHTML='<div class="card-head"><div><div class="who">'+esc(m.nombre||m.email)+'</div>'+
+          '<div class="meta"><b>Email:</b> '+esc(m.email)+' · <b>Tel:</b> '+esc(m.telefono||"—")+'<br>'+
+          '<b>Empresa:</b> '+esc(m.empresa||"—")+' · <b>Trabajo:</b> '+esc(m.portfolio||"—")+'<br>'+
+          '<b>¿Usa Piazza?</b> '+esc(m.usa_piazza||"—")+' · <b>Obra:</b> '+esc(m.tipo_obra||"—")+' · '+fdate(m.created_at)+'</div></div>'+
+          '<div class="actions"><button class="btn ok sm" data-m="'+esc(m.email)+'" data-dec="aprobar">Aprobar</button>'+
+          '<button class="btn no sm" data-m="'+esc(m.email)+'" data-dec="rechazar">Rechazar</button></div></div>';
+        mEl.appendChild(d);
+      });
+      Array.prototype.forEach.call(mEl.querySelectorAll("[data-m]"),function(b){
+        b.addEventListener("click",function(){
+          b.disabled=true;
+          api({action:"member",email:b.getAttribute("data-m"),decision:b.getAttribute("data-dec")}).then(function(r){
+            toast(r.ok?(b.getAttribute("data-dec")==="aprobar"?"Alta aprobada":"Alta rechazada"):"Error"); refresh();
+          });
+        });
+      });
+    }
+    // fotos
+    var fEl=$("fotos"); var fs=j.fotos||[];
+    $("fCount").textContent = fs.length? "· "+fs.length : "";
+    if(!fs.length){ fEl.innerHTML='<div class="empty">No hay cargas de fotos pendientes.</div>'; return; }
+    fEl.innerHTML="";
+    fs.forEach(function(f){
+      var thumbs=(f.urls||[]).map(function(u){return '<a href="'+esc(u)+'" target="_blank" rel="noopener"><img src="'+esc(u)+'" alt="foto"></a>';}).join("");
+      var d=document.createElement("div"); d.className="card";
+      d.innerHTML='<div class="card-head"><div><div class="who">'+esc(f.nombre_carga||"(sin nombre)")+'</div>'+
+        '<div class="meta"><b>'+esc(f.miembro_nombre||f.miembro_email)+'</b> · '+esc(f.miembro_email)+'<br>'+
+        esc(f.descripcion||"")+'<br><b>Cargó:</b> '+f.cantidad+' foto'+(f.cantidad===1?"":"s")+' · '+fdate(f.created_at)+'</div></div></div>'+
+        '<div class="thumbs">'+thumbs+'</div>'+
+        '<div class="actions" style="margin-top:10px">'+
+        '<span class="qty">Aprobar <input type="number" min="0" max="'+f.cantidad+'" value="'+f.cantidad+'" data-q="'+esc(f.id)+'"> de '+f.cantidad+'</span>'+
+        '<button class="btn ok sm" data-f="'+esc(f.id)+'" data-dec="aprobar">Aprobar y sumar puntos</button>'+
+        '<button class="btn no sm" data-f="'+esc(f.id)+'" data-dec="rechazar">Rechazar</button></div>';
+      fEl.appendChild(d);
+    });
+    Array.prototype.forEach.call(fEl.querySelectorAll("[data-f]"),function(b){
+      b.addEventListener("click",function(){
+        var id=b.getAttribute("data-f"), dec=b.getAttribute("data-dec");
+        var q=fEl.querySelector('[data-q="'+id+'"]'); var n=q?parseInt(q.value,10):0;
+        b.disabled=true;
+        api({action:"foto",id:id,decision:dec,cantidadAprobada:n}).then(function(r){
+          toast(r.ok?(dec==="aprobar"?("Aprobado · +"+(n*10)+" pts"):"Rechazado"):"Error"); refresh();
+        });
+      });
+    });
+  }
+
+  $("loginBtn").addEventListener("click",login);
+  $("pw").addEventListener("keydown",function(e){ if(e.key==="Enter")login(); });
+  $("refreshBtn").addEventListener("click",refresh);
+  $("outBtn").addEventListener("click",function(){ PW=""; $("panel").style.display="none"; $("login").style.display="block"; $("pw").value=""; });
+})();
+</script>
+</body>
+</html>
