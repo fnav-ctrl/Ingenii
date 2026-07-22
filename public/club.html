@@ -923,9 +923,10 @@ input{font-family:inherit;}
   $("milestone").addEventListener("click",function(e){ if(e.target.id==="milestone")$("milestone").classList.remove("show"); });
 
   /* ===== Boot ===== */
+  // Siempre inicia en el login/registro. La info del programa queda adentro,
+  // accesible desde el botón "Cómo funciona" (no se muestra apenas entrás).
   buildIntro();
-  var existing=load();
-  if(existing&&existing.created){ showAuth(); } else { showIntro(); }
+  showAuth();
 })();
 </script>
 </body>
