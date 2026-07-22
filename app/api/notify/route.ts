@@ -39,15 +39,19 @@ export async function POST(req: NextRequest): Promise<Response> {
   const detail = esc(data.detail || "");
 
   const subjects: Record<string, string> = {
-    canje: `Solicitud de beneficio — ${member}`,
+    alta: `Nueva solicitud de alta — ${member}`,
+    canje: `Solicitud de canje — ${member}`,
     foto: `Nueva foto de obra — ${member}`,
+    video: `Nuevo video de obra — ${member}`,
     sorteo: `Inscripción a sorteo — ${member}`,
   };
   const subject = subjects[kind] || `Actividad en Piazza en Obra — ${member}`;
 
   const intro: Record<string, string> = {
-    canje: "Un miembro solicitó un beneficio de su nivel.",
-    foto: "Un miembro cargó una nueva foto de obra.",
+    alta: "Un arquitecto solicitó el alta al programa. Requiere validación del equipo.",
+    canje: "Un miembro solicitó un canje / beneficio.",
+    foto: "Un miembro cargó una nueva foto de obra (para validar).",
+    video: "Un miembro cargó un nuevo video de obra (para validar).",
     sorteo: "Un miembro se inscribió a un sorteo.",
   };
 
