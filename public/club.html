@@ -136,6 +136,28 @@ input{font-family:inherit;}
 .auth-alt{margin-top:22px;font-size:12.5px;color:var(--gray);text-align:center;}
 .auth-alt button{background:none;border:none;color:var(--ink);font-weight:700;text-decoration:underline;text-underline-offset:3px;font-size:12.5px;}
 .auth-legal{margin-top:30px;font-size:10.5px;line-height:1.7;color:var(--gray-soft);}
+/* register (cuestionario) */
+#register{background:var(--paper);z-index:330;}
+.reg-nav{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;padding:18px clamp(20px,5vw,64px);background:rgba(244,241,235,0.92);backdrop-filter:blur(8px);border-bottom:0.5px solid var(--line);}
+.reg-nav .brand{font-size:22px;}
+.reg-wrap{max-width:720px;margin:0 auto;padding:clamp(32px,5vw,56px) clamp(20px,5vw,40px) 80px;}
+.reg-wrap .eyebrow{display:block;margin-bottom:16px;}
+.reg-title{font-size:clamp(28px,4.5vw,40px);font-weight:800;letter-spacing:-0.02em;line-height:1.05;margin-bottom:18px;}
+.reg-lead{font-size:15px;line-height:1.7;color:var(--ink);margin-bottom:12px;font-weight:500;}
+.reg-p{font-size:14px;line-height:1.7;color:var(--gray);margin-bottom:12px;}
+.reg-form{margin-top:30px;}
+.reg-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 16px;}
+.reg-field{margin-bottom:14px;}
+.reg-field label{font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gray);margin:0 0 9px;display:block;}
+.reg-form .field-label{margin-top:6px;}
+.seg{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
+.seg-btn{border:0.5px solid var(--line);background:var(--white);color:var(--gray);font-size:13px;font-weight:600;padding:12px 22px;transition:background .2s,color .2s,border-color .2s;}
+.seg-btn:hover{border-color:var(--ink);color:var(--ink);}
+.seg-btn.on{background:var(--ink);color:#fff;border-color:var(--ink);}
+.tc{display:flex;align-items:flex-start;gap:11px;margin:18px 0 6px;cursor:pointer;font-size:13.5px;line-height:1.5;color:var(--ink);}
+.tc input{margin-top:2px;width:18px;height:18px;flex-shrink:0;accent-color:var(--ink);}
+.tc a{color:var(--ink);text-decoration:underline;text-underline-offset:2px;}
+@media(max-width:560px){ .reg-grid{grid-template-columns:1fr;} }
 
 /* ---------- APP ---------- */
 #app{max-width:1180px;margin:0 auto;padding:0 clamp(18px,4vw,44px);opacity:0;transition:opacity .5s ease .1s;}
@@ -397,6 +419,40 @@ input{font-family:inherit;}
 </div>
 
 <!-- ==================== AUTH ==================== -->
+<div id="register" class="screen hide">
+  <div class="reg-nav">
+    <span class="brand"><span class="p">Piazza</span><span class="eo"><i>EN</i><i>OBRA</i></span></span>
+    <button class="intro-close" id="regLogin">Iniciar sesión</button>
+  </div>
+  <div class="reg-wrap">
+    <span class="eyebrow">Comunidad de Arquitectos Piazza</span>
+    <h1 class="reg-title">Sumate a la comunidad</h1>
+    <p class="reg-lead">Creamos este programa para reconocer y acompañar el trabajo real de los arquitectos que eligen nuestros productos en sus obras.</p>
+    <p class="reg-p">Si trabajás con Piazza, podés sumar puntos por cada obra real con producto instalado y canjearlos por beneficios concretos: sorteos, descuentos y experiencias pensadas para tu día a día profesional.</p>
+    <p class="reg-p">Completá este formulario para sumarte a la comunidad y empezar a participar.</p>
+    <div class="reg-form">
+      <div class="reg-grid">
+        <div class="reg-field"><label for="rgName">Nombre y apellido *</label><div class="field"><input id="rgName" type="text" placeholder="Ej. Arq. María Paz" maxlength="60"></div></div>
+        <div class="reg-field"><label for="rgBirth">Fecha de nacimiento</label><div class="field"><input id="rgBirth" type="date" max="2012-01-01"></div></div>
+        <div class="reg-field"><label for="rgPhone">Teléfono</label><div class="field"><input id="rgPhone" type="tel" placeholder="+54 9 11 ..." maxlength="30"></div></div>
+        <div class="reg-field"><label for="rgEmail">Email *</label><div class="field"><input id="rgEmail" type="email" placeholder="tucorreo@estudio.com" maxlength="80"></div></div>
+        <div class="reg-field"><label for="rgCompany">Empresa / estudio</label><div class="field"><input id="rgCompany" type="text" placeholder="Nombre del estudio" maxlength="60"></div></div>
+        <div class="reg-field"><label for="rgPortfolio">Instagram o link de tu trabajo</label><div class="field"><input id="rgPortfolio" type="text" placeholder="@usuario o https://..." maxlength="120"></div></div>
+      </div>
+      <label class="field-label">¿Trabajás actualmente con productos Piazza? *</label>
+      <div class="seg" id="rgUses"><button type="button" class="seg-btn" data-v="Sí">Sí</button><button type="button" class="seg-btn" data-v="No">No</button></div>
+      <label class="field-label">¿En qué tipo de obras?</label>
+      <div class="seg" id="rgObra"><button type="button" class="seg-btn" data-v="Vivienda">Vivienda</button><button type="button" class="seg-btn" data-v="Comercial">Comercial</button><button type="button" class="seg-btn" data-v="Otros">Otros</button></div>
+      <label class="field-label" for="rgPass">Contraseña * <span style="text-transform:none;letter-spacing:0;color:var(--gray-soft);font-weight:500">— para volver a ingresar</span></label>
+      <div class="field"><input id="rgPass" type="password" placeholder="••••••••" maxlength="60"><button class="toggle" id="rgPassToggle" type="button" tabindex="-1">Ver</button></div>
+      <label class="tc"><input type="checkbox" id="rgTerms"><span>Acepto las <a href="#" onclick="return false">bases y condiciones</a> del programa.</span></label>
+      <div class="auth-err" id="regErr"></div>
+      <button class="btn-primary" id="regBtn"><span>Aceptar y sumarme</span><span class="arw">→</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== AUTH (login) ==================== -->
 <div id="auth" class="screen hide">
   <div class="auth-visual">
     <div class="grid"></div>
@@ -409,25 +465,17 @@ input{font-family:inherit;}
   <div class="auth-form-wrap">
     <div class="auth-form">
       <span class="brand"><span class="p">Piazza</span><span class="eo"><i>EN</i><i>OBRA</i></span></span>
-      <span class="eyebrow" id="authEyebrow">Acceso de miembros</span>
-      <h1 id="authTitle">Sumate al programa</h1>
-      <p class="lead" id="authLead">Creá tu perfil para empezar a cargar tus obras.</p>
-      <div id="fieldName">
-        <label class="field-label" for="inName">Nombre y apellido / estudio</label>
-        <div class="field"><input id="inName" type="text" placeholder="Ej. Arq. María Paz" autocomplete="name" maxlength="46"></div>
-      </div>
-      <div id="fieldEmail">
-        <label class="field-label" for="inEmail">Email</label>
-        <div class="field"><input id="inEmail" type="email" placeholder="tucorreo@estudio.com" autocomplete="email" maxlength="80"></div>
-      </div>
+      <span class="eyebrow">Acceso de miembros</span>
+      <h1 id="authTitle">Iniciar sesión</h1>
+      <p class="lead" id="authLead">Ingresá tu contraseña para acceder a tu perfil.</p>
       <div>
         <label class="field-label" for="inPass">Contraseña</label>
         <div class="field"><input id="inPass" type="password" placeholder="••••••••" autocomplete="current-password" maxlength="60"><button class="toggle" id="passToggle" type="button" tabindex="-1">Ver</button></div>
       </div>
       <div class="auth-err" id="authErr"></div>
-      <button class="btn-primary" id="authBtn"><span id="authBtnLbl">Crear mi perfil</span><span class="arw">→</span></button>
-      <div class="auth-alt"><span id="authAltTxt"></span><button id="authAltBtn"></button></div>
-      <p class="auth-legal">Demo del programa Piazza en Obra, desarrollado por Freelo. El perfil se guarda en este navegador. Los avisos de fotos, canjes y sorteos se envían al equipo responsable del programa.</p>
+      <button class="btn-primary" id="authBtn"><span>Ingresar</span><span class="arw">→</span></button>
+      <div class="auth-alt"><span>¿Todavía no te sumaste? </span><button id="authToRegister">Registrate</button></div>
+      <p class="auth-legal">Demo del programa Piazza en Obra, desarrollado por Freelo. El perfil se guarda en este navegador.</p>
     </div>
   </div>
 </div>
@@ -438,16 +486,16 @@ input{font-family:inherit;}
     <div class="grid"></div>
     <div class="auth-visual-inner">
       <span class="brand on-dark"><span class="p">Piazza</span><span class="eo"><i>EN</i><i>OBRA</i></span></span>
-      <h2>Estamos <span class="soft">revisando</span><br>tu alta.</h2>
+      <h2>¡Gracias por <span class="soft">sumarte</span>!</h2>
       <div class="claim">Una comunidad que construye.</div>
     </div>
   </div>
   <div class="auth-form-wrap">
     <div class="auth-form">
       <span class="brand"><span class="p">Piazza</span><span class="eo"><i>EN</i><i>OBRA</i></span></span>
-      <span class="eyebrow">Alta en revisión</span>
-      <h1>Tu registro está <span style="white-space:nowrap">en revisión</span></h1>
-      <p class="lead">Piazza en Obra es un programa para arquitectos: un asesor valida cada alta antes de habilitar el acceso. Cuando te aprueben, vas a recibir por email un <b>código de validación</b> para ingresar.</p>
+      <span class="eyebrow">Comunidad de Arquitectos Piazza</span>
+      <h1>¡Gracias por sumarte!</h1>
+      <p class="lead">Recibimos tu inscripción correctamente. En breve, el equipo de Piazza va a validar tus datos y, una vez confirmada tu participación, te vamos a contactar para contarte cómo empezar a cargar fotos de tus obras y sumar puntos. <b>¡Gracias por ser parte!</b></p>
       <label class="field-label" for="inCode">Código de validación</label>
       <div class="field"><input id="inCode" type="text" placeholder="Ingresá el código" maxlength="24" autocapitalize="characters"></div>
       <div class="auth-err" id="codeErr"></div>
@@ -564,7 +612,7 @@ input{font-family:inherit;}
 <script>
 (function(){
   "use strict";
-  var STORE_KEY = "piazza_en_obra_v3";
+  var STORE_KEY = "piazza_en_obra_v4";
 
   /* ===== Configuración (editable) ===== */
   var PTS_FOTO = 10;   // cada foto de obra validada
@@ -625,7 +673,7 @@ input{font-family:inherit;}
 
   /* ===== Estado ===== */
   var state=null;
-  function defaultState(name,email,passHash){ return { name:name, email:email, pass:passHash, status:"pendiente", points:0, lifetime:0, tier:0, history:[], photos:[], created:true }; }
+  function defaultState(d){ return { name:d.name, email:d.email||"", phone:d.phone||"", birth:d.birth||"", company:d.company||"", portfolio:d.portfolio||"", usesPiazza:d.usesPiazza||"", obraType:d.obraType||"", pass:d.pass, status:"pendiente", points:0, lifetime:0, tier:0, history:[], photos:[], created:true }; }
   function load(){ try{ var r=localStorage.getItem(STORE_KEY); return r?JSON.parse(r):null; }catch(e){ return null; } }
   function save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){} }
   function hashStr(s){ var h=5381; for(var i=0;i<s.length;i++){ h=((h<<5)+h)+s.charCodeAt(i); h|=0; } return String(h>>>0); }
@@ -895,7 +943,7 @@ input{font-family:inherit;}
 
   /* ===== Screens ===== */
   var appActive=false;
-  function show(id){ ["intro","auth","pending","app"].forEach(function(s){ var el=$(s); if(s===id){ el.classList.remove("hide"); if(s==="app")el.classList.add("show"); } else { el.classList.add("hide"); if(s==="app")el.classList.remove("show"); } }); }
+  function show(id){ ["intro","register","auth","pending","app"].forEach(function(s){ var el=$(s); if(s===id){ el.classList.remove("hide"); if(s==="app")el.classList.add("show"); } else { el.classList.add("hide"); if(s==="app")el.classList.remove("show"); } }); }
   function showApp(){ appActive=true; show("app"); buildEarnCards(); render(); $("balanceNum").textContent=fmt(state.points); }
   function showPending(){
     $("demoHint").innerHTML='Demo: tu solicitud se envió al equipo de Piazza (hola@freeloagencia.com). Para la demostración, el código de validación es <b>'+VALIDATION_CODE+'</b>.';
@@ -909,42 +957,49 @@ input{font-family:inherit;}
     setTimeout(function(){ toast("✦","¡Alta validada!","Bienvenido/a, "+state.name.split(/\s+/)[0]+". Cargá tu primera obra."); burstConfetti(0.6,110); },500);
   }
   function showIntro(){ var member=!!state; $("introCtaLbl").textContent=member?"Volver al programa":"Sumate al programa"; $("introCta2").style.display=member?"":"none"; $("intro").classList.remove("hide"); window.scrollTo(0,0); }
-  function hideIntro(){ $("intro").classList.add("hide"); if(appActive) show("app"); else showAuth(); }
+  function hideIntro(){ $("intro").classList.add("hide"); if(appActive) show("app"); else showRegister(); }
 
-  /* ===== Auth ===== */
-  var authMode="signup";
+  /* ===== Registro (cuestionario) ===== */
+  function showRegister(){
+    $("regErr").textContent=""; show("register"); window.scrollTo(0,0);
+    setTimeout(function(){ $("rgName").focus(); },300);
+  }
+  function segVal(id){ var b=document.querySelector("#"+id+" .seg-btn.on"); return b?b.getAttribute("data-v"):""; }
+  function submitRegister(){
+    var name=$("rgName").value.trim(), email=$("rgEmail").value.trim(), pass=$("rgPass").value;
+    var birth=$("rgBirth").value, phone=$("rgPhone").value.trim(), company=$("rgCompany").value.trim(), portfolio=$("rgPortfolio").value.trim();
+    var uses=segVal("rgUses"), obra=segVal("rgObra");
+    if(!name){ $("regErr").textContent="Ingresá tu nombre y apellido."; return; }
+    if(!email||email.indexOf("@")<1){ $("regErr").textContent="Ingresá un email válido."; return; }
+    if(pass.length<4){ $("regErr").textContent="La contraseña debe tener al menos 4 caracteres."; return; }
+    if(!uses){ $("regErr").textContent="Contanos si trabajás con productos Piazza."; return; }
+    if(!$("rgTerms").checked){ $("regErr").textContent="Tenés que aceptar las bases y condiciones para sumarte."; return; }
+    state=defaultState({ name:name, email:email, phone:phone, birth:birth, company:company, portfolio:portfolio, usesPiazza:uses, obraType:obra, pass:hashStr(pass) });
+    save();
+    notifyManager("alta",{ detail:"Nueva solicitud de alta — requiere validación", extra:[
+      ["Nombre y apellido",name],["Fecha de nacimiento",birth],["Teléfono",phone],["Empresa / estudio",company],
+      ["Instagram / trabajo",portfolio],["¿Trabaja con Piazza?",uses],["Tipo de obras",obra]
+    ] }, "Solicitud de alta");
+    showPending();
+  }
+
+  /* ===== Login ===== */
   function showAuth(){
-    var ex=load(); authMode=ex&&ex.created?"login":"signup";
-    if(authMode==="login"){
-      var first=(ex.name||"").split(/\s+/)[0];
-      $("authEyebrow").textContent="Bienvenido/a de nuevo"; $("authTitle").textContent="Hola, "+first;
-      $("authLead").textContent="Ingresá tu contraseña para acceder a tu perfil.";
-      $("fieldName").style.display="none"; $("fieldEmail").style.display="none"; $("authBtnLbl").textContent="Ingresar";
-      $("inPass").setAttribute("autocomplete","current-password"); $("authAltTxt").textContent="¿No sos vos? "; $("authAltBtn").textContent="Empezar de nuevo";
-    } else {
-      $("authEyebrow").textContent="Acceso de miembros"; $("authTitle").textContent="Sumate al programa";
-      $("authLead").textContent="Creá tu perfil para empezar a cargar tus obras.";
-      $("fieldName").style.display=""; $("fieldEmail").style.display=""; $("authBtnLbl").textContent="Crear mi perfil";
-      $("inPass").setAttribute("autocomplete","new-password"); $("authAltTxt").textContent="¿Ya tenés perfil? "; $("authAltBtn").textContent="Iniciar sesión";
-    }
+    var ex=load();
+    if(!ex||!ex.created){ showRegister(); return; }
+    var first=(ex.name||"").split(/\s+/)[0];
+    $("authTitle").textContent="Hola, "+first;
+    $("authLead").textContent="Ingresá tu contraseña para acceder a tu perfil.";
     $("authErr").textContent=""; $("inPass").value=""; show("auth");
-    setTimeout(function(){ (authMode==="login"?$("inPass"):$("inName")).focus(); },300);
+    setTimeout(function(){ $("inPass").focus(); },300);
   }
   function submitAuth(){
+    var ex=load(); if(!ex){ showRegister(); return; }
     var pass=$("inPass").value;
-    if(authMode==="signup"){
-      var name=$("inName").value.trim(), email=$("inEmail").value.trim();
-      if(!name){ $("authErr").textContent="Ingresá tu nombre o el de tu estudio."; return; }
-      if(pass.length<4){ $("authErr").textContent="La contraseña debe tener al menos 4 caracteres."; return; }
-      state=defaultState(name,email,hashStr(pass)); save();
-      notifyManager("alta",{ detail:"Nueva solicitud de alta — requiere validación" }, "Solicitud de alta");
-      showPending();
-    } else {
-      var ex=load(); if(hashStr(pass)!==ex.pass){ $("authErr").textContent="Contraseña incorrecta. Probá de nuevo."; return; }
-      state=ex; state.tier=tierIndexFor(state.lifetime); if(!state.photos)state.photos=[];
-      if(state.status!=="activo"){ save(); showPending(); return; }
-      save(); showApp();
-    }
+    if(hashStr(pass)!==ex.pass){ $("authErr").textContent="Contraseña incorrecta. Probá de nuevo."; return; }
+    state=ex; state.tier=tierIndexFor(state.lifetime); if(!state.photos)state.photos=[];
+    if(state.status!=="activo"){ save(); showPending(); return; }
+    save(); showApp();
   }
 
   /* ===== Wire ===== */
@@ -952,12 +1007,13 @@ input{font-family:inherit;}
   $("introCta2").addEventListener("click",hideIntro);
   $("authBtn").addEventListener("click",submitAuth);
   $("inPass").addEventListener("keydown",function(e){ if(e.key==="Enter")submitAuth(); });
-  $("inName").addEventListener("keydown",function(e){ if(e.key==="Enter")$("inEmail").focus(); });
-  $("inEmail").addEventListener("keydown",function(e){ if(e.key==="Enter")$("inPass").focus(); });
-  $("authAltBtn").addEventListener("click",function(){
-    if(authMode==="login"){ if(confirm("Esto va a empezar un perfil nuevo y borrar el actual de este navegador. ¿Continuar?")){ try{localStorage.removeItem(STORE_KEY);}catch(e){} state=null; showAuth(); } }
-    else { if(load()) showAuth(); else toast("!","Sin perfil","Todavía no hay un perfil creado en este navegador"); }
-  });
+  $("authToRegister").addEventListener("click",showRegister);
+  // registro
+  $("regBtn").addEventListener("click",submitRegister);
+  $("rgPass").addEventListener("keydown",function(e){ if(e.key==="Enter")submitRegister(); });
+  $("regLogin").addEventListener("click",function(){ if(load()) showAuth(); else toast("!","Sin perfil","Todavía no hay un perfil en este navegador"); });
+  $("rgPassToggle").addEventListener("click",function(){ var i=$("rgPass"); if(i.type==="password"){ i.type="text"; this.textContent="Ocultar"; } else { i.type="password"; this.textContent="Ver"; } });
+  Array.prototype.forEach.call(document.querySelectorAll(".seg-btn"),function(b){ b.addEventListener("click",function(){ var p=b.parentNode; Array.prototype.forEach.call(p.querySelectorAll(".seg-btn"),function(x){ x.classList.remove("on"); }); b.classList.add("on"); }); });
   $("passToggle").addEventListener("click",function(){ var i=$("inPass"); if(i.type==="password"){ i.type="text"; this.textContent="Ocultar"; } else { i.type="password"; this.textContent="Ver"; } });
   $("codeBtn").addEventListener("click",validateAndEnter);
   $("inCode").addEventListener("keydown",function(e){ if(e.key==="Enter")validateAndEnter(); });
@@ -973,7 +1029,8 @@ input{font-family:inherit;}
   // Siempre inicia en el login/registro. La info del programa queda adentro,
   // accesible desde el botón "Cómo funciona" (no se muestra apenas entrás).
   buildIntro();
-  showAuth();
+  var existing=load();
+  if(existing&&existing.created){ showAuth(); } else { showRegister(); }
 })();
 </script>
 </body>

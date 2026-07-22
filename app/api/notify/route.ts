@@ -63,6 +63,12 @@ export async function POST(req: NextRequest): Promise<Response> {
   ];
   if (item) rows.push(["Detalle", item]);
   if (detail) rows.push(["Nota", detail]);
+  // Campos extra del cuestionario de alta (label/value)
+  if (Array.isArray(data.extra)) {
+    for (const pair of data.extra) {
+      if (Array.isArray(pair) && pair[1]) rows.push([esc(pair[0]), esc(pair[1])]);
+    }
+  }
 
   const html = `<div style="font-family:Arial,Helvetica,sans-serif;color:#1e1e1e;max-width:540px;margin:0 auto">
     <div style="background:#303030;color:#fff;padding:22px 26px">
@@ -82,6 +88,36 @@ export async function POST(req: NextRequest): Promise<Response> {
       <p style="font-size:12px;color:#8a8a8a;margin:22px 0 0">Enviado automáticamente desde Piazza en Obra.</p>
     </div>
   </div>`;
+
+  // Registro en Google Sheets (best-effort; no bloquea el email).
+  // Configurar SHEETS_WEBHOOK_URL con la URL del Web App de Apps Script.
+  const sheetUrl = process.env.SHEETS_WEBHOOK_URL;
+  if (sheetUrl && kind === "alta") {
+    const map: Record<string, string> = {};
+    if (Array.isArray(data.extra)) {
+      for (const pair of data.extra) {
+        if (Array.isArray(pair)) map[String(pair[0])] = String(pair[1] ?? "");
+      }
+    }
+    try {
+      await fetch(sheetUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nombre: data.memberName || "",
+          email: data.memberEmail || "",
+          nacimiento: map["Fecha de nacimiento"] || "",
+          telefono: map["Teléfono"] || "",
+          empresa: map["Empresa / estudio"] || "",
+          trabajo: map["Instagram / trabajo"] || "",
+          usaPiazza: map["¿Trabaja con Piazza?"] || "",
+          tipoObra: map["Tipo de obras"] || "",
+        }),
+      });
+    } catch {
+      /* si falla el sheet, seguimos igual con el email */
+    }
+  }
 
   const key = process.env.RESEND_API_KEY;
   const to = process.env.NOTIFY_EMAIL || "hola@freeloagencia.com";
