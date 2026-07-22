@@ -525,12 +525,10 @@ input{font-family:inherit;}
       <span class="eyebrow">Comunidad de Arquitectos Piazza</span>
       <h1>¡Gracias por sumarte!</h1>
       <p class="lead">Recibimos tu inscripción correctamente. En breve, el equipo de Piazza va a validar tus datos y, una vez confirmada tu participación, te vamos a contactar para contarte cómo empezar a cargar fotos de tus obras y sumar puntos. <b>¡Gracias por ser parte!</b></p>
-      <label class="field-label" for="inCode">Código de validación</label>
-      <div class="field"><input id="inCode" type="text" placeholder="Ingresá el código" maxlength="24" autocapitalize="characters"></div>
       <div class="auth-err" id="codeErr"></div>
-      <button class="btn-primary" id="codeBtn"><span>Validar e ingresar</span><span class="arw">→</span></button>
+      <button class="btn-primary" id="codeBtn"><span>Ya me validaron · Ingresar</span><span class="arw">→</span></button>
       <div class="auth-alt"><span>¿Ya tenés acceso? </span><button id="pendLogin">Iniciar sesión</button></div>
-      <p class="auth-legal" id="demoHint"></p>
+      <p class="auth-legal">Cuando el equipo de Piazza apruebe tu alta vas a poder ingresar. Volvé a esta pantalla y tocá <b>“Ya me validaron · Ingresar”</b>.</p>
     </div>
   </div>
 </div>
@@ -646,10 +644,8 @@ input{font-family:inherit;}
   /* ===== Configuración (editable) ===== */
   var PTS_FOTO = 10;   // cada foto de obra validada
   var PTS_VIDEO = 50;  // un video de obra
-  // Alta validada por el equipo: el registro queda pendiente hasta que un asesor
-  // de Piazza lo habilita. En producción esto lo hace un panel de administración;
-  // para la demo, la habilitación se hace con este código (lo envía el equipo).
-  var VALIDATION_CODE = "PIAZZA2026";
+  // La validación del alta la hace el equipo desde la planilla (columna "Estado").
+  // El acceso del arquitecto se consulta contra ese Estado vía /api/status.
 
   var TIERS = [
     { name:"Bronce",    min:0,   color:"#B0805B", benefits:["Kit de bienvenida (merch, carta, muestra)","Muestras por lanzamiento"] },
@@ -975,16 +971,35 @@ input{font-family:inherit;}
   function show(id){ ["cover","intro","register","auth","pending","app"].forEach(function(s){ var el=$(s); if(s===id){ el.classList.remove("hide"); if(s==="app")el.classList.add("show"); } else { el.classList.add("hide"); if(s==="app")el.classList.remove("show"); } }); }
   function showCover(){ show("cover"); window.scrollTo(0,0); }
   function showApp(){ appActive=true; show("app"); buildEarnCards(); render(); $("balanceNum").textContent=fmt(state.points); }
-  function showPending(){
-    $("demoHint").innerHTML='Demo: tu solicitud se envió al equipo de Piazza (hola@freeloagencia.com). Para la demostración, el código de validación es <b>'+VALIDATION_CODE+'</b>.';
-    $("codeErr").textContent=""; $("inCode").value="";
-    show("pending"); setTimeout(function(){ $("inCode").focus(); },300);
+  function showPending(msg){
+    $("codeErr").textContent = msg || "";
+    show("pending"); window.scrollTo(0,0);
   }
-  function validateAndEnter(){
-    var c=$("inCode").value.trim().toUpperCase();
-    if(c!==VALIDATION_CODE){ $("codeErr").textContent="Código incorrecto. El equipo te lo envía por email al validar tu alta."; return; }
-    state.status="activo"; save(); showApp();
-    setTimeout(function(){ toast("✦","¡Alta validada!","Bienvenido/a, "+state.name.split(/\s+/)[0]+". Cargá tu primera obra."); burstConfetti(0.6,110); },500);
+  // Consulta el Estado del arquitecto en la planilla (vía /api/status) y decide el acceso.
+  function checkStatusAndEnter(ctx){
+    if(!state || !state.email){ showRegister(); return; }
+    if(location.protocol.indexOf("http")!==0){
+      toast("!","Solo online","La validación por planilla funciona en la versión publicada");
+      if(ctx==="login") showPending(); return;
+    }
+    if(ctx==="login") $("authErr").textContent="Verificando tu acceso…"; else $("codeErr").textContent="Verificando…";
+    fetch("/api/status?email="+encodeURIComponent(state.email))
+      .then(function(r){ return r.json(); })
+      .then(function(j){
+        var st=String(j&&j.estado||"").toLowerCase();
+        if(st.indexOf("aprob")>=0){
+          state.status="activo"; save(); showApp();
+          setTimeout(function(){ toast("✦","¡Alta aprobada!","Bienvenido/a, "+state.name.split(/\s+/)[0]+". Cargá tu primera obra."); burstConfetti(0.6,110); },500);
+        } else if(st.indexOf("rechaz")>=0){
+          showPending("Tu solicitud no fue aprobada esta vez. Ante cualquier duda, escribinos.");
+        } else {
+          showPending("Tu alta todavía está en revisión. Cuando el equipo la apruebe, tocá “Ya me validaron · Ingresar”.");
+        }
+      })
+      .catch(function(){
+        if(ctx==="login"){ $("authErr").textContent="No pudimos verificar tu acceso. Reintentá."; }
+        else { $("codeErr").textContent="No pudimos verificar el estado. Reintentá."; }
+      });
   }
   function showIntro(){ var member=!!state; $("introCtaLbl").textContent=member?"Volver al programa":"Sumate al programa"; $("introCta2").style.display=member?"":"none"; $("intro").classList.remove("hide"); window.scrollTo(0,0); }
   function hideIntro(){ $("intro").classList.add("hide"); if(appActive) show("app"); else showRegister(); }
@@ -1027,9 +1042,9 @@ input{font-family:inherit;}
     var ex=load(); if(!ex){ showRegister(); return; }
     var pass=$("inPass").value;
     if(hashStr(pass)!==ex.pass){ $("authErr").textContent="Contraseña incorrecta. Probá de nuevo."; return; }
-    state=ex; state.tier=tierIndexFor(state.lifetime); if(!state.photos)state.photos=[];
-    if(state.status!=="activo"){ save(); showPending(); return; }
-    save(); showApp();
+    state=ex; state.tier=tierIndexFor(state.lifetime); if(!state.photos)state.photos=[]; save();
+    if(state.status==="activo"){ showApp(); return; }
+    checkStatusAndEnter("login");
   }
 
   /* ===== Wire ===== */
@@ -1049,8 +1064,7 @@ input{font-family:inherit;}
   $("rgPassToggle").addEventListener("click",function(){ var i=$("rgPass"); if(i.type==="password"){ i.type="text"; this.textContent="Ocultar"; } else { i.type="password"; this.textContent="Ver"; } });
   Array.prototype.forEach.call(document.querySelectorAll(".seg-btn"),function(b){ b.addEventListener("click",function(){ var p=b.parentNode; Array.prototype.forEach.call(p.querySelectorAll(".seg-btn"),function(x){ x.classList.remove("on"); }); b.classList.add("on"); }); });
   $("passToggle").addEventListener("click",function(){ var i=$("inPass"); if(i.type==="password"){ i.type="text"; this.textContent="Ocultar"; } else { i.type="password"; this.textContent="Ver"; } });
-  $("codeBtn").addEventListener("click",validateAndEnter);
-  $("inCode").addEventListener("keydown",function(e){ if(e.key==="Enter")validateAndEnter(); });
+  $("codeBtn").addEventListener("click",function(){ checkStatusAndEnter("pending"); });
   $("pendLogin").addEventListener("click",function(){ state=null; showAuth(); });
   $("fileInput").addEventListener("change",function(e){ if(e.target.files&&e.target.files[0]) handleFile(e.target.files[0]); e.target.value=""; });
   $("howBtn").addEventListener("click",showIntro);
