@@ -120,7 +120,9 @@ export async function POST(req: NextRequest): Promise<Response> {
   }
 
   const key = process.env.RESEND_API_KEY;
-  const to = process.env.NOTIFY_EMAIL || "hola@freeloagencia.com";
+  // Mientras Resend esté en modo prueba (sin dominio verificado), solo se puede
+  // enviar al email de la cuenta de Resend (flor@freeloagencia.com).
+  const to = process.env.NOTIFY_EMAIL || "flor@freeloagencia.com";
   const from = process.env.NOTIFY_FROM || "Piazza en Obra <onboarding@resend.dev>";
 
   // Sin clave configurada: respondemos OK pero avisamos que no se envió (modo no configurado).
