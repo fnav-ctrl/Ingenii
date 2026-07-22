@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "INGENII+ — Ingeniería y Construcción",
-  description: "Ingeniería y Construcción",
+  title: "Piazza en Obra — Programa de Beneficios",
+  description: "Una comunidad que construye.",
 };
 
 export default function RootLayout({
