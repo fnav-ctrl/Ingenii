@@ -695,11 +695,12 @@ input{font-family:inherit;}
     <button class="pm-x" id="vmClose" type="button">×</button>
     <span class="eyebrow" style="display:block;margin-bottom:10px">Cargar video de obra</span>
     <h2 style="font-size:22px;font-weight:800;letter-spacing:-0.01em;margin-bottom:6px">Compartí tu video</h2>
-    <p style="font-size:13px;color:var(--gray);line-height:1.5;margin-bottom:20px">Subí tu video a YouTube, Instagram, Drive o WeTransfer y pegá el link acá. El equipo lo valida y sumás <b>30 puntos</b>.</p>
+    <p style="font-size:13px;color:var(--gray);line-height:1.5;margin-bottom:20px">Subí tu video a <b>Google Drive</b> y pegá el link acá. El equipo lo valida y sumás <b>30 puntos</b>.</p>
     <label class="field-label" for="vmName">Nombre de la carga *</label>
     <div class="field"><input id="vmName" type="text" placeholder="Ej. Recorrido baño — Casa Palermo" maxlength="80"></div>
-    <label class="field-label" for="vmUrl">Link del video *</label>
-    <div class="field"><input id="vmUrl" type="url" placeholder="https://..." maxlength="400"></div>
+    <label class="field-label" for="vmUrl">Link de Google Drive *</label>
+    <div class="field"><input id="vmUrl" type="url" placeholder="https://drive.google.com/..." maxlength="400"></div>
+    <p style="font-size:12px;color:var(--gray-soft);line-height:1.5;margin:-4px 0 16px">Importante: compartí el archivo como <b>"Cualquiera con el enlace"</b> para que el equipo pueda verlo.</p>
     <label class="field-label" for="vmDesc">Descripción</label>
     <div class="field"><textarea id="vmDesc" rows="3" placeholder="Contanos la dirección, los m² y qué ambiente se ve. Ej: Av. Corrientes 1234, CABA · 45 m² · Cocina." maxlength="300" style="width:100%;border:none;outline:none;background:transparent;font-family:inherit;font-size:14px;resize:vertical"></textarea></div>
     <div class="auth-err" id="vmErr"></div>
@@ -1583,7 +1584,7 @@ input{font-family:inherit;}
       '<div class="action-right"><div class="action-pts">+10 <span>pts c/u</span></div><button class="action-btn" id="earnPhotoBtn">Cargar fotos</button></div>';
     el.appendChild(d1);
     var d2=document.createElement("div"); d2.className="action";
-    d2.innerHTML='<div class="action-icon">▶</div><div class="action-body"><div class="action-name">Cargar video de obra</div><div class="action-desc">Compartí el link de un video de tu obra (YouTube, Instagram, Drive o WeTransfer). El equipo lo valida y sumás 30 puntos.</div></div>'+
+    d2.innerHTML='<div class="action-icon">▶</div><div class="action-body"><div class="action-name">Cargar video de obra</div><div class="action-desc">Compartí el link de un video de tu obra por <b>Google Drive</b>. El equipo lo valida y sumás 30 puntos.</div></div>'+
       '<div class="action-right"><div class="action-pts">+30 <span>pts</span></div><button class="action-btn" id="earnVideoBtn">Cargar video</button></div>';
     el.appendChild(d2);
     $("earnPhotoBtn").addEventListener("click",openPhotoModal);
