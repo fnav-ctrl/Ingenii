@@ -48,6 +48,11 @@ h2{font-size:20px;font-weight:800;letter-spacing:-0.01em;margin:8px 0 16px;}
 .toast{position:fixed;right:20px;bottom:20px;background:var(--ink);color:#fff;padding:13px 18px;font-size:13px;box-shadow:0 20px 50px -24px rgba(0,0,0,.5);opacity:0;transform:translateY(12px);transition:.3s;}
 .toast.in{opacity:1;transform:translateY(0);}
 .hint{font-size:12px;color:var(--gray-soft);margin-top:4px;}
+.videolink{display:inline-block;border:0.5px solid var(--ink);padding:10px 16px;font-size:12px;font-weight:700;color:var(--ink);text-decoration:none;letter-spacing:0.04em;}
+.videolink:hover{background:var(--ink);color:#fff;}
+.statepill{font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);border:0.5px solid rgba(200,149,42,0.5);padding:5px 9px;align-self:flex-start;white-space:nowrap;}
+.who{overflow-wrap:anywhere;}
+.meta{overflow-wrap:anywhere;}
 </style>
 </head>
 <body>
@@ -77,10 +82,17 @@ h2{font-size:20px;font-weight:800;letter-spacing:-0.01em;margin:8px 0 16px;}
   </div>
 
   <div class="section">
-    <span class="eyebrow">Fotos de obra</span>
+    <span class="eyebrow">Fotos y videos de obra</span>
     <h2>Cargas pendientes <span class="count" id="fCount"></span></h2>
-    <p class="hint">Aprobá la cantidad de fotos válidas: cada foto aprobada suma 10 puntos al miembro.</p>
+    <p class="hint">Fotos: cada foto aprobada suma 10 puntos. Video: aprobarlo suma 50 puntos al miembro.</p>
     <div id="fotos" style="margin-top:12px"></div>
+  </div>
+
+  <div class="section">
+    <span class="eyebrow">Canjes y solicitudes</span>
+    <h2>Pendientes <span class="count" id="cCount"></span></h2>
+    <p class="hint">Canjes de productos y solicitudes de beneficios / sorteos. Marcá el estado de cada uno.</p>
+    <div id="canjes" style="margin-top:12px"></div>
   </div>
 </div>
 
@@ -136,31 +148,70 @@ h2{font-size:20px;font-weight:800;letter-spacing:-0.01em;margin:8px 0 16px;}
         });
       });
     }
-    // fotos
+    // fotos y videos
     var fEl=$("fotos"); var fs=j.fotos||[];
     $("fCount").textContent = fs.length? "· "+fs.length : "";
-    if(!fs.length){ fEl.innerHTML='<div class="empty">No hay cargas de fotos pendientes.</div>'; return; }
-    fEl.innerHTML="";
-    fs.forEach(function(f){
-      var thumbs=(f.urls||[]).map(function(u){return '<a href="'+esc(u)+'" target="_blank" rel="noopener"><img src="'+esc(u)+'" alt="foto"></a>';}).join("");
+    if(!fs.length){ fEl.innerHTML='<div class="empty">No hay cargas pendientes.</div>'; }
+    else {
+      fEl.innerHTML="";
+      fs.forEach(function(f){
+        var esVideo = f.tipo==="video";
+        var media = esVideo
+          ? '<div class="thumbs"><a class="videolink" href="'+esc(f.video_url||"#")+'" target="_blank" rel="noopener">▶ Ver video en una pestaña nueva</a></div>'
+          : '<div class="thumbs">'+(f.urls||[]).map(function(u){return '<a href="'+esc(u)+'" target="_blank" rel="noopener"><img src="'+esc(u)+'" alt="foto"></a>';}).join("")+'</div>';
+        var cargo = esVideo ? '1 video' : (f.cantidad+' foto'+(f.cantidad===1?"":"s"));
+        var acciones = esVideo
+          ? '<span class="qty">Aprobar suma <b>+50 pts</b></span>'+
+            '<button class="btn ok sm" data-f="'+esc(f.id)+'" data-video="1" data-dec="aprobar">Aprobar video (+50 pts)</button>'+
+            '<button class="btn no sm" data-f="'+esc(f.id)+'" data-dec="rechazar">Rechazar</button>'
+          : '<span class="qty">Aprobar <input type="number" min="0" max="'+f.cantidad+'" value="'+f.cantidad+'" data-q="'+esc(f.id)+'"> de '+f.cantidad+'</span>'+
+            '<button class="btn ok sm" data-f="'+esc(f.id)+'" data-dec="aprobar">Aprobar y sumar puntos</button>'+
+            '<button class="btn no sm" data-f="'+esc(f.id)+'" data-dec="rechazar">Rechazar</button>';
+        var d=document.createElement("div"); d.className="card";
+        d.innerHTML='<div class="card-head"><div><div class="who">'+(esVideo?'🎬 ':'')+esc(f.nombre_carga||"(sin nombre)")+'</div>'+
+          '<div class="meta"><b>'+esc(f.miembro_nombre||f.miembro_email)+'</b> · '+esc(f.miembro_email)+'<br>'+
+          esc(f.descripcion||"")+'<br><b>Cargó:</b> '+cargo+' · '+fdate(f.created_at)+'</div></div></div>'+
+          media+
+          '<div class="actions" style="margin-top:10px">'+acciones+'</div>';
+        fEl.appendChild(d);
+      });
+      Array.prototype.forEach.call(fEl.querySelectorAll("[data-f]"),function(b){
+        b.addEventListener("click",function(){
+          var id=b.getAttribute("data-f"), dec=b.getAttribute("data-dec"), video=b.getAttribute("data-video");
+          var q=fEl.querySelector('[data-q="'+id+'"]'); var n=q?parseInt(q.value,10):(video?1:0);
+          b.disabled=true;
+          api({action:"foto",id:id,decision:dec,cantidadAprobada:n}).then(function(r){
+            toast(r.ok?(dec==="aprobar"?("Aprobado · +"+(video?50:(n*10))+" pts"):"Rechazado"):"Error"); refresh();
+          });
+        });
+      });
+    }
+    // canjes y solicitudes
+    var cEl=$("canjes"); var cs=j.canjes||[];
+    $("cCount").textContent = cs.length? "· "+cs.length : "";
+    if(!cs.length){ cEl.innerHTML='<div class="empty">No hay canjes ni solicitudes pendientes.</div>'; return; }
+    cEl.innerHTML="";
+    cs.forEach(function(c){
+      var esBene = c.tipo==="beneficio"||c.tipo==="sorteo";
+      var tag = c.tipo==="sorteo" ? "Sorteo" : (c.tipo==="beneficio" ? "Beneficio de nivel" : "Canje de producto");
+      var costo = esBene ? "Sin costo en puntos" : ((c.costo||0)+" pts");
+      var nivel = c.detalle ? (" · Nivel "+esc(c.detalle)) : "";
       var d=document.createElement("div"); d.className="card";
-      d.innerHTML='<div class="card-head"><div><div class="who">'+esc(f.nombre_carga||"(sin nombre)")+'</div>'+
-        '<div class="meta"><b>'+esc(f.miembro_nombre||f.miembro_email)+'</b> · '+esc(f.miembro_email)+'<br>'+
-        esc(f.descripcion||"")+'<br><b>Cargó:</b> '+f.cantidad+' foto'+(f.cantidad===1?"":"s")+' · '+fdate(f.created_at)+'</div></div></div>'+
-        '<div class="thumbs">'+thumbs+'</div>'+
+      d.innerHTML='<div class="card-head"><div><div class="who">'+esc(c.producto||"(sin nombre)")+'</div>'+
+        '<div class="meta"><b>'+esc(c.miembro_nombre||c.miembro_email)+'</b> · '+esc(c.miembro_email)+'<br>'+
+        '<b>'+tag+'</b> · '+costo+nivel+' · '+fdate(c.created_at)+'</div></div>'+
+        '<span class="statepill">Pendiente</span></div>'+
         '<div class="actions" style="margin-top:10px">'+
-        '<span class="qty">Aprobar <input type="number" min="0" max="'+f.cantidad+'" value="'+f.cantidad+'" data-q="'+esc(f.id)+'"> de '+f.cantidad+'</span>'+
-        '<button class="btn ok sm" data-f="'+esc(f.id)+'" data-dec="aprobar">Aprobar y sumar puntos</button>'+
-        '<button class="btn no sm" data-f="'+esc(f.id)+'" data-dec="rechazar">Rechazar</button></div>';
-      fEl.appendChild(d);
+        '<button class="btn ok sm" data-c="'+esc(c.id)+'" data-est="entregado">Marcar entregado</button>'+
+        '<button class="btn no sm" data-c="'+esc(c.id)+'" data-est="rechazado">Rechazar</button></div>';
+      cEl.appendChild(d);
     });
-    Array.prototype.forEach.call(fEl.querySelectorAll("[data-f]"),function(b){
+    Array.prototype.forEach.call(cEl.querySelectorAll("[data-c]"),function(b){
       b.addEventListener("click",function(){
-        var id=b.getAttribute("data-f"), dec=b.getAttribute("data-dec");
-        var q=fEl.querySelector('[data-q="'+id+'"]'); var n=q?parseInt(q.value,10):0;
+        var id=b.getAttribute("data-c"), est=b.getAttribute("data-est");
         b.disabled=true;
-        api({action:"foto",id:id,decision:dec,cantidadAprobada:n}).then(function(r){
-          toast(r.ok?(dec==="aprobar"?("Aprobado · +"+(n*10)+" pts"):"Rechazado"):"Error"); refresh();
+        api({action:"canje",id:id,estado:est}).then(function(r){
+          toast(r.ok?(est==="entregado"?"Marcado como entregado":"Canje rechazado"):"Error"); refresh();
         });
       });
     });

@@ -6,11 +6,13 @@ import { createHash, randomUUID } from "crypto";
    Acciones (POST { action, ... }):
      register  -> crea el miembro (estado pendiente) + avisa a Flor
      login     -> valida credenciales, devuelve sesión + estado + puntos
-     me        -> estado/puntos/nivel + fotos del miembro
-     canje     -> descuenta puntos disponibles + registra canje + avisa
+     me        -> estado/puntos/nivel + fotos/videos + canjes del miembro
+     canje     -> descuenta puntos disponibles + registra canje (pendiente) + avisa
+     beneficio -> registra la solicitud de un beneficio de nivel (pendiente) + avisa
+     video     -> registra un video de obra por link (pendiente de validar) + avisa
      fotos     -> sube fotos al Storage privado (quedan pendientes de validar)
    Requiere env: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY.
-   Email opcional: RESEND_API_KEY, NOTIFY_EMAIL, NOTIFY_FROM.
+   Email opcional: RESEND_API_KEY, NOTIFY_EMAIL, NOTIFY_FROM, NOTIFY_PLATFORM_URL.
    ========================================================================= */
 
 const SB = process.env.SUPABASE_URL;
@@ -19,7 +21,6 @@ const RKEY = process.env.RESEND_API_KEY;
 const NOTIFY = process.env.NOTIFY_EMAIL || "flor@freeloagencia.com";
 const FROM = process.env.NOTIFY_FROM || "Piazza en Obra <onboarding@resend.dev>";
 
-const PTS_POR_FOTO = 10;
 const TIERS = [
   { name: "Bronce", min: 0 }, { name: "Plata", min: 30 },
   { name: "Oro", min: 60 }, { name: "Platinium", min: 100 },
@@ -29,6 +30,7 @@ function tierName(pts) { let n = "Bronce"; for (const t of TIERS) if (pts >= t.m
 function J(o, s = 200) { return new Response(JSON.stringify(o), { status: s, headers: { "Content-Type": "application/json" } }); }
 function hash(email, pass) { return createHash("sha256").update(String(email).toLowerCase() + ":" + String(pass)).digest("hex"); }
 function esc(s) { return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+function enc(s) { return encodeURIComponent(String(s ?? "")); }
 
 async function sbGet(path) {
   const r = await fetch(SB + "/rest/v1/" + path, { headers: { apikey: SK, Authorization: "Bearer " + SK } });
@@ -42,17 +44,20 @@ async function sbPatch(path, body) {
   return fetch(SB + "/rest/v1/" + path, { method: "PATCH", headers: { apikey: SK, Authorization: "Bearer " + SK, "Content-Type": "application/json", Prefer: "return=representation" }, body: JSON.stringify(body) });
 }
 async function getMember(email) {
-  const rows = await sbGet("miembros?email=eq." + encodeURIComponent(email.toLowerCase()) + "&select=*&limit=1");
+  const rows = await sbGet("miembros?email=eq." + enc(email.toLowerCase()) + "&select=*&limit=1");
   return rows[0] || null;
 }
 function pub(m) {
   return { email: m.email, nombre: m.nombre, estado: m.estado, puntos: m.puntos_disponibles, acumulado: m.puntos_acumulados, tier: tierName(m.puntos_acumulados) };
 }
-function frame(intro, rows) {
-  return `<div style="font-family:Arial,Helvetica,sans-serif;color:#1e1e1e;max-width:540px;margin:0 auto"><div style="background:#1A1A18;color:#fff;padding:22px 26px"><div style="font-size:20px;font-weight:800">Piazza <span style="font-size:11px">EN OBRA</span></div><div style="font-size:12px;color:#C8952A;margin-top:6px">Programa de beneficios · aviso automático</div></div><div style="padding:26px;border:1px solid #ececec;border-top:none"><p style="font-size:15px;margin:0 0 18px;line-height:1.5">${esc(intro)}</p><table style="width:100%;border-collapse:collapse;font-size:14px">${rows.filter(r => r[1]).map(([k, v]) => `<tr><td style="padding:9px 0;color:#585858;width:120px;vertical-align:top">${esc(k)}</td><td style="padding:9px 0;font-weight:600;border-bottom:1px solid #f2f2f2">${esc(v)}</td></tr>`).join("")}</table></div></div>`;
+function frame(intro, rows, cta) {
+  const btn = cta && cta.url
+    ? `<div style="margin-top:22px"><a href="${esc(cta.url)}" style="display:inline-block;background:#C8952A;color:#1A1A18;text-decoration:none;font-weight:800;font-size:14px;padding:14px 28px;letter-spacing:0.02em">${esc(cta.label || "Ir a la plataforma")}</a></div>`
+    : "";
+  return `<div style="font-family:Arial,Helvetica,sans-serif;color:#1e1e1e;max-width:540px;margin:0 auto"><div style="background:#1A1A18;color:#fff;padding:22px 26px"><div style="font-size:20px;font-weight:800">Piazza <span style="font-size:11px">EN OBRA</span></div><div style="font-size:12px;color:#C8952A;margin-top:6px">Programa de beneficios · aviso automático</div></div><div style="padding:26px;border:1px solid #ececec;border-top:none"><p style="font-size:15px;margin:0 0 18px;line-height:1.5">${esc(intro)}</p><table style="width:100%;border-collapse:collapse;font-size:14px">${rows.filter(r => r[1]).map(([k, v]) => `<tr><td style="padding:9px 0;color:#585858;width:120px;vertical-align:top">${esc(k)}</td><td style="padding:9px 0;font-weight:600;border-bottom:1px solid #f2f2f2">${esc(v)}</td></tr>`).join("")}</table>${btn}</div></div>`;
 }
 async function sendEmail(to, subject, html) {
-  if (!RKEY) return;
+  if (!RKEY || !to) return;
   try { await fetch("https://api.resend.com/emails", { method: "POST", headers: { Authorization: "Bearer " + RKEY, "Content-Type": "application/json" }, body: JSON.stringify({ from: FROM, to, subject, html }) }); } catch (e) {}
 }
 async function uploadImage(objectPath, dataUrl) {
@@ -97,19 +102,50 @@ export async function POST(req) {
   if (!m || d.session !== m.pass_hash) return J({ ok: false, error: "auth" }, 401);
 
   if (action === "me") {
-    const fotos = await sbGet("fotos?miembro_email=eq." + encodeURIComponent(email) + "&select=id,nombre_carga,descripcion,cantidad,estado,cantidad_aprobada,puntos_otorgados,created_at&order=created_at.desc&limit=30");
-    return J({ ok: true, member: pub(m), fotos });
+    const fotos = await sbGet("fotos?miembro_email=eq." + enc(email) + "&select=*&order=created_at.desc&limit=40");
+    const canjes = await sbGet("canjes?miembro_email=eq." + enc(email) + "&select=*&order=created_at.desc&limit=40");
+    return J({ ok: true, member: pub(m), fotos, canjes });
   }
 
   if (action === "canje") {
     if (m.estado !== "aprobado") return J({ ok: false, error: "no_aprobado" }, 403);
     const costo = parseInt(d.costo, 10) || 0;
     if (m.puntos_disponibles < costo) return J({ ok: false, error: "insuficiente" }, 400);
-    await sbPatch("miembros?email=eq." + encodeURIComponent(email), { puntos_disponibles: m.puntos_disponibles - costo });
-    await sbPost("canjes", { miembro_email: email, producto: d.producto || "", costo }, "return=minimal");
-    sendEmail(NOTIFY, "Solicitud de canje — " + (m.nombre || email), frame("Un miembro solicitó un canje de producto.", [["Miembro", m.nombre], ["Email", email], ["Producto", d.producto], ["Costo", costo + " pts"], ["Nivel", tierName(m.puntos_acumulados)]]));
+    await sbPatch("miembros?email=eq." + enc(email), { puntos_disponibles: m.puntos_disponibles - costo });
+    // Registra el canje como pendiente. Si la base todavía no tiene las columnas
+    // nuevas, reintenta con los campos base para no romper el flujo.
+    const full = { miembro_email: email, miembro_nombre: m.nombre || "", producto: d.producto || "", costo, tipo: "producto", estado: "pendiente" };
+    const cr = await sbPost("canjes", full, "return=minimal");
+    if (!cr.ok) await sbPost("canjes", { miembro_email: email, producto: d.producto || "", costo }, "return=minimal");
+    sendEmail(NOTIFY, "Solicitud de canje — " + (m.nombre || email), frame("Un miembro solicitó un canje de producto. Marcá su estado desde el panel /admin.", [["Miembro", m.nombre], ["Email", email], ["Producto", d.producto], ["Costo", costo + " pts"], ["Nivel", tierName(m.puntos_acumulados)]]));
     const m2 = await getMember(email);
     return J({ ok: true, member: pub(m2) });
+  }
+
+  if (action === "beneficio") {
+    if (m.estado !== "aprobado") return J({ ok: false, error: "no_aprobado" }, 403);
+    const nombre = String(d.itemName || "").trim();
+    const tier = String(d.tier || "");
+    const kind = String(d.kind || "beneficio");
+    if (!nombre) return J({ ok: false, error: "item" }, 400);
+    // Evita duplicados: si ya lo solicitó, no lo registra de nuevo.
+    const ex = await sbGet("canjes?miembro_email=eq." + enc(email) + "&tipo=eq." + enc(kind) + "&producto=eq." + enc(nombre) + "&select=id&limit=1");
+    if (ex.length) return J({ ok: true, already: true });
+    const cr = await sbPost("canjes", { miembro_email: email, miembro_nombre: m.nombre || "", producto: nombre, detalle: tier, costo: 0, tipo: kind, estado: "pendiente" }, "return=minimal");
+    if (!cr.ok) { const t = await cr.text(); return J({ ok: false, error: "db", detail: t.slice(0, 160) }, 500); }
+    const asunto = kind === "sorteo" ? "Participación en sorteo" : "Solicitud de beneficio";
+    sendEmail(NOTIFY, asunto + " — " + (m.nombre || email), frame("Un miembro registró una solicitud. Marcá su estado desde el panel /admin.", [["Miembro", m.nombre], ["Email", email], [kind === "sorteo" ? "Sorteo" : "Beneficio", nombre], ["Nivel", tier]]));
+    return J({ ok: true });
+  }
+
+  if (action === "video") {
+    if (m.estado !== "aprobado") return J({ ok: false, error: "no_aprobado" }, 403);
+    const url = String(d.videoUrl || "").trim();
+    if (!/^https?:\/\//i.test(url)) return J({ ok: false, error: "url" }, 400);
+    const cr = await sbPost("fotos", { miembro_email: email, miembro_nombre: m.nombre || "", nombre_carga: d.nombreCarga || "", descripcion: d.descripcion || "", cantidad: 1, paths: [], tipo: "video", video_url: url, estado: "pendiente" }, "return=minimal");
+    if (!cr.ok) { const t = await cr.text(); return J({ ok: false, error: "db", detail: t.slice(0, 160) }, 500); }
+    sendEmail(NOTIFY, "Nuevo video de obra — " + (m.nombre || email), frame("Un miembro cargó un video de obra (por link). Revisalo y aprobalo desde el panel /admin.", [["Miembro", m.nombre], ["Email", email], ["Carga", d.nombreCarga], ["Descripción", d.descripcion], ["Video", url]]));
+    return J({ ok: true });
   }
 
   if (action === "fotos") {
@@ -124,7 +160,7 @@ export async function POST(req) {
       if (ok) paths.push(p);
     }
     if (!paths.length) return J({ ok: false, error: "upload_fail" }, 500);
-    await sbPost("fotos", { miembro_email: email, miembro_nombre: m.nombre || "", nombre_carga: d.nombreCarga || "", descripcion: d.descripcion || "", cantidad: paths.length, paths, estado: "pendiente" }, "return=minimal");
+    await sbPost("fotos", { miembro_email: email, miembro_nombre: m.nombre || "", nombre_carga: d.nombreCarga || "", descripcion: d.descripcion || "", cantidad: paths.length, paths, tipo: "foto", estado: "pendiente" }, "return=minimal");
     sendEmail(NOTIFY, "Nuevas fotos de obra — " + (m.nombre || email), frame("Un miembro cargó fotos de obra. Revisalas y aprobá la cantidad desde el panel /admin.", [["Miembro", m.nombre], ["Email", email], ["Carga", d.nombreCarga], ["Descripción", d.descripcion], ["Cantidad", String(paths.length)]]));
     return J({ ok: true });
   }
