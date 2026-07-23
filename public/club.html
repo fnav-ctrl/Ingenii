@@ -210,6 +210,9 @@ input{font-family:inherit;}
 .section-head h2{font-size:clamp(20px,3vw,27px);font-weight:800;letter-spacing:-0.02em;line-height:1.1;}
 .section-head .eyebrow{display:block;margin-bottom:10px;}
 .section-note{font-size:12px;color:var(--gray);max-width:300px;text-align:right;line-height:1.6;}
+.info-note{background:var(--white);border:0.5px solid var(--line);border-left:3px solid var(--gold);padding:13px 16px;font-size:13px;line-height:1.55;color:var(--ink);margin-bottom:16px;}
+.info-note b{font-weight:700;}
+.info-note.ig{border-left-color:#C13584;}
 
 /* earn */
 .earn-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
@@ -298,8 +301,10 @@ input{font-family:inherit;}
 .fbadge.no{color:var(--red);border-color:rgba(162,67,56,0.5);}
 .fbadge.pend{color:var(--gold);border-color:rgba(200,149,42,0.5);}
 /* modal de carga de fotos */
-#photoModal,#videoModal{position:fixed;inset:0;z-index:520;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(26,26,24,0.6);backdrop-filter:blur(4px);overflow-y:auto;}
-#photoModal.show,#videoModal.show{display:flex;}
+#photoModal,#videoModal,#photoNotice{position:fixed;inset:0;z-index:520;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(26,26,24,0.6);backdrop-filter:blur(4px);overflow-y:auto;}
+#photoModal.show,#videoModal.show,#photoNotice.show{display:flex;}
+.notice-text{font-size:14px;line-height:1.6;color:var(--ink);margin-bottom:22px;}
+.notice-text b{font-weight:700;}
 .pm-card{position:relative;width:100%;max-width:460px;background:var(--white);padding:34px 30px 30px;box-shadow:0 40px 100px -30px rgba(26,26,24,0.7);max-height:92vh;overflow-y:auto;}
 .pm-x{position:absolute;top:12px;right:14px;border:none;background:none;font-size:24px;line-height:1;color:var(--gray);cursor:pointer;}
 .pm-preview{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 10px;}
@@ -600,8 +605,9 @@ input{font-family:inherit;}
   <section class="section">
     <div class="section-head">
       <div><span class="eyebrow">Cargá tu obra</span><h2>Sumá puntos</h2></div>
-      <p class="section-note">Cada carga se envía al equipo Piazza para validar. Los puntos se acreditan al instante en la demo.</p>
+      <p class="section-note">Cada carga se envía al equipo Piazza para validar. Los puntos se acreditan cuando la aprueban.</p>
     </div>
+    <div class="info-note ig">📸 <b>¡Subí tus fotos y etiquetá @griferiapiazza</b> para que podamos compartir tu perfil en nuestras redes!</div>
     <div class="earn-grid" id="earnGrid"></div>
     <div class="earn-hint">Equivalencias: <b>2 fotos</b> = obra mínima (20 pts) · <b>3 fotos</b> = obra típica (30) · <b>5 fotos</b> = obra completa (50) · <b>1 video</b> = 50 pts.</div>
   </section>
@@ -617,8 +623,9 @@ input{font-family:inherit;}
   <section class="section">
     <div class="section-head">
       <div><span class="eyebrow">Catálogo de canjes</span><h2>Canjeá tus puntos</h2></div>
-      <p class="section-note">Muestra del catálogo Piazza. Al canjear se descuenta tu saldo y se avisa al equipo.</p>
+      <p class="section-note">Al canjear se descuenta tu saldo y se avisa al equipo Piazza.</p>
     </div>
+    <div class="info-note">🏢 Los productos se <b>retiran en las oficinas de Piazza</b> una vez confirmado el canje. El equipo te contacta para coordinar el retiro.</div>
     <div class="legend">
       <div class="legend-item"><span class="legend-dot" style="background:#C8952A"></span>Accesible (hasta 30 pts)</div>
       <div class="legend-item"><span class="legend-dot" style="background:#4A7A5A"></span>Intermedio (30–80 pts)</div>
@@ -658,6 +665,15 @@ input{font-family:inherit;}
 </div>
 
 <input type="file" id="pmFile" accept="image/*" multiple style="display:none">
+<div id="photoNotice">
+  <div class="pm-card">
+    <button class="pm-x" id="pnClose" type="button">×</button>
+    <span class="eyebrow" style="display:block;margin-bottom:10px">Antes de cargar</span>
+    <h2 style="font-size:22px;font-weight:800;letter-spacing:-0.01em;margin-bottom:16px">¡Hola!</h2>
+    <p class="notice-text">Recordá que Piazza se reserva el derecho de validar los contenidos enviados según sus criterios. Además, para que tu participación pueda ser contabilizada, podés subir <b>hasta un máximo de 3 fotos de una misma grifería</b>.</p>
+    <button class="btn-primary" id="pnContinue"><span>Entendido, continuar</span><span class="arw">→</span></button>
+  </div>
+</div>
 <div id="photoModal">
   <div class="pm-card">
     <button class="pm-x" id="pmClose" type="button">×</button>
@@ -1449,6 +1465,10 @@ input{font-family:inherit;}
   var pmImages=[];
   function openPhotoModal(){
     if(state && state.estado && state.estado!=="aprobado"){ toast("!","Tu alta no está aprobada aún","Vas a poder cargar fotos cuando el equipo te apruebe"); return; }
+    $("photoNotice").classList.add("show");
+  }
+  function closePhotoNotice(){ $("photoNotice").classList.remove("show"); }
+  function realOpenPhotoModal(){
     $("pmName").value=""; $("pmDesc").value=""; $("pmErr").textContent=""; pmImages=[]; renderPmPreview(); $("photoModal").classList.add("show");
   }
   function closePhotoModal(){ $("photoModal").classList.remove("show"); }
@@ -1664,6 +1684,10 @@ input{font-family:inherit;}
   // "Ya me validaron": pedir email + contraseña (no ingresar directo).
   $("codeBtn").addEventListener("click",showAuth);
   $("pendLogin").addEventListener("click",showAuth);
+  // aviso previo a cargar fotos
+  $("pnContinue").addEventListener("click",function(){ closePhotoNotice(); realOpenPhotoModal(); });
+  $("pnClose").addEventListener("click",closePhotoNotice);
+  $("photoNotice").addEventListener("click",function(e){ if(e.target.id==="photoNotice") closePhotoNotice(); });
   // carga de fotos (modal)
   $("pmAddBtn").addEventListener("click",function(){ $("pmFile").click(); });
   $("pmFile").addEventListener("change",function(e){ addPhotoFiles(e.target.files); e.target.value=""; });
