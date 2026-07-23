@@ -280,6 +280,29 @@ input{font-family:inherit;}
 .cat-more-btn{border:0.5px solid var(--ink);background:var(--white);color:var(--ink);padding:14px 32px;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;transition:background .2s,color .2s;}
 .cat-more-btn:hover{background:var(--ink);color:#fff;}
 .cat-more-note{font-size:11px;color:var(--gray-soft);letter-spacing:0.04em;}
+/* foto cards (galería del miembro) */
+.foto-card{background:var(--white);border:0.5px solid var(--line);padding:16px 18px;}
+.foto-card-top{font-size:12px;font-weight:700;color:var(--gray);letter-spacing:0.02em;}
+.foto-card-name{font-size:14px;font-weight:700;margin:8px 0 4px;letter-spacing:-0.01em;}
+.foto-card-desc{font-size:12px;color:var(--gray);line-height:1.5;margin-bottom:8px;}
+.foto-card-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;}
+.foto-card-time{font-size:11px;color:var(--gray-soft);}
+.fbadge{font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:5px 9px;border:0.5px solid var(--line);white-space:nowrap;}
+.fbadge.ok{color:var(--green);border-color:rgba(74,122,90,0.5);}
+.fbadge.no{color:var(--red);border-color:rgba(162,67,56,0.5);}
+.fbadge.pend{color:var(--gold);border-color:rgba(200,149,42,0.5);}
+/* modal de carga de fotos */
+#photoModal{position:fixed;inset:0;z-index:520;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(26,26,24,0.6);backdrop-filter:blur(4px);overflow-y:auto;}
+#photoModal.show{display:flex;}
+.pm-card{position:relative;width:100%;max-width:460px;background:var(--white);padding:34px 30px 30px;box-shadow:0 40px 100px -30px rgba(26,26,24,0.7);max-height:92vh;overflow-y:auto;}
+.pm-x{position:absolute;top:12px;right:14px;border:none;background:none;font-size:24px;line-height:1;color:var(--gray);cursor:pointer;}
+.pm-preview{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 10px;}
+.pm-thumb{position:relative;width:70px;height:56px;border:0.5px solid var(--line);overflow:hidden;}
+.pm-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.pm-thumb button{position:absolute;top:2px;right:2px;width:18px;height:18px;border:none;background:rgba(26,26,24,0.75);color:#fff;font-size:12px;line-height:1;cursor:pointer;}
+.pm-add{width:100%;border:0.5px dashed var(--line);background:transparent;color:var(--ink);padding:13px;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;margin-bottom:6px;}
+.pm-add:hover{border-color:var(--ink);}
+.pm-count{color:var(--gold);font-weight:800;margin-left:6px;}
 
 /* sorteos app */
 .sorteos-app{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
@@ -499,7 +522,11 @@ input{font-family:inherit;}
       <span class="brand"><span class="p">Piazza</span><span class="eo"><i>EN</i><i>OBRA</i></span></span>
       <span class="eyebrow">Acceso de miembros</span>
       <h1 id="authTitle">Iniciar sesión</h1>
-      <p class="lead" id="authLead">Ingresá tu contraseña para acceder a tu perfil.</p>
+      <p class="lead" id="authLead">Ingresá tu email y contraseña.</p>
+      <div>
+        <label class="field-label" for="inEmail">Email</label>
+        <div class="field"><input id="inEmail" type="email" placeholder="tucorreo@estudio.com" autocomplete="email" maxlength="80"></div>
+      </div>
       <div>
         <label class="field-label" for="inPass">Contraseña</label>
         <div class="field"><input id="inPass" type="password" placeholder="••••••••" autocomplete="current-password" maxlength="60"><button class="toggle" id="passToggle" type="button" tabindex="-1">Ver</button></div>
@@ -507,7 +534,7 @@ input{font-family:inherit;}
       <div class="auth-err" id="authErr"></div>
       <button class="btn-primary" id="authBtn"><span>Ingresar</span><span class="arw">→</span></button>
       <div class="auth-alt"><span>¿Todavía no te sumaste? </span><button id="authToRegister">Registrate</button></div>
-      <p class="auth-legal">Demo del programa Piazza en Obra, desarrollado por Freelo. El perfil se guarda en este navegador.</p>
+      <p class="auth-legal">Programa Piazza en Obra — Comunidad de Arquitectos Piazza.</p>
     </div>
   </div>
 </div>
@@ -624,7 +651,23 @@ input{font-family:inherit;}
   </div>
 </div>
 
-<input type="file" id="fileInput" style="display:none">
+<input type="file" id="pmFile" accept="image/*" multiple style="display:none">
+<div id="photoModal">
+  <div class="pm-card">
+    <button class="pm-x" id="pmClose" type="button">×</button>
+    <span class="eyebrow" style="display:block;margin-bottom:10px">Cargar fotos de obra</span>
+    <h2 style="font-size:22px;font-weight:800;letter-spacing:-0.01em;margin-bottom:6px">Contanos de tu obra</h2>
+    <p style="font-size:13px;color:var(--gray);line-height:1.5;margin-bottom:20px">Subí las fotos de tu obra con productos Piazza. El equipo las valida y sumás 10 puntos por cada foto aprobada.</p>
+    <label class="field-label" for="pmName">Nombre de la carga *</label>
+    <div class="field"><input id="pmName" type="text" placeholder="Ej. Baño principal — Casa Palermo" maxlength="80"></div>
+    <label class="field-label" for="pmDesc">Descripción</label>
+    <div class="field"><textarea id="pmDesc" rows="2" placeholder="Ej. Grifería Emblem, bacha de apoyo y bañera Village instaladas." maxlength="300" style="width:100%;border:none;outline:none;background:transparent;font-family:inherit;font-size:14px;resize:vertical"></textarea></div>
+    <div class="pm-preview" id="pmPreview"></div>
+    <button class="pm-add" id="pmAddBtn" type="button">＋ Agregar fotos <span id="pmCount" class="pm-count"></span></button>
+    <div class="auth-err" id="pmErr"></div>
+    <button class="btn-primary" id="pmSubmit"><span>Enviar para validar</span><span class="arw">→</span></button>
+  </div>
+</div>
 <div id="toasts"></div>
 <div id="milestone">
   <div class="ms-card">
@@ -1145,10 +1188,38 @@ input{font-family:inherit;}
 
   /* ===== Estado ===== */
   var state=null;
-  function defaultState(d){ return { name:d.name, email:d.email||"", phone:d.phone||"", birth:d.birth||"", company:d.company||"", portfolio:d.portfolio||"", usesPiazza:d.usesPiazza||"", obraType:d.obraType||"", pass:d.pass, status:"pendiente", points:0, lifetime:0, tier:0, history:[], photos:[], created:true }; }
-  function load(){ try{ var r=localStorage.getItem(STORE_KEY); return r?JSON.parse(r):null; }catch(e){ return null; } }
-  function save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){} }
-  function hashStr(s){ var h=5381; for(var i=0;i<s.length;i++){ h=((h<<5)+h)+s.charCodeAt(i); h|=0; } return String(h>>>0); }
+  var sess=null; // { email, session }
+  function loadSess(){ try{ var r=localStorage.getItem("piazza_session"); return r?JSON.parse(r):null; }catch(e){ return null; } }
+  function saveSess(s){ sess=s; try{ localStorage.setItem("piazza_session",JSON.stringify(s)); }catch(e){} }
+  function clearSess(){ sess=null; try{ localStorage.removeItem("piazza_session"); }catch(e){} }
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
+  function api(action,extra){
+    var body=Object.assign({action:action},extra||{});
+    if(sess){ body.email=sess.email; body.session=sess.session; }
+    return fetch("/api/app",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)})
+      .then(function(r){ return r.json().catch(function(){ return {ok:false}; }); })
+      .catch(function(){ return {ok:false}; });
+  }
+  function applyMember(m){
+    state=state||{};
+    state.name=m.nombre||""; state.email=m.email||""; state.estado=m.estado;
+    state.points=m.puntos||0; state.lifetime=m.acumulado||0; state.tier=tierIndexFor(state.lifetime);
+  }
+  function mapActivity(f){
+    var ap=f.estado==="aprobada", rc=f.estado==="rechazada";
+    return { label:(f.nombre_carga||"Carga de fotos")+" · "+f.cantidad+" foto"+(f.cantidad===1?"":"s"),
+             delta: ap?(f.puntos_otorgados||0):0, tag: ap?"Aprobada":(rc?"Rechazada":"En revisión"),
+             icon: ap?"✓":(rc?"×":"◲"), ts:new Date(f.created_at).getTime() };
+  }
+  function loadMe(){
+    return api("me").then(function(j){
+      if(!j||!j.ok) return j||{ok:false};
+      applyMember(j.member);
+      state.fotos=j.fotos||[]; state.photos=state.fotos;
+      state.history=state.fotos.map(mapActivity);
+      return j;
+    });
+  }
 
   function $(id){ return document.getElementById(id); }
   function fmt(n){ return Math.round(n).toLocaleString("es-AR"); }
@@ -1257,12 +1328,17 @@ input{font-family:inherit;}
   }
 
   function renderGallery(){
-    var w=$("galleryWrap");
-    if(!state.photos.length){ w.innerHTML='<div class="photo-empty"><p>Todavía no cargaste fotos ni videos de obra.</p><button id="emptyPhoto">Cargar una foto</button></div>'; $("emptyPhoto").addEventListener("click",function(){ openUpload("foto"); }); return; }
+    var w=$("galleryWrap"); var fs=state.photos||[];
+    if(!fs.length){ w.innerHTML='<div class="photo-empty"><p>Todavía no cargaste fotos de obra.</p><button id="emptyPhoto">Cargar fotos</button></div>'; $("emptyPhoto").addEventListener("click",openPhotoModal); return; }
     var html='<div class="photo-gallery">';
-    state.photos.forEach(function(p){
-      var media = p.type==="video" ? '<div class="vid">▷</div>' : '<img src="'+p.src+'" alt="Foto de obra">';
-      html+='<div class="photo-thumb">'+media+'<div class="cap">'+(p.type==="video"?"Video · ":"")+relTime(p.ts)+'</div></div>';
+    fs.forEach(function(f){
+      var badge = f.estado==="aprobada" ? '<span class="fbadge ok">Aprobada · +'+((f.cantidad_aprobada||0)*10)+' pts</span>'
+                : f.estado==="rechazada" ? '<span class="fbadge no">Rechazada</span>'
+                : '<span class="fbadge pend">En revisión</span>';
+      html+='<div class="foto-card"><div class="foto-card-top">◲ '+f.cantidad+' foto'+(f.cantidad===1?"":"s")+'</div>'+
+        '<div class="foto-card-name">'+esc(f.nombre_carga||"Carga de obra")+'</div>'+
+        (f.descripcion?'<div class="foto-card-desc">'+esc(f.descripcion)+'</div>':'')+
+        '<div class="foto-card-foot">'+badge+'<span class="foto-card-time">'+relTime(new Date(f.created_at).getTime())+'</span></div></div>';
     });
     w.innerHTML=html+'</div>';
   }
@@ -1279,71 +1355,55 @@ input{font-family:inherit;}
     });
   }
 
-  /* ===== Motor de puntos ===== */
-  function animateBalance(from,to){
-    var node=$("balanceNum"); node.classList.remove("pop"); void node.offsetWidth; node.classList.add("pop");
-    var start=performance.now(), dur=650;
-    function step(now){ var p=Math.min(1,(now-start)/dur), e=1-Math.pow(1-p,3); node.textContent=fmt(from+(to-from)*e); if(p<1)requestAnimationFrame(step); else node.textContent=fmt(to); }
-    requestAnimationFrame(step);
-  }
-  function pushHistory(label,delta,icon,tag){ state.history.unshift({label:label,delta:delta,icon:icon,tag:tag,ts:Date.now()}); if(state.history.length>60)state.history.length=60; }
-
-  // Ganar puntos (foto/video): suma a disponibles Y acumulado; el acumulado define el nivel.
-  function earnPoints(label,delta,icon){
-    var before=state.points;
-    state.points+=delta; state.lifetime+=delta;
-    pushHistory(label,delta,icon);
-    var nt=tierIndexFor(state.lifetime), celebrated=false;
-    if(nt>state.tier){ state.tier=nt; celebrated=true; celebrateTier(nt); }
-    save(); animateBalance(before,state.points); render();
-    if(!celebrated) toast(icon||"✓","+"+fmt(delta)+" puntos",label);
-  }
-  // Canjear (gasta disponibles; el acumulado/nivel no baja).
-  function spendPoints(label,cost,icon){
-    var before=state.points; state.points-=cost; if(state.points<0)state.points=0;
-    pushHistory(label,-cost,icon); save(); animateBalance(before,state.points); render();
-  }
-
+  /* ===== Canje (server / Supabase) ===== */
   function redeem(idx){
     var p=CATALOG[idx]; if(!p)return;
     if(state.points<p.cost){ toast("!","Puntos insuficientes","Te faltan "+fmt(p.cost-state.points)+" pts"); return; }
-    spendPoints("Canje: "+p.name, p.cost, "◦");
-    toast("✓","¡Canje solicitado!",p.name+" · "+p.cost+" pts");
-    burstConfetti(0.4,80);
-    notifyManager("canje",{ itemName:p.name, tier:TIERS[state.tier].name, detail:p.cost+" pts · "+p.cat }, p.name);
+    toast("◦","Procesando canje…",p.name);
+    api("canje",{producto:p.name,costo:p.cost}).then(function(j){
+      if(j&&j.ok){ applyMember(j.member); render(); $("balanceNum").textContent=fmt(state.points);
+        toast("✓","¡Canje solicitado!",p.name+" · "+p.cost+" pts"); burstConfetti(0.4,80); }
+      else if(j&&j.error==="insuficiente"){ loadMe().then(render); toast("!","Puntos insuficientes",p.name); }
+      else if(j&&j.error==="no_aprobado"){ toast("!","Tu alta no está aprobada aún",""); }
+      else { toast("!","No se pudo canjear","Reintentá en un momento"); }
+    });
   }
   function requestBenefit(name,tierName){
-    pushHistory("Solicitaste: "+name,0,"◦","Enviado"); save(); render(); burstConfetti(0.3,55);
+    burstConfetti(0.3,55);
     notifyManager("canje",{ itemName:name, tier:tierName, detail:"Beneficio de nivel" }, name);
   }
   function enterSorteo(q){
-    pushHistory("Inscripción a sorteo · "+q,0,"✦","Enviado"); save(); render(); burstConfetti(0.35,70);
+    burstConfetti(0.35,70);
     notifyManager("sorteo",{ itemName:"Sorteo "+q, tier:TIERS[state.tier].name }, "Sorteo "+q);
   }
 
-  /* ===== Cargas (foto/video) ===== */
-  var pendingKind="foto";
-  function openUpload(kind){ pendingKind=kind; var inp=$("fileInput"); inp.accept=kind==="video"?"video/*":"image/*"; inp.click(); }
-  function handleFile(file){
-    if(!file)return;
-    if(pendingKind==="video"){
-      state.photos.unshift({ type:"video", ts:Date.now() }); if(state.photos.length>10)state.photos.length=10;
-      earnPoints("Video de obra cargado", PTS_VIDEO, "▷"); burstConfetti(0.5,90);
-      notifyManager("video",{ tier:TIERS[state.tier].name, detail:"Video de obra ("+(file.name||"video")+")" }, "Video de obra");
-      return;
-    }
-    if(file.type.indexOf("image")!==0){ toast("!","Archivo inválido","Subí una imagen de tu obra"); return; }
-    var reader=new FileReader();
-    reader.onload=function(e){
-      downscale(e.target.result,1400,0.82,function(medium){
-        downscale(e.target.result,320,0.7,function(thumb){
-          state.photos.unshift({ type:"foto", src:thumb, ts:Date.now() }); if(state.photos.length>10)state.photos.length=10;
-          earnPoints("Foto de obra cargada", PTS_FOTO, "◲"); burstConfetti(0.4,70);
-          notifyManager("foto",{ tier:TIERS[state.tier].name, image:medium, detail:"Foto de obra para validar" }, "Foto de obra");
-        });
-      });
-    };
-    reader.readAsDataURL(file);
+  /* ===== Carga de fotos (modal + Supabase) ===== */
+  var pmImages=[];
+  function openPhotoModal(){
+    if(state && state.estado && state.estado!=="aprobado"){ toast("!","Tu alta no está aprobada aún","Vas a poder cargar fotos cuando el equipo te apruebe"); return; }
+    $("pmName").value=""; $("pmDesc").value=""; $("pmErr").textContent=""; pmImages=[]; renderPmPreview(); $("photoModal").classList.add("show");
+  }
+  function closePhotoModal(){ $("photoModal").classList.remove("show"); }
+  function renderPmPreview(){
+    var el=$("pmPreview");
+    el.innerHTML=pmImages.map(function(src,i){ return '<div class="pm-thumb"><img src="'+src+'"><button type="button" data-rm="'+i+'">×</button></div>'; }).join("");
+    Array.prototype.forEach.call(el.querySelectorAll("[data-rm]"),function(b){ b.addEventListener("click",function(){ pmImages.splice(parseInt(b.getAttribute("data-rm"),10),1); renderPmPreview(); }); });
+    $("pmCount").textContent = pmImages.length? ("· "+pmImages.length+" foto"+(pmImages.length===1?"":"s")) : "";
+  }
+  function addPhotoFiles(files){
+    var arr=Array.prototype.slice.call(files||[]).filter(function(f){ return f.type.indexOf("image")===0; });
+    var i=0; (function next(){ if(i>=arr.length||pmImages.length>=10){ renderPmPreview(); return; } var reader=new FileReader(); reader.onload=function(e){ downscale(e.target.result,1400,0.82,function(md){ pmImages.push(md); i++; next(); }); }; reader.readAsDataURL(arr[i]); })();
+  }
+  function submitPhotos(){
+    if(!pmImages.length){ $("pmErr").textContent="Agregá al menos una foto."; return; }
+    if(!$("pmName").value.trim()){ $("pmErr").textContent="Ponele un nombre a la carga."; return; }
+    var btn=$("pmSubmit"); btn.disabled=true; $("pmErr").textContent="Enviando…";
+    api("fotos",{ nombreCarga:$("pmName").value.trim(), descripcion:$("pmDesc").value.trim(), images:pmImages }).then(function(j){
+      btn.disabled=false;
+      if(j&&j.ok){ closePhotoModal(); toast("◲","¡Fotos enviadas!","Van a estar validándose por el equipo"); burstConfetti(0.4,70); loadMe().then(render); }
+      else if(j&&j.error==="no_aprobado"){ $("pmErr").textContent="Tu alta todavía no está aprobada."; }
+      else { $("pmErr").textContent="No se pudieron enviar. Reintentá."; }
+    });
   }
   function downscale(dataUrl,maxW,q,cb){
     var img=new Image();
@@ -1407,20 +1467,14 @@ input{font-family:inherit;}
     if(parts.length) requestAnimationFrame(tick); else { cx.clearRect(0,0,cv.width,cv.height); on=false; }
   }
 
-  /* ===== Earn cards ===== */
+  /* ===== Earn card ===== */
   function buildEarnCards(){
     var el=$("earnGrid"); el.innerHTML="";
-    var cards=[
-      { kind:"foto",  icon:"◲", name:"Cargar foto de obra",  desc:"Subí una foto de tu obra con productos Piazza. Suma al validarse.", pts:PTS_FOTO,  btn:"Subir foto" },
-      { kind:"video", icon:"▷", name:"Cargar video de obra", desc:"Un video de tu obra terminada suma más puntos.",                   pts:PTS_VIDEO, btn:"Subir video" }
-    ];
-    cards.forEach(function(a){
-      var d=document.createElement("div"); d.className="action";
-      d.innerHTML='<div class="action-icon">'+a.icon+'</div><div class="action-body"><div class="action-name">'+a.name+'</div><div class="action-desc">'+a.desc+'</div></div>'+
-        '<div class="action-right"><div class="action-pts">+'+a.pts+' <span>pts</span></div><button class="action-btn" data-up="'+a.kind+'">'+a.btn+'</button></div>';
-      el.appendChild(d);
-    });
-    Array.prototype.forEach.call(el.querySelectorAll("[data-up]"),function(b){ b.addEventListener("click",function(){ openUpload(b.getAttribute("data-up")); }); });
+    var d=document.createElement("div"); d.className="action";
+    d.innerHTML='<div class="action-icon">◲</div><div class="action-body"><div class="action-name">Cargar fotos de obra</div><div class="action-desc">Subí fotos de tu obra con productos Piazza (con nombre y descripción). El equipo las valida y sumás 10 puntos por cada foto aprobada.</div></div>'+
+      '<div class="action-right"><div class="action-pts">+10 <span>pts c/u</span></div><button class="action-btn" id="earnPhotoBtn">Cargar fotos</button></div>';
+    el.appendChild(d);
+    $("earnPhotoBtn").addEventListener("click",openPhotoModal);
   }
 
   /* ===== Screens ===== */
@@ -1432,31 +1486,17 @@ input{font-family:inherit;}
     $("codeErr").textContent = msg || "";
     show("pending"); window.scrollTo(0,0);
   }
-  // Consulta el Estado del arquitecto en la planilla (vía /api/status) y decide el acceso.
+  function enterApp(){ return loadMe().then(function(j){ if(j&&j.ok){ showApp(); } else { toast("!","No pudimos cargar tu perfil","Reintentá"); } return j; }); }
+  // Chequea el estado del alta contra Supabase y decide el acceso.
   function checkStatusAndEnter(ctx){
-    if(!state || !state.email){ showRegister(); return; }
-    if(location.protocol.indexOf("http")!==0){
-      toast("!","Solo online","La validación por planilla funciona en la versión publicada");
-      if(ctx==="login") showPending(); return;
-    }
-    if(ctx==="login") $("authErr").textContent="Verificando tu acceso…"; else $("codeErr").textContent="Verificando…";
-    fetch("/api/status?email="+encodeURIComponent(state.email))
-      .then(function(r){ return r.json(); })
-      .then(function(j){
-        var st=String(j&&j.estado||"").toLowerCase();
-        if(st.indexOf("aprob")>=0){
-          state.status="activo"; save(); showApp();
-          setTimeout(function(){ toast("✦","¡Alta aprobada!","Bienvenido/a, "+state.name.split(/\s+/)[0]+". Cargá tu primera obra."); burstConfetti(0.6,110); },500);
-        } else if(st.indexOf("rechaz")>=0){
-          showPending("Tu solicitud no fue aprobada esta vez. Ante cualquier duda, escribinos.");
-        } else {
-          showPending("Tu alta todavía está en revisión. Cuando el equipo la apruebe, tocá “Ya me validaron · Ingresar”.");
-        }
-      })
-      .catch(function(){
-        if(ctx==="login"){ $("authErr").textContent="No pudimos verificar tu acceso. Reintentá."; }
-        else { $("codeErr").textContent="No pudimos verificar el estado. Reintentá."; }
-      });
+    if(!sess){ showAuth(); return; }
+    if(ctx==="login") $("authErr").textContent="Verificando…"; else $("codeErr").textContent="Verificando…";
+    loadMe().then(function(j){
+      if(!j||!j.ok){ var m="No pudimos verificar tu acceso. Reintentá."; if(ctx==="login")$("authErr").textContent=m; else $("codeErr").textContent=m; return; }
+      if(state.estado==="aprobado"){ showApp(); setTimeout(function(){ toast("✦","¡Alta aprobada!","Bienvenido/a, "+(state.name||"").split(/\s+/)[0]+". Cargá tus obras."); burstConfetti(0.6,110); },400); }
+      else if(state.estado==="rechazado"){ showPending("Tu solicitud no fue aprobada esta vez. Ante cualquier duda, escribinos."); }
+      else { showPending("Tu alta todavía está en revisión. Cuando el equipo la apruebe, tocá “Ya me validaron · Ingresar”."); }
+    });
   }
   function showIntro(){ var member=!!state; $("introCtaLbl").textContent=member?"Volver al programa":"Sumate al programa"; $("introCta2").style.display=member?"":"none"; $("intro").classList.remove("hide"); window.scrollTo(0,0); }
   function hideIntro(){ $("intro").classList.add("hide"); if(appActive) show("app"); else showRegister(); }
@@ -1476,32 +1516,37 @@ input{font-family:inherit;}
     if(pass.length<4){ $("regErr").textContent="La contraseña debe tener al menos 4 caracteres."; return; }
     if(!uses){ $("regErr").textContent="Contanos si trabajás con productos Piazza."; return; }
     if(!$("rgTerms").checked){ $("regErr").textContent="Tenés que aceptar las bases y condiciones para sumarte."; return; }
-    state=defaultState({ name:name, email:email, phone:phone, birth:birth, company:company, portfolio:portfolio, usesPiazza:uses, obraType:obra, pass:hashStr(pass) });
-    save();
-    notifyManager("alta",{ detail:"Nueva solicitud de alta — requiere validación", extra:[
-      ["Nombre y apellido",name],["Fecha de nacimiento",birth],["Teléfono",phone],["Empresa / estudio",company],
-      ["Instagram / trabajo",portfolio],["¿Trabaja con Piazza?",uses],["Tipo de obras",obra]
-    ] }, "Solicitud de alta");
-    showPending();
+    var btn=$("regBtn"); btn.disabled=true; $("regErr").textContent="Enviando…";
+    api("register",{ name:name, email:email, password:pass, phone:phone, birth:birth, company:company, portfolio:portfolio, usesPiazza:uses, obraType:obra }).then(function(j){
+      btn.disabled=false;
+      if(j&&j.ok){
+        api("login",{email:email,password:pass}).then(function(l){ if(l&&l.ok){ saveSess({email:email.toLowerCase(),session:l.session}); applyMember(l.member); } showPending(); });
+      } else if(j&&j.error==="exists"){ $("regErr").textContent="Ya existe una cuenta con ese email. Iniciá sesión."; }
+      else { $("regErr").textContent="No se pudo crear la cuenta. Reintentá."; }
+    });
   }
 
   /* ===== Login ===== */
   function showAuth(){
-    var ex=load();
-    if(!ex||!ex.created){ showRegister(); return; }
-    var first=(ex.name||"").split(/\s+/)[0];
-    $("authTitle").textContent="Hola, "+first;
-    $("authLead").textContent="Ingresá tu contraseña para acceder a tu perfil.";
-    $("authErr").textContent=""; $("inPass").value=""; show("auth");
-    setTimeout(function(){ $("inPass").focus(); },300);
+    $("authTitle").textContent="Iniciar sesión";
+    $("authLead").textContent="Ingresá tu email y contraseña.";
+    $("authErr").textContent=""; $("inPass").value="";
+    var s=loadSess(); $("inEmail").value=(s&&s.email)||"";
+    show("auth");
+    setTimeout(function(){ ($("inEmail").value?$("inPass"):$("inEmail")).focus(); },300);
   }
   function submitAuth(){
-    var ex=load(); if(!ex){ showRegister(); return; }
-    var pass=$("inPass").value;
-    if(hashStr(pass)!==ex.pass){ $("authErr").textContent="Contraseña incorrecta. Probá de nuevo."; return; }
-    state=ex; state.tier=tierIndexFor(state.lifetime); if(!state.photos)state.photos=[]; save();
-    if(state.status==="activo"){ showApp(); return; }
-    checkStatusAndEnter("login");
+    var email=$("inEmail").value.trim(), pass=$("inPass").value;
+    if(!email||email.indexOf("@")<1){ $("authErr").textContent="Ingresá tu email."; return; }
+    if(!pass){ $("authErr").textContent="Ingresá tu contraseña."; return; }
+    $("authErr").textContent="Verificando…";
+    api("login",{email:email,password:pass}).then(function(j){
+      if(!j||!j.ok){ $("authErr").textContent="Email o contraseña incorrectos."; return; }
+      saveSess({email:email.toLowerCase(),session:j.session}); applyMember(j.member);
+      if(j.member.estado==="aprobado"){ enterApp(); }
+      else if(j.member.estado==="rechazado"){ showPending("Tu solicitud no fue aprobada esta vez."); }
+      else { showPending("Tu alta todavía está en revisión. Cuando el equipo la apruebe, tocá “Ya me validaron · Ingresar”."); }
+    });
   }
 
   /* ===== Wire ===== */
@@ -1512,20 +1557,27 @@ input{font-family:inherit;}
   $("authToRegister").addEventListener("click",showRegister);
   // portada
   $("coverRegister").addEventListener("click",showRegister);
-  $("coverLogin").addEventListener("click",function(){ if(load()) showAuth(); else { toast("!","Todavía no tenés cuenta","Completá el formulario para sumarte"); showRegister(); } });
+  $("coverLogin").addEventListener("click",showAuth);
   var regBrand=document.querySelector("#register .reg-nav .brand"); if(regBrand) regBrand.addEventListener("click",showCover);
   // registro
   $("regBtn").addEventListener("click",submitRegister);
   $("rgPass").addEventListener("keydown",function(e){ if(e.key==="Enter")submitRegister(); });
-  $("regLogin").addEventListener("click",function(){ if(load()) showAuth(); else toast("!","Sin perfil","Todavía no hay un perfil en este navegador"); });
+  $("regLogin").addEventListener("click",showAuth);
   $("rgPassToggle").addEventListener("click",function(){ var i=$("rgPass"); if(i.type==="password"){ i.type="text"; this.textContent="Ocultar"; } else { i.type="password"; this.textContent="Ver"; } });
   Array.prototype.forEach.call(document.querySelectorAll(".seg-btn"),function(b){ b.addEventListener("click",function(){ var p=b.parentNode; Array.prototype.forEach.call(p.querySelectorAll(".seg-btn"),function(x){ x.classList.remove("on"); }); b.classList.add("on"); }); });
+  // login
+  $("inEmail").addEventListener("keydown",function(e){ if(e.key==="Enter")$("inPass").focus(); });
   $("passToggle").addEventListener("click",function(){ var i=$("inPass"); if(i.type==="password"){ i.type="text"; this.textContent="Ocultar"; } else { i.type="password"; this.textContent="Ver"; } });
   $("codeBtn").addEventListener("click",function(){ checkStatusAndEnter("pending"); });
-  $("pendLogin").addEventListener("click",function(){ state=null; showAuth(); });
-  $("fileInput").addEventListener("change",function(e){ if(e.target.files&&e.target.files[0]) handleFile(e.target.files[0]); e.target.value=""; });
+  $("pendLogin").addEventListener("click",showAuth);
+  // carga de fotos (modal)
+  $("pmAddBtn").addEventListener("click",function(){ $("pmFile").click(); });
+  $("pmFile").addEventListener("change",function(e){ addPhotoFiles(e.target.files); e.target.value=""; });
+  $("pmClose").addEventListener("click",closePhotoModal);
+  $("pmSubmit").addEventListener("click",submitPhotos);
+  $("photoModal").addEventListener("click",function(e){ if(e.target.id==="photoModal") closePhotoModal(); });
   $("howBtn").addEventListener("click",showIntro);
-  $("logoutBtn").addEventListener("click",function(){ appActive=false; state=null; showCover(); });
+  $("logoutBtn").addEventListener("click",function(){ appActive=false; state=null; clearSess(); showCover(); });
   $("msClose").addEventListener("click",function(){ $("milestone").classList.remove("show"); });
   $("milestone").addEventListener("click",function(e){ if(e.target.id==="milestone")$("milestone").classList.remove("show"); });
 
@@ -1533,6 +1585,7 @@ input{font-family:inherit;}
   // Siempre inicia en el login/registro. La info del programa queda adentro,
   // accesible desde el botón "Cómo funciona" (no se muestra apenas entrás).
   buildIntro();
+  sess=loadSess();
   showCover();
 })();
 </script>
