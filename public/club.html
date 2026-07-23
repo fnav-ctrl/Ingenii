@@ -450,7 +450,7 @@ input{font-family:inherit;}
         <div class="equiv-box"><div class="big">2</div><div class="lbl">fotos</div><div class="arw">↓</div><div class="pts">20 pts</div><div class="sub">obra mínima</div></div>
         <div class="equiv-box"><div class="big">3</div><div class="lbl">fotos</div><div class="arw">↓</div><div class="pts">30 pts</div><div class="sub">obra típica</div></div>
         <div class="equiv-box"><div class="big">5</div><div class="lbl">fotos</div><div class="arw">↓</div><div class="pts">50 pts</div><div class="sub">obra completa</div></div>
-        <div class="equiv-box"><div class="big">1</div><div class="lbl">video</div><div class="arw">↓</div><div class="pts">50 pts</div><div class="sub">obra completa</div></div>
+        <div class="equiv-box"><div class="big">1</div><div class="lbl">video</div><div class="arw">↓</div><div class="pts">30 pts</div><div class="sub">recorrido de obra</div></div>
       </div>
     </div>
 
@@ -609,7 +609,7 @@ input{font-family:inherit;}
     </div>
     <div class="info-note ig">📸 <b>¡Subí tus fotos y etiquetá @griferiapiazza</b> para que podamos compartir tu perfil en nuestras redes!</div>
     <div class="earn-grid" id="earnGrid"></div>
-    <div class="earn-hint">Equivalencias: <b>2 fotos</b> = obra mínima (20 pts) · <b>3 fotos</b> = obra típica (30) · <b>5 fotos</b> = obra completa (50) · <b>1 video</b> = 50 pts.</div>
+    <div class="earn-hint">Equivalencias: <b>2 fotos</b> = obra mínima (20 pts) · <b>3 fotos</b> = obra típica (30) · <b>5 fotos</b> = obra completa (50) · <b>1 video</b> = 30 pts.</div>
   </section>
 
   <section class="section">
@@ -695,7 +695,7 @@ input{font-family:inherit;}
     <button class="pm-x" id="vmClose" type="button">×</button>
     <span class="eyebrow" style="display:block;margin-bottom:10px">Cargar video de obra</span>
     <h2 style="font-size:22px;font-weight:800;letter-spacing:-0.01em;margin-bottom:6px">Compartí tu video</h2>
-    <p style="font-size:13px;color:var(--gray);line-height:1.5;margin-bottom:20px">Subí tu video a YouTube, Instagram, Drive o WeTransfer y pegá el link acá. El equipo lo valida y sumás <b>50 puntos</b>.</p>
+    <p style="font-size:13px;color:var(--gray);line-height:1.5;margin-bottom:20px">Subí tu video a YouTube, Instagram, Drive o WeTransfer y pegá el link acá. El equipo lo valida y sumás <b>30 puntos</b>.</p>
     <label class="field-label" for="vmName">Nombre de la carga *</label>
     <div class="field"><input id="vmName" type="text" placeholder="Ej. Recorrido baño — Casa Palermo" maxlength="80"></div>
     <label class="field-label" for="vmUrl">Link del video *</label>
@@ -726,15 +726,15 @@ input{font-family:inherit;}
 
   /* ===== Configuración (editable) ===== */
   var PTS_FOTO = 10;   // cada foto de obra validada
-  var PTS_VIDEO = 50;  // un video de obra
+  var PTS_VIDEO = 30;  // un video de obra
   // La validación del alta la hace el equipo desde la planilla (columna "Estado").
   // El acceso del arquitecto se consulta contra ese Estado vía /api/status.
 
   var TIERS = [
     { name:"Bronce",    min:0,   color:"#B0805B", benefits:["Kit de bienvenida (merch, carta, muestra)","Muestras por lanzamiento"] },
-    { name:"Plata",     min:30,  color:"#9BA1A6", benefits:["Muestras por lanzamiento","Sorteo semestral","Regalo de cumpleaños"] },
-    { name:"Oro",       min:60,  color:"#C8952A", benefits:["Muestras por lanzamiento","Kit pileta + grifería de cocina al ingresar al nivel","Sorteo trimestral","Regalo de cumpleaños","Fechas especiales","Invitación a eventos"] },
-    { name:"Platinium", min:100, color:"#7F94A2", benefits:["Muestras por lanzamiento","Kit pileta + grifería de cocina al ingresar al nivel","Sorteo trimestral","Regalo de cumpleaños","Fechas especiales","Invitación a eventos","Membresía Piazza"] }
+    { name:"Plata",     min:100, color:"#9BA1A6", benefits:["Muestras por lanzamiento","Sorteo semestral","Regalo de cumpleaños"] },
+    { name:"Oro",       min:200, color:"#C8952A", benefits:["Muestras por lanzamiento","Kit pileta + grifería de cocina al ingresar al nivel","Sorteo trimestral","Regalo de cumpleaños","Fechas especiales","Invitación a eventos"] },
+    { name:"Platinium", min:300, color:"#7F94A2", benefits:["Muestras por lanzamiento","Kit pileta + grifería de cocina al ingresar al nivel","Sorteo trimestral","Regalo de cumpleaños","Fechas especiales","Invitación a eventos","Membresía Piazza"] }
   ];
 
   var SORTEOS = [
@@ -1583,8 +1583,8 @@ input{font-family:inherit;}
       '<div class="action-right"><div class="action-pts">+10 <span>pts c/u</span></div><button class="action-btn" id="earnPhotoBtn">Cargar fotos</button></div>';
     el.appendChild(d1);
     var d2=document.createElement("div"); d2.className="action";
-    d2.innerHTML='<div class="action-icon">▶</div><div class="action-body"><div class="action-name">Cargar video de obra</div><div class="action-desc">Compartí el link de un video de tu obra (YouTube, Instagram, Drive o WeTransfer). El equipo lo valida y sumás 50 puntos.</div></div>'+
-      '<div class="action-right"><div class="action-pts">+50 <span>pts</span></div><button class="action-btn" id="earnVideoBtn">Cargar video</button></div>';
+    d2.innerHTML='<div class="action-icon">▶</div><div class="action-body"><div class="action-name">Cargar video de obra</div><div class="action-desc">Compartí el link de un video de tu obra (YouTube, Instagram, Drive o WeTransfer). El equipo lo valida y sumás 30 puntos.</div></div>'+
+      '<div class="action-right"><div class="action-pts">+30 <span>pts</span></div><button class="action-btn" id="earnVideoBtn">Cargar video</button></div>';
     el.appendChild(d2);
     $("earnPhotoBtn").addEventListener("click",openPhotoModal);
     $("earnVideoBtn").addEventListener("click",openVideoModal);

@@ -17,7 +17,7 @@ const FROM = process.env.NOTIFY_FROM || "Piazza en Obra <onboarding@resend.dev>"
 const PLATFORM = process.env.NOTIFY_PLATFORM_URL || "https://piazza-en-obra.vercel.app";
 const SECRET = process.env.CRON_SECRET || "";
 
-const TIERS = [{ name: "Bronce", min: 0 }, { name: "Plata", min: 30 }, { name: "Oro", min: 60 }, { name: "Platinium", min: 100 }];
+const TIERS = [{ name: "Bronce", min: 0 }, { name: "Plata", min: 100 }, { name: "Oro", min: 200 }, { name: "Platinium", min: 300 }];
 function tierName(pts) { let n = "Bronce"; for (const t of TIERS) if (pts >= t.min) n = t.name; return n; }
 function nextTier(pts) { for (const t of TIERS) if (pts < t.min) return t; return null; }
 

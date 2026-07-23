@@ -22,8 +22,8 @@ const NOTIFY = process.env.NOTIFY_EMAIL || "flor@freeloagencia.com";
 const FROM = process.env.NOTIFY_FROM || "Piazza en Obra <onboarding@resend.dev>";
 
 const TIERS = [
-  { name: "Bronce", min: 0 }, { name: "Plata", min: 30 },
-  { name: "Oro", min: 60 }, { name: "Platinium", min: 100 },
+  { name: "Bronce", min: 0 }, { name: "Plata", min: 100 },
+  { name: "Oro", min: 200 }, { name: "Platinium", min: 300 },
 ];
 function tierName(pts) { let n = "Bronce"; for (const t of TIERS) if (pts >= t.min) n = t.name; return n; }
 

@@ -5,7 +5,7 @@ export const runtime = "nodejs";
    Protegido por ADMIN_PASSWORD. Acciones (POST { pw, action, ... }):
      list    -> altas pendientes + cargas (fotos/videos) + canjes/solicitudes pendientes
      member  -> aprobar/rechazar un alta (avisa al miembro, con botón a la plataforma)
-     foto    -> aprobar (fotos: N*10 pts · video: 50 pts) o rechazar (avisa al miembro)
+     foto    -> aprobar (fotos: N*10 pts · video: 30 pts) o rechazar (avisa al miembro)
      canje   -> marcar un canje/solicitud como entregado / rechazado / pendiente
    Env: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, ADMIN_PASSWORD,
         RESEND_API_KEY, NOTIFY_FROM, NOTIFY_PLATFORM_URL
@@ -19,8 +19,8 @@ const FROM = process.env.NOTIFY_FROM || "Piazza en Obra <onboarding@resend.dev>"
 const PLATFORM = process.env.NOTIFY_PLATFORM_URL || "https://piazza-en-obra.vercel.app";
 
 const PTS_POR_FOTO = 10;
-const PTS_VIDEO = 50;
-const TIERS = [{ name: "Bronce", min: 0 }, { name: "Plata", min: 30 }, { name: "Oro", min: 60 }, { name: "Platinium", min: 100 }];
+const PTS_VIDEO = 30;
+const TIERS = [{ name: "Bronce", min: 0 }, { name: "Plata", min: 100 }, { name: "Oro", min: 200 }, { name: "Platinium", min: 300 }];
 function tierName(pts) { let n = "Bronce"; for (const t of TIERS) if (pts >= t.min) n = t.name; return n; }
 
 function J(o, s = 200) { return new Response(JSON.stringify(o), { status: s, headers: { "Content-Type": "application/json" } }); }

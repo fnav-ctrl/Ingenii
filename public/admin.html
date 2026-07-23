@@ -84,7 +84,7 @@ h2{font-size:20px;font-weight:800;letter-spacing:-0.01em;margin:8px 0 16px;}
   <div class="section">
     <span class="eyebrow">Fotos y videos de obra</span>
     <h2>Cargas pendientes <span class="count" id="fCount"></span></h2>
-    <p class="hint">Fotos: cada foto aprobada suma 10 puntos. Video: aprobarlo suma 50 puntos al miembro.</p>
+    <p class="hint">Fotos: cada foto aprobada suma 10 puntos. Video: aprobarlo suma 30 puntos al miembro.</p>
     <div id="fotos" style="margin-top:12px"></div>
   </div>
 
@@ -161,8 +161,8 @@ h2{font-size:20px;font-weight:800;letter-spacing:-0.01em;margin:8px 0 16px;}
           : '<div class="thumbs">'+(f.urls||[]).map(function(u){return '<a href="'+esc(u)+'" target="_blank" rel="noopener"><img src="'+esc(u)+'" alt="foto"></a>';}).join("")+'</div>';
         var cargo = esVideo ? '1 video' : (f.cantidad+' foto'+(f.cantidad===1?"":"s"));
         var acciones = esVideo
-          ? '<span class="qty">Aprobar suma <b>+50 pts</b></span>'+
-            '<button class="btn ok sm" data-f="'+esc(f.id)+'" data-video="1" data-dec="aprobar">Aprobar video (+50 pts)</button>'+
+          ? '<span class="qty">Aprobar suma <b>+30 pts</b></span>'+
+            '<button class="btn ok sm" data-f="'+esc(f.id)+'" data-video="1" data-dec="aprobar">Aprobar video (+30 pts)</button>'+
             '<button class="btn no sm" data-f="'+esc(f.id)+'" data-dec="rechazar">Rechazar</button>'
           : '<span class="qty">Aprobar <input type="number" min="0" max="'+f.cantidad+'" value="'+f.cantidad+'" data-q="'+esc(f.id)+'"> de '+f.cantidad+'</span>'+
             '<button class="btn ok sm" data-f="'+esc(f.id)+'" data-dec="aprobar">Aprobar y sumar puntos</button>'+
@@ -181,7 +181,7 @@ h2{font-size:20px;font-weight:800;letter-spacing:-0.01em;margin:8px 0 16px;}
           var q=fEl.querySelector('[data-q="'+id+'"]'); var n=q?parseInt(q.value,10):(video?1:0);
           b.disabled=true;
           api({action:"foto",id:id,decision:dec,cantidadAprobada:n}).then(function(r){
-            toast(r.ok?(dec==="aprobar"?("Aprobado · +"+(video?50:(n*10))+" pts"):"Rechazado"):"Error"); refresh();
+            toast(r.ok?(dec==="aprobar"?("Aprobado · +"+(video?30:(n*10))+" pts"):"Rechazado"):"Error"); refresh();
           });
         });
       });
