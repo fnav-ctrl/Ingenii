@@ -5,6 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Finanzas de Flor</title>
 <meta name="description" content="Cargá tus ingresos y gastos, mirá en qué se te va la plata por categoría y controlá tus presupuestos mes a mes.">
+<meta name="theme-color" content="#6B5BE0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Finanzas">
+<link rel="apple-touch-icon" href="/finanzas-icon.png">
+<link rel="icon" type="image/png" href="/finanzas-icon.png">
+<link rel="manifest" href="/finanzas.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
@@ -32,7 +40,7 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
-body{font-family:var(--font-body);background:var(--ground);color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100vh;}
+body{font-family:var(--font-body);background:var(--ground);color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden;}
 button{font-family:inherit;cursor:pointer;color:inherit;}
 input,select{font-family:inherit;color:inherit;}
 button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
@@ -40,7 +48,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{ou
 .eyebrow{font-size:11px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);}
 
 /* ---------- shell ---------- */
-.shell{display:grid;grid-template-columns:232px 1fr;min-height:100vh;}
+.shell{display:grid;grid-template-columns:232px minmax(0,1fr);min-height:100vh;}
 .side{background:var(--card);border-right:1px solid var(--line);padding:28px 20px;display:flex;flex-direction:column;gap:28px;position:sticky;top:0;height:100vh;}
 .me{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;}
 .avatar{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font-family:var(--font-display);font-weight:800;font-size:22px;color:#fff;background:linear-gradient(135deg,var(--accent) 0%,#B29CF5 100%);box-shadow:0 10px 24px -12px rgba(107,91,224,0.7);letter-spacing:0.02em;}
@@ -61,7 +69,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{ou
 .linkbtn{background:none;border:0;font-size:12px;color:var(--muted);text-decoration:underline;text-underline-offset:3px;padding:4px;align-self:flex-start;}
 .linkbtn:hover{color:var(--coral);}
 
-.main{padding:28px clamp(18px,3.2vw,44px) 60px;max-width:1360px;width:100%;}
+.main{padding:28px clamp(18px,3.2vw,44px) 60px;max-width:1360px;width:100%;min-width:0;}
 
 /* ---------- header ---------- */
 .top{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:22px;}
@@ -81,7 +89,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{ou
 .month span{font-family:var(--font-display);font-weight:700;font-size:14px;min-width:150px;text-align:center;text-transform:capitalize;}
 
 /* ---------- tiles ---------- */
-.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:18px;}
+.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-bottom:18px;}
 .tile{background:var(--card);border-radius:var(--r);padding:22px 24px;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden;}
 .tile .row{display:flex;align-items:center;justify-content:space-between;gap:12px;}
 .tile .ico{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;}
@@ -102,8 +110,8 @@ button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{ou
 
 /* ---------- cards / grid ---------- */
 .grid{display:grid;gap:18px;}
-.g3{grid-template-columns:300px 1fr 1fr;margin-bottom:18px;}
-.g2{grid-template-columns:1.1fr 1fr;}
+.g3{grid-template-columns:300px minmax(0,1fr) minmax(0,1fr);margin-bottom:18px;}
+.g2{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);}
 .card{background:var(--card);border-radius:var(--r);padding:22px 24px;box-shadow:var(--shadow-sm);min-width:0;}
 .card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;}
 .card-head h2{font-family:var(--font-display);font-size:16px;font-weight:700;letter-spacing:-0.01em;}
@@ -244,23 +252,28 @@ label.lbl{display:block;font-size:12px;font-weight:600;color:var(--muted);margin
   .g3 .card:last-child{grid-column:1 / -1;}
 }
 @media (max-width:980px){
-  .shell{grid-template-columns:1fr;}
+  .shell{grid-template-columns:minmax(0,1fr);}
   .side{position:static;height:auto;flex-direction:row;align-items:center;padding:14px 18px;gap:16px;border-right:0;border-bottom:1px solid var(--line);}
   .me{flex-direction:row;text-align:left;gap:12px;}
   .avatar{width:44px;height:44px;font-size:16px;}
   .nav{flex-direction:row;overflow:auto;flex:1;}
   .nav a{padding:8px 12px;white-space:nowrap;}
   .side-foot{display:none;}
-  .tiles{grid-template-columns:1fr;}
-  .g3,.g2{grid-template-columns:1fr;}
+  .tiles{grid-template-columns:minmax(0,1fr);}
+  .g3,.g2{grid-template-columns:minmax(0,1fr);}
   .g3 .card:last-child{grid-column:auto;}
-  .budgets{grid-template-columns:1fr;}
+  .budgets{grid-template-columns:minmax(0,1fr);}
+  .top-right{width:100%;}
+  .month{margin-left:auto;}
   .bud:nth-last-child(-n+2){border-bottom:1px solid var(--line);}
   .bud:last-child{border-bottom:0;}
 }
 @media (max-width:560px){
   .legend{grid-template-columns:1fr;}
-  .search{min-width:0;flex:1;}
+  .search{min-width:0;flex:1 1 100%;}
+  .month{width:100%;justify-content:space-between;margin-left:0;}
+  .mov{grid-template-columns:34px minmax(0,1fr) auto;}
+  .mov .acts{grid-column:2 / -1;justify-content:flex-end;opacity:1;}
   .main{padding:18px 14px 50px;}
   .card{padding:18px;}
 }

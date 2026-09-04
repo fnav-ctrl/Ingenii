@@ -1,0 +1,11 @@
+{
+  "name": "Finanzas de Flor",
+  "short_name": "Finanzas",
+  "description": "Ingresos, gastos y presupuestos del mes.",
+  "start_url": "./finanzas.html",
+  "display": "standalone",
+  "background_color": "#F6F5FB",
+  "theme_color": "#6B5BE0",
+  "lang": "es",
+  "icons": [{ "src": "/finanzas-icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }]
+}
