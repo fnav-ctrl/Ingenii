@@ -842,7 +842,7 @@ if(sb) sb.auth.onAuthStateChange((ev,session)=>{
   } else if(ev!=='INITIAL_SESSION' || !session){ user=null; state={ name:'', movements:[], budgets:{} }; renderAll(); showAuth('login'); }
 });
 
-/* ---------- otros controles ---------- *//* ---------- otros controles ---------- */
+/* ---------- otros controles ---------- */
 $('#prevM').addEventListener('click',()=>{ const d=new Date(view.y,view.m-1,1); view={y:d.getFullYear(),m:d.getMonth()}; renderAll(); });
 $('#nextM').addEventListener('click',()=>{ const d=new Date(view.y,view.m+1,1); view={y:d.getFullYear(),m:d.getMonth()}; renderAll(); });
 $('#q').addEventListener('input',e=>{ query=e.target.value.trim(); renderMovs(); });
