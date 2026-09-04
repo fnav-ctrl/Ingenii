@@ -295,6 +295,7 @@ body.locked{overflow:hidden;}
 .iconbtn svg{width:18px;height:18px;}
 .side-foot .row2{display:flex;gap:12px;flex-wrap:wrap;}
 .side-logout{display:none;margin-left:auto;}
+.side-logout+.side-logout{margin-left:0;}
 .tabbar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:40;background:rgba(255,255,255,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom));}
 .tabbar a{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 2px 5px;border-radius:12px;text-decoration:none;color:var(--muted);font-size:10.5px;font-weight:600;letter-spacing:0.01em;min-width:0;}
 .tabbar a span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
@@ -357,6 +358,7 @@ body.locked{overflow:hidden;}
         <div class="me-sub">Finanzas personales</div>
       </div>
     </div>
+    <button class="iconbtn side-logout" id="importBtn2" title="Importar datos de este navegador" aria-label="Importar datos de este navegador"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 19h16"/></svg></button>
     <button class="iconbtn side-logout" id="logoutBtn3" title="Cerrar sesión" aria-label="Cerrar sesión"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg></button>
     <nav class="nav">
       <a href="#inicio" class="active" data-nav><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg>Inicio</a>
@@ -367,7 +369,8 @@ body.locked{overflow:hidden;}
     </nav>
     <div class="side-foot">
       <div class="tip"><strong>Tus datos están en tu cuenta.</strong> Se sincronizan solos entre el teléfono y la compu.</div>
-      <div class="row2"><button class="linkbtn" id="logoutBtn">Cerrar sesión</button><button class="linkbtn" id="resetBtn">Borrar todos mis datos</button></div>
+      <div class="row2"><button class="linkbtn" id="logoutBtn">Cerrar sesión</button><button class="linkbtn" id="importBtn">Importar datos de este navegador</button></div>
+      <button class="linkbtn" id="resetBtn">Borrar todos mis datos</button>
     </div>
   </aside>
 
@@ -570,18 +573,26 @@ async function remote(promise, okMsg){
   offline(false); if(okMsg) toast(okMsg); return true;
 }
 // datos que hayan quedado guardados solo en este navegador (versión anterior de la app)
-async function migrateLocal(){
-  let old=null; try{ old=JSON.parse(localStorage.getItem('freelo-finanzas-v1')||'null'); }catch(e){}
-  if(!old || !Array.isArray(old.movements)) return;
-  const real = old.movements.filter(m=>!String(m.id).startsWith('s'));
-  if(!real.length){ localStorage.removeItem('freelo-finanzas-v1'); return; }
-  if(state.movements.length){ return; }
-  if(!confirm(`Encontré ${real.length} movimiento${real.length>1?'s':''} guardado${real.length>1?'s':''} solo en este dispositivo. ¿Los subo a tu cuenta?`)){ localStorage.removeItem('freelo-finanzas-v1'); return; }
-  const rows = real.map(m=>toRow({...m, id:'m'+Date.now().toString(36)+Math.random().toString(36).slice(2,7)}));
+async function migrateLocal(manual){
+  const K='freelo-finanzas-v1', KB='freelo-finanzas-v1-importado';
+  let raw=null, fromBackup=false;
+  try{ raw=localStorage.getItem(K); if(!raw && manual){ raw=localStorage.getItem(KB); fromBackup=!!raw; } }catch(e){}
+  let old=null; try{ old=JSON.parse(raw||'null'); }catch(e){}
+  const real = (old && Array.isArray(old.movements)) ? old.movements.filter(m=>!String(m.id).startsWith('s') && m.amount>0 && m.date) : [];
+  if(!real.length){ if(manual) toast('No encontré datos de la versión anterior en este navegador.'); return; }
+  const n=real.length;
+  const msg = fromBackup
+    ? `Estos ${n} movimientos ya se importaron antes. ¿Los subo de nuevo? Van a quedar duplicados si ya están en tu cuenta.`
+    : `Encontré ${n} movimiento${n>1?'s':''} guardado${n>1?'s':''} en este navegador (de la versión anterior). ¿Los subo a tu cuenta? Se agregan a los que ya tenés.`;
+  if(!confirm(msg)){ if(manual) toast('Quedan guardados en este navegador. Podés importarlos después desde el menú.'); return; }
+  const rows = real.map(m=>toRow({id:'m'+Date.now().toString(36)+Math.random().toString(36).slice(2,7), type:m.type==='ingreso'?'ingreso':'gasto', category:m.category||'otros', amount:Math.round(+m.amount), date:m.date, note:m.note||'', familiar:!!m.familiar}));
   const ok = await remote(sb.from(T_MOV).insert(rows));
-  const buds = Object.entries(old.budgets||{}).filter(([k,v])=>v>0).map(([categoria,limite])=>({categoria,limite}));
-  if(ok && buds.length) await remote(sb.from(T_BUD).upsert(buds));
-  if(ok){ localStorage.removeItem('freelo-finanzas-v1'); toast('Listo, tus datos ya están en tu cuenta'); await loadCloud(); }
+  if(!ok) return;
+  const buds = Object.entries(old.budgets||{}).filter(([k,v])=>v>0 && !state.budgets[k]).map(([categoria,limite])=>({categoria,limite}));
+  if(buds.length) await remote(sb.from(T_BUD).upsert(buds));
+  try{ if(!fromBackup){ localStorage.setItem(KB, raw); localStorage.removeItem(K); } }catch(e){}
+  toast(`Listo: ${n} movimiento${n>1?'s':''} subido${n>1?'s':''} a tu cuenta`);
+  await loadCloud();
 }
 
 /* ---------- helpers ---------- */
@@ -1014,6 +1025,8 @@ $('#nextM').addEventListener('click',()=>{ const d=new Date(view.y,view.m+1,1); 
 $('#q').addEventListener('input',e=>{ query=e.target.value.trim(); renderMovs(); });
 $('#filter').addEventListener('change',e=>{ filter=e.target.value; renderMovs(); });
 $('#editName').addEventListener('click',async()=>{ const n=prompt('¿Cómo te llamás?', state.name||''); if(n!==null && n.trim()){ state.name=n.trim(); save(); renderHeader(); await remote(sb.auth.updateUser({data:{full_name:state.name}})); } });
+$('#importBtn').addEventListener('click',()=>{ if(user) migrateLocal(true); });
+$('#importBtn2').addEventListener('click',()=>{ if(user) migrateLocal(true); });
 $('#resetBtn').addEventListener('click',async()=>{
   if(!user) return;
   if(!confirm('Se van a borrar todos tus movimientos y presupuestos de tu cuenta, en todos tus dispositivos. Esto no se puede deshacer. ¿Seguimos?')) return;
