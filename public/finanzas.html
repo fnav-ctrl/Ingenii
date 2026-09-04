@@ -136,6 +136,30 @@ label.lbl{display:block;font-size:12px;font-weight:600;color:var(--muted);margin
 .chip:hover{border-color:var(--accent);background:var(--accent-softer);}
 .chip.on{background:var(--ink);border-color:var(--ink);color:#fff;}
 .field{margin-bottom:14px;}
+.drop{display:flex;align-items:center;gap:12px;border:1.5px dashed var(--line-2);border-radius:14px;padding:10px 12px;margin-bottom:14px;cursor:pointer;background:var(--card-2);transition:border-color .15s,background .15s;position:relative;}
+.drop:hover,.drop.over{border-color:var(--accent);background:var(--accent-softer);}
+.drop input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.drop .ic{width:38px;height:38px;border-radius:11px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;flex:none;}
+.drop .ic svg{width:18px;height:18px;}
+.drop b{display:block;font-size:13.5px;font-weight:600;}
+.drop small{display:block;font-size:11.5px;color:var(--muted);margin-top:2px;line-height:1.3;}
+.receipt{display:flex;align-items:center;gap:12px;border:1px solid var(--line-2);border-radius:14px;padding:10px 12px;margin-bottom:14px;background:var(--card);}
+.receipt[hidden]{display:none;}
+.receipt .thumb{width:52px;height:52px;border-radius:10px;object-fit:cover;background:var(--ground);flex:none;border:1px solid var(--line);}
+.receipt .pdf{width:52px;height:52px;border-radius:10px;background:var(--coral-soft);color:var(--coral);display:grid;place-items:center;font-size:11px;font-weight:800;flex:none;letter-spacing:0.04em;}
+.receipt .t{min-width:0;flex:1;}
+.receipt .t b{display:block;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.receipt .t small{display:block;font-size:11.5px;color:var(--muted);margin-top:2px;}
+.receipt .t small.ok{color:var(--mint);}
+.receipt .t small.err{color:var(--coral);}
+.receipt .x{width:30px;height:30px;border:0;background:transparent;border-radius:9px;color:var(--muted);display:grid;place-items:center;flex:none;}
+.receipt .x:hover{background:var(--coral-soft);color:var(--coral);}
+.receipt .x svg{width:15px;height:15px;}
+.spin{width:14px;height:14px;border:2px solid var(--line-2);border-top-color:var(--accent);border-radius:50%;display:inline-block;vertical-align:-2px;margin-right:6px;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.hl{animation:hl 1.6s ease;}
+@keyframes hl{0%{box-shadow:0 0 0 4px var(--accent-soft)}100%{box-shadow:0 0 0 0 transparent}}
+.mov .acts button.clip{color:var(--accent);opacity:1;}
 .fam{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line-2);border-radius:12px;padding:10px 12px;margin-bottom:14px;cursor:pointer;transition:border-color .15s,background .15s;user-select:none;}
 .fam:hover{border-color:var(--accent);}
 .fam.on{border-color:var(--accent);background:var(--accent-softer);}
@@ -400,6 +424,16 @@ body.locked{overflow:hidden;}
         <div class="amount"><span class="cur">$</span><input id="amt" type="text" inputmode="numeric" placeholder="0" aria-label="Monto" autocomplete="off"></div>
         <label class="lbl">Categoría</label>
         <div class="chips" id="chips"></div>
+        <label class="drop" id="drop">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h3l2-3h6l2 3h3v12H4z"/><circle cx="12" cy="13" r="3.5"/></svg></span>
+          <span><b>Subir comprobante o foto</b><small>Lo leo y te precargo monto, fecha y categoría para que revises.</small></span>
+          <input type="file" id="file" accept="image/*,application/pdf,.pdf" aria-label="Subir comprobante">
+        </label>
+        <div class="receipt" id="receipt" hidden>
+          <img class="thumb" id="rThumb" alt="" hidden><div class="pdf" id="rPdf" hidden>PDF</div>
+          <div class="t"><b id="rName">comprobante.jpg</b><small id="rStatus"></small></div>
+          <button type="button" class="x" id="rRemove" title="Quitar comprobante"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        </div>
         <label class="fam" id="famRow"><span><b>Gasto familiar</b><small>Marcalo para contemplarlo después en las finanzas de la familia y no en las tuyas.</small></span><input type="checkbox" id="fam"><span class="sw"></span></label>
         <div class="field"><label class="lbl" for="date">Fecha</label><input id="date" type="date"></div>
         <div class="field"><label class="lbl" for="note">Nota <span style="font-weight:400;color:var(--faint)">(opcional)</span></label><input id="note" type="text" placeholder="ej. supermercado del sábado" maxlength="60"></div>
@@ -507,8 +541,9 @@ const todayISO = () => { const d=new Date(); return d.getFullYear()+'-'+p2(d.get
 const cacheKey = () => 'freelo-finanzas-v2:'+(user?user.id:'anon');
 function save(){ try{ localStorage.setItem(cacheKey(), JSON.stringify(state)); }catch(e){} }
 function loadCache(){ try{ const raw=localStorage.getItem(cacheKey()); if(raw){ const s=JSON.parse(raw); if(s && Array.isArray(s.movements)) return s; } }catch(e){} return null; }
-const toRow = m => ({ id:m.id, tipo:m.type, categoria:m.category, monto:m.amount, fecha:m.date, nota:m.note||'', familiar:!!m.familiar });
-const fromRow = r => ({ id:r.id, type:r.tipo, category:r.categoria, amount:Math.round(+r.monto), date:r.fecha, note:r.nota||'', familiar:!!r.familiar });
+const toRow = m => ({ id:m.id, tipo:m.type, categoria:m.category, monto:m.amount, fecha:m.date, nota:m.note||'', familiar:!!m.familiar, comprobante:m.receipt||null });
+const fromRow = r => ({ id:r.id, type:r.tipo, category:r.categoria, amount:Math.round(+r.monto), date:r.fecha, note:r.nota||'', familiar:!!r.familiar, receipt:r.comprobante||null });
+const BUCKET='fin-personal';
 function offline(on){ $('#syncPill').hidden=!on; }
 let loadTries=0, loadedOnce=false;
 async function loadCloud(){
@@ -562,7 +597,7 @@ function fmtDay(iso){ const [y,m,d]=iso.split('-').map(Number); return d+' '+MES
 
 /* ---------- vista ---------- */
 let view = (()=>{ const d=new Date(); return {y:d.getFullYear(), m:d.getMonth()}; })();
-let form = { type:'gasto', category:'super', editing:null, familiar:false };
+let form = { type:'gasto', category:'super', editing:null, familiar:false, receipt:null, receiptDirty:false };
 let query = '', filter = '';
 const viewKey = () => view.y+'-'+p2(view.m+1);
 const monthMovs = () => state.movements.filter(x=>ymOf(x.date)===viewKey());
@@ -731,13 +766,14 @@ function renderMovs(){
       <div class="dot"><i></i></div>
       <div class="t"><b>${esc(c.name)}${x.type==='gasto'&&x.familiar?FAM_TAG:''}</b><small>${fmtDay(x.date)}${x.note?' · '+esc(x.note):''}</small></div>
       <div class="amt">${signed(x.amount,x.type)}</div>
-      <div class="acts"><button title="Editar" data-e="${x.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="del" title="Borrar" data-d="${x.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg></button></div>
+      <div class="acts">${x.receipt?`<button class="clip" title="Ver comprobante" data-r="${x.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 11-8.5 8.5a5 5 0 0 1-7-7L14 4a3.5 3.5 0 0 1 5 5l-8.5 8.5a2 2 0 0 1-3-3L15 7"/></svg></button>`:''}<button title="Editar" data-e="${x.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="del" title="Borrar" data-d="${x.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg></button></div>
     </li>`; }).join('');
   const tot = mv.reduce((a,x)=>a+(x.type==='ingreso'?x.amount:-x.amount),0);
   const nFam = mv.filter(x=>x.type==='gasto'&&x.familiar).length;
   $('#movFoot').innerHTML = `<span>${mv.length} de ${all} movimiento${all!==1?'s':''}${nFam?' · '+nFam+' familiar'+(nFam>1?'es':''):''}</span><span>Balance: <b class="num" style="color:${tot<0?'var(--coral)':'var(--mint)'}">${(tot<0?'– ':'+ ')+money(tot)}</b></span>`;
   box.querySelectorAll('[data-e]').forEach(b=>b.addEventListener('click',()=>startEdit(b.dataset.e)));
   box.querySelectorAll('[data-d]').forEach(b=>b.addEventListener('click',()=>del(b.dataset.d)));
+  box.querySelectorAll('[data-r]').forEach(b=>b.addEventListener('click',()=>openReceipt(b.dataset.r)));
 }
 
 /* ---------- form ---------- */
@@ -771,26 +807,30 @@ function submit(){
   err.textContent='';
   if(form.editing){
     const x = state.movements.find(m=>m.id===form.editing);
-    if(x){ Object.assign(x,{type:form.type,category:form.category,amount,date,note,familiar:form.type==='gasto'&&form.familiar}); remote(sb.from(T_MOV).upsert(toRow(x)),'Movimiento actualizado'); }
+    if(x){ const oldR=x.receipt; Object.assign(x,{type:form.type,category:form.category,amount,date,note,familiar:form.type==='gasto'&&form.familiar,receipt:form.receipt}); remote(sb.from(T_MOV).upsert(toRow(x)),'Movimiento actualizado'); if(oldR && oldR!==form.receipt) sb.storage.from(BUCKET).remove([oldR]); }
   } else {
-    const nm={id:'m'+Date.now().toString(36)+Math.random().toString(36).slice(2,7), type:form.type, category:form.category, amount, date, note, familiar:form.type==='gasto'&&form.familiar};
+    const nm={id:'m'+Date.now().toString(36)+Math.random().toString(36).slice(2,7), type:form.type, category:form.category, amount, date, note, familiar:form.type==='gasto'&&form.familiar, receipt:form.receipt};
     state.movements.push(nm);
     remote(sb.from(T_MOV).insert(toRow(nm)), (form.type==='gasto'?(form.familiar?'Gasto familiar':'Gasto'):'Ingreso')+' de '+money(amount)+' agregado');
   }
   save();
+  form.receiptDirty=false;
   // si cargó en otro mes, saltar a ese mes para que lo vea
   const [yy,mm] = date.split('-').map(Number); view={y:yy,m:mm-1};
   resetForm(true); renderAll();
 }
 function resetForm(keepType){
-  form.editing=null; form.familiar=false; if(keepType!==true) form.type='gasto';
+  if(form.receipt && form.receiptDirty){ sb.storage.from(BUCKET).remove([form.receipt]); }
+  form.editing=null; form.familiar=false; form.receipt=null; form.receiptDirty=false; showReceipt(null); if(keepType!==true) form.type='gasto';
   $('#amt').value=''; $('#note').value=''; $('#date').value=todayISO(); $('#err').textContent='';
   $('#formTitle').textContent='Cargar movimiento'; $('#cancelEdit').hidden=true;
   renderChips();
 }
 function startEdit(id){
   const x = state.movements.find(m=>m.id===id); if(!x) return;
-  form.editing=id; form.type=x.type; form.category=x.category; form.familiar=!!x.familiar;
+  if(form.receipt && form.receiptDirty){ sb.storage.from(BUCKET).remove([form.receipt]); }
+  form.editing=id; form.type=x.type; form.category=x.category; form.familiar=!!x.familiar; form.receipt=x.receipt||null; form.receiptDirty=false;
+  showReceipt(x.receipt ? {name:x.receipt.split('/').pop(), status:'Comprobante guardado', cls:'ok', isPdf:/\.pdf$/i.test(x.receipt), path:x.receipt} : null);
   $('#amt').value=nf.format(x.amount); $('#date').value=x.date; $('#note').value=x.note||'';
   $('#formTitle').textContent='Editar movimiento'; $('#cancelEdit').hidden=false;
   renderChips();
@@ -803,7 +843,85 @@ function del(id){
   state.movements = state.movements.filter(m=>m.id!==id);
   if(form.editing===id) resetForm();
   save(); renderAll(); remote(sb.from(T_MOV).delete().eq('id',id),'Movimiento borrado');
+  if(x.receipt) sb.storage.from(BUCKET).remove([x.receipt]);
 }
+
+/* ---------- Comprobantes ---------- */
+const rEl=$('#receipt');
+function showReceipt(info){
+  if(!info){ rEl.hidden=true; $('#rThumb').hidden=true; $('#rPdf').hidden=true; $('#rThumb').removeAttribute('src'); return; }
+  rEl.hidden=false; $('#rName').textContent=info.name||'comprobante';
+  const st=$('#rStatus'); st.innerHTML=(info.spinner?'<span class="spin"></span>':'')+(info.status||''); st.className=info.cls||'';
+  if(info.isPdf){ $('#rPdf').hidden=false; $('#rThumb').hidden=true; }
+  else { $('#rPdf').hidden=true; if(info.thumb){ $('#rThumb').src=info.thumb; $('#rThumb').hidden=false; } else if(info.path){ sb.storage.from(BUCKET).createSignedUrl(info.path,600).then(({data})=>{ if(data&&data.signedUrl){ $('#rThumb').src=data.signedUrl; $('#rThumb').hidden=false; } }); } }
+}
+function receiptStatus(msg,cls,spinner){ const st=$('#rStatus'); st.innerHTML=(spinner?'<span class="spin"></span>':'')+msg; st.className=cls||''; }
+// achica la foto antes de subirla (máx 1600 px, JPEG) para que pese poco y se lea rápido
+function shrinkImage(file){
+  return new Promise(resolve=>{
+    if(!/^image\//.test(file.type) || file.type==='image/gif'){ resolve(null); return; }
+    const img=new Image(); const url=URL.createObjectURL(file);
+    img.onload=()=>{ URL.revokeObjectURL(url);
+      const max=1600, k=Math.min(1, max/Math.max(img.width,img.height));
+      const c=document.createElement('canvas'); c.width=Math.round(img.width*k); c.height=Math.round(img.height*k);
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+      c.toBlob(b=>resolve(b?{blob:b, dataUrl:c.toDataURL('image/jpeg',0.6)}:null),'image/jpeg',0.85); };
+    img.onerror=()=>{ URL.revokeObjectURL(url); resolve(null); };
+    img.src=url;
+  });
+}
+async function handleFile(file){
+  if(!file || !user) return;
+  if(file.size>10*1024*1024){ toast('El archivo es muy pesado (máximo 10 MB).'); return; }
+  const isPdf = file.type==='application/pdf' || /\.pdf$/i.test(file.name);
+  if(!isPdf && !/^image\//.test(file.type)){ toast('Subí una foto o un PDF.'); return; }
+  if(form.receipt && form.receiptDirty){ sb.storage.from(BUCKET).remove([form.receipt]); }
+  let upload=file, ext=isPdf?'pdf':(file.name.split('.').pop()||'jpg').toLowerCase(), thumb=null;
+  if(!isPdf){ const small=await shrinkImage(file); if(small){ upload=small.blob; ext='jpg'; thumb=small.dataUrl; } }
+  if(!/^(jpg|jpeg|png|webp|pdf)$/.test(ext)) ext='jpg';
+  const path = user.id+'/'+Date.now().toString(36)+Math.random().toString(36).slice(2,6)+'.'+ext;
+  showReceipt({name:file.name, status:'Subiendo…', spinner:true, isPdf, thumb});
+  const {error:upErr} = await sb.storage.from(BUCKET).upload(path, upload, {contentType: isPdf?'application/pdf':(ext==='png'?'image/png':ext==='webp'?'image/webp':'image/jpeg'), upsert:false});
+  if(upErr){ console.error(upErr); receiptStatus('No se pudo subir. Probá de nuevo.','err'); return; }
+  form.receipt=path; form.receiptDirty=true;
+  if(form.type!=='gasto'){ form.type='gasto'; renderChips(); }
+  receiptStatus('Leyendo el comprobante…','',true);
+  try{
+    const {data,error} = await sb.functions.invoke('fin-leer-comprobante',{body:{path}});
+    if(error){
+      let msg='No pude leerlo. Cargá los datos a mano.';
+      try{ const j=await error.context.json(); if(j&&j.message) msg=j.message; }catch(e){}
+      receiptStatus(msg,'err'); return;
+    }
+    const d=(data&&data.datos)||{};
+    if(d.es_comprobante===false){ receiptStatus('No parece un comprobante. Igual quedó adjunto: cargá los datos a mano.','err'); return; }
+    applyReading(d);
+  }catch(e){ console.error(e); receiptStatus('No pude leerlo. Cargá los datos a mano.','err'); }
+}
+function applyReading(d){
+  const filled=[];
+  if(d.tipo==='ingreso'||d.tipo==='gasto'){ form.type=d.tipo; }
+  if(d.categoria && (form.type==='gasto'?GASTOS:INGRESOS).some(c=>c.id===d.categoria)){ form.category=d.categoria; filled.push('categoría'); }
+  renderChips();
+  if(d.monto && d.monto>0){ $('#amt').value=nf.format(Math.round(d.monto)); filled.push('monto'); flash($('#amt').parentElement); }
+  if(d.fecha && /^\d{4}-\d{2}-\d{2}$/.test(d.fecha)){ $('#date').value=d.fecha; filled.push('fecha'); flash($('#date')); }
+  const nota=(d.nota||d.comercio||'').trim(); if(nota){ $('#note').value=nota.slice(0,60); filled.push('nota'); flash($('#note')); }
+  const conf = d.confianza==='alta'?'Leído':d.confianza==='media'?'Leído, revisá los datos':'Leído con dudas, revisá bien';
+  receiptStatus(filled.length ? `${conf}: ${filled.join(', ')}. Revisá y tocá Agregar.` : 'No encontré datos claros. Cargalos a mano.', filled.length?'ok':'err');
+  if(!$('#amt').value) $('#amt').focus();
+}
+function flash(el){ if(!el) return; el.classList.remove('hl'); void el.offsetWidth; el.classList.add('hl'); }
+async function openReceipt(id){
+  const x=state.movements.find(m=>m.id===id); if(!x||!x.receipt) return;
+  const {data,error}=await sb.storage.from(BUCKET).createSignedUrl(x.receipt,300);
+  if(error||!data){ toast('No pude abrir el comprobante.'); return; }
+  window.open(data.signedUrl,'_blank','noopener');
+}
+$('#file').addEventListener('change',e=>{ const f=e.target.files&&e.target.files[0]; e.target.value=''; handleFile(f); });
+$('#rRemove').addEventListener('click',()=>{ if(form.receipt && form.receiptDirty){ sb.storage.from(BUCKET).remove([form.receipt]); } form.receipt=null; form.receiptDirty=form.editing?true:false; showReceipt(null); });
+['dragenter','dragover'].forEach(ev=>$('#drop').addEventListener(ev,e=>{ e.preventDefault(); $('#drop').classList.add('over'); }));
+['dragleave','drop'].forEach(ev=>$('#drop').addEventListener(ev,e=>{ e.preventDefault(); $('#drop').classList.remove('over'); }));
+$('#drop').addEventListener('drop',e=>{ const f=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0]; handleFile(f); });
 
 /* ---------- Sesión ---------- */
 const lockEl=$('#lock');
