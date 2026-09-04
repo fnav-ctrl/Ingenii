@@ -276,7 +276,8 @@ body.locked{overflow:hidden;}
 .tabbar a span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
 .tabbar a svg{width:22px;height:22px;flex:none;}
 .tabbar a.active{color:var(--accent);background:var(--accent-softer);}
-.pill.clickable{cursor:pointer;}
+.pill.clickable{cursor:pointer;border:0;font-family:inherit;}
+.pill[hidden]{display:none;}
 
 /* ---------- responsive ---------- */
 @media (max-width:1180px){
@@ -509,7 +510,6 @@ function loadCache(){ try{ const raw=localStorage.getItem(cacheKey()); if(raw){ 
 const toRow = m => ({ id:m.id, tipo:m.type, categoria:m.category, monto:m.amount, fecha:m.date, nota:m.note||'', familiar:!!m.familiar });
 const fromRow = r => ({ id:r.id, type:r.tipo, category:r.categoria, amount:Math.round(+r.monto), date:r.fecha, note:r.nota||'', familiar:!!r.familiar });
 function offline(on){ $('#syncPill').hidden=!on; }
-$('#syncPill').addEventListener('click',()=>{ loadTries=0; loadCloud(); });
 let loadTries=0;
 async function loadCloud(){
   let a,b;
@@ -854,6 +854,7 @@ async function logout(){ await sb.auth.signOut(); }
 $('#logoutBtn').addEventListener('click',logout);
 $('#logoutBtn2').addEventListener('click',logout);
 $('#logoutBtn3').addEventListener('click',logout);
+$('#syncPill').addEventListener('click',()=>{ loadTries=0; loadCloud(); });
 async function onLogin(){
   const meta=user.user_metadata||{};
   const cached=loadCache();
