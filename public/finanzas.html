@@ -246,6 +246,30 @@ label.lbl{display:block;font-size:12px;font-weight:600;color:var(--muted);margin
 .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--ink);color:#fff;padding:12px 18px;border-radius:14px;font-size:13.5px;font-weight:500;box-shadow:var(--shadow);opacity:0;transition:opacity .2s,transform .2s;z-index:60;pointer-events:none;}
 .toast.show{opacity:1;transform:translate(-50%,0);}
 
+.lock{position:fixed;inset:0;z-index:100;background:var(--ground);display:flex;align-items:center;justify-content:center;padding:24px;}
+.lock[hidden]{display:none;}
+body.locked{overflow:hidden;}
+.lock-card{width:100%;max-width:360px;background:var(--card);border-radius:28px;padding:34px 28px 26px;box-shadow:var(--shadow);text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px;}
+.lock-card .avatar{margin-bottom:4px;}
+.lock-card h2{font-family:var(--font-display);font-size:22px;font-weight:800;letter-spacing:-0.02em;text-wrap:balance;}
+.lock-card p{font-size:13.5px;color:var(--muted);line-height:1.5;max-width:30ch;min-height:20px;}
+.lock-card .btn{max-width:230px;margin-top:4px;}
+.lock-err{font-size:12.5px;color:var(--coral);min-height:16px;}
+.lock-links{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:4px;}
+.lock-links button{background:none;border:0;font-size:12.5px;color:var(--muted);text-decoration:underline;text-underline-offset:3px;padding:4px;}
+.lock-links button:hover{color:var(--accent);}
+.lock-form{width:100%;display:flex;flex-direction:column;gap:10px;margin-top:6px;}
+.lock-form .field{margin:0;text-align:left;}
+.lock-form .field[hidden]{display:none;}
+.lock-form .btn{max-width:none;}
+.lock-ok{font-size:13px;color:var(--mint);min-height:16px;}
+.lock.shake .lock-form{animation:shake .4s;}
+@keyframes shake{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}30%,50%,70%{transform:translateX(-6px)}40%,60%{transform:translateX(6px)}}
+.iconbtn{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);display:grid;place-items:center;color:var(--ink-2);box-shadow:var(--shadow-sm);flex:none;}
+.iconbtn:hover{background:var(--accent-softer);color:var(--accent);}
+.iconbtn svg{width:18px;height:18px;}
+.side-foot .row2{display:flex;gap:12px;flex-wrap:wrap;}
+
 /* ---------- responsive ---------- */
 @media (max-width:1180px){
   .g3{grid-template-columns:300px 1fr;}
@@ -303,8 +327,8 @@ label.lbl{display:block;font-size:12px;font-weight:600;color:var(--muted);margin
       <a href="#movimientos" data-nav><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Movimientos</a>
     </nav>
     <div class="side-foot">
-      <div class="tip"><strong>Tus datos quedan en este dispositivo.</strong> Nada se sube a ningún servidor: se guardan en el navegador.</div>
-      <button class="linkbtn" id="resetBtn">Borrar todo y empezar de cero</button>
+      <div class="tip"><strong>Tus datos están en tu cuenta.</strong> Se sincronizan solos entre el teléfono y la compu.</div>
+      <div class="row2"><button class="linkbtn" id="logoutBtn">Cerrar sesión</button><button class="linkbtn" id="resetBtn">Borrar todos mis datos</button></div>
     </div>
   </aside>
 
@@ -316,11 +340,12 @@ label.lbl{display:block;font-size:12px;font-weight:600;color:var(--muted);margin
         <div class="sub" id="today"></div>
       </div>
       <div class="top-right">
-        <span class="pill" id="demoPill" hidden><i></i> Datos de ejemplo</span>
+        <span class="pill" id="syncPill" hidden><i></i> Sin conexión</span>
         <label class="search">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
           <input type="search" id="q" placeholder="Buscar un movimiento…" aria-label="Buscar movimiento">
         </label>
+        <button class="iconbtn" id="logoutBtn2" title="Cerrar sesión" aria-label="Cerrar sesión"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg></button>
         <div class="month">
           <button id="prevM" aria-label="Mes anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg></button>
           <span id="monthLbl"></span>
@@ -402,9 +427,26 @@ label.lbl{display:block;font-size:12px;font-weight:600;color:var(--muted);margin
   </main>
 </div>
 
+<div class="lock" id="lock" hidden>
+  <div class="lock-card">
+    <div class="avatar">$</div>
+    <h2 id="authTitle">Tus finanzas</h2>
+    <p id="authSub">Entrá con tu mail y contraseña.</p>
+    <form class="lock-form" id="authForm" novalidate>
+      <div class="field" id="authNameF" hidden><input id="authName" type="text" placeholder="Tu nombre" autocomplete="name"></div>
+      <div class="field" id="authEmailF"><input id="authEmail" type="email" placeholder="Mail" autocomplete="email"></div>
+      <div class="field" id="authPassF"><input id="authPass" type="password" placeholder="Contraseña" autocomplete="current-password"></div>
+      <div class="lock-ok" id="authOkMsg"></div>
+      <div class="lock-err" id="authErr" aria-live="polite"></div>
+      <button class="btn" id="authBtn" type="submit">Entrar</button>
+    </form>
+    <div class="lock-links"><button type="button" id="authToggle">Crear una cuenta</button><button type="button" id="authForgot">Olvidé mi contraseña</button></div>
+  </div>
+</div>
 <div class="tt" id="tt"></div>
 <div class="toast" id="toast"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 (function(){
 'use strict';
@@ -431,58 +473,47 @@ const ALL = [...GASTOS, ...INGRESOS];
 const FAM_TAG = `<span class="tag" title="Gasto familiar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg>Familiar</span>`;
 const catOf = id => ALL.find(c=>c.id===id) || {id, name:id, c:'#a3a7b3'};
 
-/* ---------- storage ---------- */
-const KEY = 'freelo-finanzas-v1';
-const todayISO = () => { const d=new Date(); return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate()); };
+/* ---------- Supabase ---------- */
+const SB_URL='https://wpopqnwkvnliyyteljyg.supabase.co';
+const SB_KEY='sb_publishable_tK229V9vqmgJ0Yh0yShgzw_ANorvL9a';
+const sb = window.supabase ? window.supabase.createClient(SB_URL, SB_KEY) : null;
+const T_MOV='fin_personal_movimientos', T_BUD='fin_personal_presupuestos';
+let user=null;
+let state = { name:'', movements:[], budgets:{} };
 const p2 = n => String(n).padStart(2,'0');
-let state = load();
-function load(){
-  try{ const raw=localStorage.getItem(KEY); if(raw){ const s=JSON.parse(raw); if(s && Array.isArray(s.movements)) return s; } }catch(e){}
-  return seed();
+const todayISO = () => { const d=new Date(); return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate()); };
+const cacheKey = () => 'freelo-finanzas-v2:'+(user?user.id:'anon');
+function save(){ try{ localStorage.setItem(cacheKey(), JSON.stringify(state)); }catch(e){} }
+function loadCache(){ try{ const raw=localStorage.getItem(cacheKey()); if(raw){ const s=JSON.parse(raw); if(s && Array.isArray(s.movements)) return s; } }catch(e){} return null; }
+const toRow = m => ({ id:m.id, tipo:m.type, categoria:m.category, monto:m.amount, fecha:m.date, nota:m.note||'', familiar:!!m.familiar });
+const fromRow = r => ({ id:r.id, type:r.tipo, category:r.categoria, amount:Math.round(+r.monto), date:r.fecha, note:r.nota||'', familiar:!!r.familiar });
+function offline(on){ $('#syncPill').hidden=!on; }
+async function loadCloud(){
+  const [a,b] = await Promise.all([ sb.from(T_MOV).select('*').order('fecha',{ascending:false}), sb.from(T_BUD).select('*') ]);
+  if(a.error||b.error){ console.error(a.error||b.error); offline(true); toast('No pude traer tus datos. Revisá la conexión.'); return false; }
+  offline(false);
+  state.movements = a.data.map(fromRow);
+  state.budgets = {}; b.data.forEach(r=>{ state.budgets[r.categoria]=Math.round(+r.limite); });
+  save(); renderAll(); return true;
 }
-function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
-
-/* datos de ejemplo: los últimos 6 meses relativos a hoy, para que el tablero arranque con algo que mirar */
-function seed(){
-  const now = new Date(); const y=now.getFullYear(), m=now.getMonth();
-  const ym = (off) => { const d=new Date(y, m+off, 1); return d.getFullYear()+'-'+p2(d.getMonth()+1); };
-  const cur = ym(0);
-  const mv = [];
-  let n=1; const add = (type,cat,amount,date,note,familiar)=>mv.push({id:'s'+(n++),type,category:cat,amount,date,note,familiar:!!familiar});
-  // mes actual
-  add('ingreso','sueldo',880000,cur+'-01','Sueldo');
-  add('ingreso','freelance',95000,cur+'-15','Freelance');
-  add('gasto','alquiler',285000,cur+'-03','Alquiler',true);
-  add('gasto','super',36000,cur+'-19','Super',true);
-  add('gasto','super',21000,cur+'-29','Kiosco varios');
-  add('gasto','super',19000,cur+'-10','Verdulería');
-  add('gasto','super',42000,cur+'-05','Compra grande',true);
-  add('gasto','ahorro',60000,cur+'-14','Ahorro dólar');
-  add('gasto','ropa',32000,cur+'-11','Campera');
-  add('gasto','salud',28500,cur+'-23','Farmacia',true);
-  add('gasto','ocio',11000,cur+'-25','Cine');
-  add('gasto','ocio',15000,cur+'-13','Show');
-  add('gasto','transporte',9000,cur+'-18','SUBE');
-  add('gasto','transporte',16000,cur+'-07','Nafta');
-  add('gasto','comidas',6800,cur+'-27','Delivery');
-  add('gasto','comidas',5400,cur+'-16','Café');
-  add('gasto','comidas',9000,cur+'-08','Pizza con amigas');
-  add('gasto','otros',8000,cur+'-21','Regalo cumple');
-  add('gasto','subs',4500,cur+'-02','Streaming');
-  // meses anteriores (solo totales aproximados, para el gráfico)
-  const prev = [
-    [-1, 860000, [['alquiler',280000],['super',110000],['comidas',34000],['transporte',22000],['salud',12000],['ocio',30000],['ropa',18000],['subs',4500],['ahorro',80000],['otros',15000]]],
-    [-2, 820000, [['alquiler',270000],['super',98000],['comidas',41000],['transporte',20000],['salud',9000],['ocio',22000],['ropa',0],['subs',4500],['ahorro',100000],['otros',9000]]],
-    [-3, 820000, [['alquiler',270000],['super',104000],['comidas',28000],['transporte',18000],['salud',31000],['ocio',18000],['ropa',45000],['subs',4500],['ahorro',60000],['otros',12000]]],
-    [-4, 790000, [['alquiler',260000],['super',95000],['comidas',30000],['transporte',17000],['salud',8000],['ocio',26000],['ropa',0],['subs',4500],['ahorro',90000],['otros',20000]]],
-    [-5, 790000, [['alquiler',260000],['super',101000],['comidas',36000],['transporte',19000],['salud',14000],['ocio',15000],['ropa',22000],['subs',4500],['ahorro',70000],['otros',7000]]],
-  ];
-  prev.forEach(([off,inc,cats])=>{
-    const k=ym(off);
-    add('ingreso','sueldo',inc,k+'-01','Sueldo');
-    cats.forEach(([c,a])=>{ if(a>0) add('gasto',c,a,k+'-12',''); });
-  });
-  return { name:'Flor Naveiro', movements:mv, budgets:{super:90000, alquiler:280000, ropa:20000}, demo:true };
+async function remote(promise, okMsg){
+  const {error} = await promise;
+  if(error){ console.error(error); offline(true); toast('No se pudo guardar. Revisá la conexión.'); return false; }
+  offline(false); if(okMsg) toast(okMsg); return true;
+}
+// datos que hayan quedado guardados solo en este navegador (versión anterior de la app)
+async function migrateLocal(){
+  let old=null; try{ old=JSON.parse(localStorage.getItem('freelo-finanzas-v1')||'null'); }catch(e){}
+  if(!old || !Array.isArray(old.movements)) return;
+  const real = old.movements.filter(m=>!String(m.id).startsWith('s'));
+  if(!real.length){ localStorage.removeItem('freelo-finanzas-v1'); return; }
+  if(state.movements.length){ return; }
+  if(!confirm(`Encontré ${real.length} movimiento${real.length>1?'s':''} guardado${real.length>1?'s':''} solo en este dispositivo. ¿Los subo a tu cuenta?`)){ localStorage.removeItem('freelo-finanzas-v1'); return; }
+  const rows = real.map(m=>toRow({...m, id:'m'+Date.now().toString(36)+Math.random().toString(36).slice(2,7)}));
+  const ok = await remote(sb.from(T_MOV).insert(rows));
+  const buds = Object.entries(old.budgets||{}).filter(([k,v])=>v>0).map(([categoria,limite])=>({categoria,limite}));
+  if(ok && buds.length) await remote(sb.from(T_BUD).upsert(buds));
+  if(ok){ localStorage.removeItem('freelo-finanzas-v1'); toast('Listo, tus datos ya están en tu cuenta'); await loadCloud(); }
 }
 
 /* ---------- helpers ---------- */
@@ -516,7 +547,6 @@ function renderHeader(){
   const isCur = (()=>{ const t=new Date(); return t.getFullYear()===view.y && t.getMonth()===view.m; })();
   $('#monthLbl').textContent = MESES[view.m] + ' ' + view.y;
   $('#nextM').disabled = false;
-  $('#demoPill').hidden = !state.demo;
 }
 
 /* ---------- tiles ---------- */
@@ -647,7 +677,7 @@ function renderBudgets(){
   }).join('');
   box.querySelectorAll('input').forEach(inp=>{
     inp.addEventListener('input',()=>{ const d=inp.value.replace(/\D/g,''); inp.value = d?nf.format(+d):''; });
-    inp.addEventListener('change',()=>{ const d=+inp.value.replace(/\D/g,''); if(d>0) state.budgets[inp.dataset.b]=d; else delete state.budgets[inp.dataset.b]; save(); renderBudgets(); });
+    inp.addEventListener('change',()=>{ const d=+inp.value.replace(/\D/g,''); const cat=inp.dataset.b; if(d>0){ state.budgets[cat]=d; remote(sb.from(T_BUD).upsert({categoria:cat,limite:d})); } else { delete state.budgets[cat]; remote(sb.from(T_BUD).delete().eq('categoria',cat)); } save(); renderBudgets(); });
   });
 }
 
@@ -707,11 +737,11 @@ function submit(){
   err.textContent='';
   if(form.editing){
     const x = state.movements.find(m=>m.id===form.editing);
-    if(x){ Object.assign(x,{type:form.type,category:form.category,amount,date,note,familiar:form.type==='gasto'&&form.familiar}); }
-    toast('Movimiento actualizado');
+    if(x){ Object.assign(x,{type:form.type,category:form.category,amount,date,note,familiar:form.type==='gasto'&&form.familiar}); remote(sb.from(T_MOV).upsert(toRow(x)),'Movimiento actualizado'); }
   } else {
-    state.movements.push({id:'m'+Date.now().toString(36)+Math.random().toString(36).slice(2,6), type:form.type, category:form.category, amount, date, note, familiar:form.type==='gasto'&&form.familiar});
-    toast((form.type==='gasto'?(form.familiar?'Gasto familiar':'Gasto'):'Ingreso')+' de '+money(amount)+' agregado');
+    const nm={id:'m'+Date.now().toString(36)+Math.random().toString(36).slice(2,7), type:form.type, category:form.category, amount, date, note, familiar:form.type==='gasto'&&form.familiar};
+    state.movements.push(nm);
+    remote(sb.from(T_MOV).insert(toRow(nm)), (form.type==='gasto'?(form.familiar?'Gasto familiar':'Gasto'):'Ingreso')+' de '+money(amount)+' agregado');
   }
   save();
   // si cargó en otro mes, saltar a ese mes para que lo vea
@@ -738,31 +768,104 @@ function del(id){
   if(!confirm(`¿Borrar ${catOf(x.category).name}${x.familiar?' (familiar)':''} de ${money(x.amount)}?`)) return;
   state.movements = state.movements.filter(m=>m.id!==id);
   if(form.editing===id) resetForm();
-  save(); renderAll(); toast('Movimiento borrado');
+  save(); renderAll(); remote(sb.from(T_MOV).delete().eq('id',id),'Movimiento borrado');
 }
 
-/* ---------- otros controles ---------- */
+/* ---------- Sesión ---------- */
+const lockEl=$('#lock');
+let authMode='login', authBusy=false;
+const AUTH_TXT = {
+  login:   ['Tus finanzas','Entrá con tu mail y contraseña.','Entrar','Crear una cuenta'],
+  signup:  ['Creá tu cuenta','Tus datos van a quedar guardados en tu cuenta y sincronizados en todos tus dispositivos.','Crear cuenta','Ya tengo cuenta'],
+  forgot:  ['Recuperar contraseña','Te mandamos un mail con un link para elegir una nueva.','Enviar mail','Volver'],
+  recovery:['Nueva contraseña','Elegí una contraseña nueva de al menos 6 caracteres.','Guardar contraseña',''],
+};
+function showAuth(mode, okMsg){
+  authMode=mode; const t=AUTH_TXT[mode];
+  $('#authTitle').textContent=t[0]; $('#authSub').textContent=t[1]; $('#authBtn').textContent=t[2];
+  $('#authToggle').textContent=t[3]; $('#authToggle').hidden=!t[3];
+  $('#authForgot').hidden = mode!=='login';
+  $('#authNameF').hidden = mode!=='signup';
+  $('#authEmailF').hidden = mode==='recovery';
+  $('#authPassF').hidden = mode==='forgot';
+  $('#authPass').autocomplete = mode==='login' ? 'current-password' : 'new-password';
+  $('#authPass').value=''; $('#authErr').textContent=''; $('#authOkMsg').textContent=okMsg||'';
+  lockEl.hidden=false; document.body.classList.add('locked');
+  setTimeout(()=>{ (mode==='signup'?$('#authName'):mode==='recovery'?$('#authPass'):$('#authEmail')).focus(); },50);
+}
+function hideAuth(){ lockEl.hidden=true; document.body.classList.remove('locked'); }
+function authFail(msg){ $('#authErr').textContent=msg; $('#authOkMsg').textContent=''; lockEl.classList.remove('shake'); void lockEl.offsetWidth; lockEl.classList.add('shake'); }
+$('#authToggle').addEventListener('click',()=>showAuth(authMode==='login'?'signup':'login'));
+$('#authForgot').addEventListener('click',()=>showAuth('forgot'));
+$('#authForm').addEventListener('submit',async e=>{
+  e.preventDefault(); if(authBusy) return;
+  const email=$('#authEmail').value.trim().toLowerCase(), pass=$('#authPass').value, name=$('#authName').value.trim();
+  if(authMode!=='recovery' && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ authFail('Escribí un mail válido.'); return; }
+  if(authMode!=='forgot' && pass.length<6){ authFail('La contraseña tiene que tener al menos 6 caracteres.'); return; }
+  if(authMode==='signup' && !name){ authFail('Contanos tu nombre.'); return; }
+  authBusy=true; $('#authBtn').disabled=true; $('#authErr').textContent='';
+  try{
+    if(authMode==='login'){
+      const {error}=await sb.auth.signInWithPassword({email,password:pass});
+      if(error){ authFail(/confirm/i.test(error.message)?'Todavía no confirmaste tu mail. Revisá tu casilla.':'Mail o contraseña incorrectos.'); }
+    } else if(authMode==='signup'){
+      const {data,error}=await sb.auth.signUp({email,password:pass,options:{data:{full_name:name}}});
+      if(error){ authFail(/registered|exists/i.test(error.message)?'Ese mail ya tiene cuenta. Probá entrar.':'No pudimos crear la cuenta: '+error.message); }
+      else if(!data.session){ showAuth('login','Te mandamos un mail para confirmar la cuenta. Cuando lo confirmes, entrá acá con tu contraseña.'); $('#authEmail').value=email; }
+    } else if(authMode==='forgot'){
+      const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});
+      if(error) authFail('No pudimos enviar el mail: '+error.message);
+      else { showAuth('login','Si ese mail tiene cuenta, te llegó un link para cambiar la contraseña.'); $('#authEmail').value=email; }
+    } else if(authMode==='recovery'){
+      const {error}=await sb.auth.updateUser({password:pass});
+      if(error) authFail('No se pudo cambiar: '+error.message); else { hideAuth(); toast('Contraseña actualizada'); }
+    }
+  } catch(err){ console.error(err); authFail('Algo falló. Revisá la conexión e intentá de nuevo.'); }
+  authBusy=false; $('#authBtn').disabled=false;
+});
+async function logout(){ await sb.auth.signOut(); }
+$('#logoutBtn').addEventListener('click',logout);
+$('#logoutBtn2').addEventListener('click',logout);
+async function onLogin(){
+  const meta=user.user_metadata||{};
+  const cached=loadCache();
+  state = cached || { name:'', movements:[], budgets:{} };
+  state.name = meta.full_name || meta.name || state.name || (user.email||'').split('@')[0];
+  resetForm(); renderAll(); hideAuth();
+  if(await loadCloud()) await migrateLocal();
+}
+if(sb) sb.auth.onAuthStateChange((ev,session)=>{
+  if(ev==='PASSWORD_RECOVERY'){ user=session?session.user:user; showAuth('recovery'); return; }
+  if(session && session.user){
+    if(!user || user.id!==session.user.id){ user=session.user; onLogin(); }
+    else if(ev==='USER_UPDATED'){ user=session.user; }
+  } else if(ev!=='INITIAL_SESSION' || !session){ user=null; state={ name:'', movements:[], budgets:{} }; renderAll(); showAuth('login'); }
+});
+
+/* ---------- otros controles ---------- *//* ---------- otros controles ---------- */
 $('#prevM').addEventListener('click',()=>{ const d=new Date(view.y,view.m-1,1); view={y:d.getFullYear(),m:d.getMonth()}; renderAll(); });
 $('#nextM').addEventListener('click',()=>{ const d=new Date(view.y,view.m+1,1); view={y:d.getFullYear(),m:d.getMonth()}; renderAll(); });
 $('#q').addEventListener('input',e=>{ query=e.target.value.trim(); renderMovs(); });
 $('#filter').addEventListener('change',e=>{ filter=e.target.value; renderMovs(); });
-$('#editName').addEventListener('click',()=>{ const n=prompt('¿Cómo te llamás?', state.name||''); if(n!==null && n.trim()){ state.name=n.trim(); save(); renderHeader(); } });
-$('#resetBtn').addEventListener('click',()=>{
-  if(!confirm('Se van a borrar todos los movimientos y presupuestos guardados en este navegador. ¿Seguimos?')) return;
-  state = { name:state.name, movements:[], budgets:{}, demo:false }; save(); resetForm(); renderAll(); toast('Listo, arrancás de cero');
+$('#editName').addEventListener('click',async()=>{ const n=prompt('¿Cómo te llamás?', state.name||''); if(n!==null && n.trim()){ state.name=n.trim(); save(); renderHeader(); await remote(sb.auth.updateUser({data:{full_name:state.name}})); } });
+$('#resetBtn').addEventListener('click',async()=>{
+  if(!user) return;
+  if(!confirm('Se van a borrar todos tus movimientos y presupuestos de tu cuenta, en todos tus dispositivos. Esto no se puede deshacer. ¿Seguimos?')) return;
+  const ok1 = await remote(sb.from(T_MOV).delete().eq('user_id',user.id));
+  const ok2 = await remote(sb.from(T_BUD).delete().eq('user_id',user.id));
+  if(ok1&&ok2){ state.movements=[]; state.budgets={}; save(); resetForm(); renderAll(); toast('Listo, arrancás de cero'); }
 });
 document.querySelectorAll('[data-nav]').forEach(a=>a.addEventListener('click',()=>{ document.querySelectorAll('[data-nav]').forEach(b=>b.classList.remove('active')); a.classList.add('active'); }));
 
 let toastT; function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2200); }
 
 function renderAll(){
-  // si el usuario carga algo real, dejamos de marcar los datos como ejemplo
-  if(state.demo && state.movements.some(m=>!m.id.startsWith('s'))){ state.demo=false; save(); }
   renderHeader(); renderTiles(); renderDonut(); renderBars(); renderBudgets(); renderMovs();
 }
 $('#date').value = todayISO();
 renderChips();
 renderAll();
+if(!sb){ showAuth('login'); authFail('No se pudo cargar la conexión. Revisá internet y recargá la página.'); $('#authBtn').disabled=true; }
 })();
 </script>
 </body>
