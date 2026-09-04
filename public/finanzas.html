@@ -510,7 +510,7 @@ function loadCache(){ try{ const raw=localStorage.getItem(cacheKey()); if(raw){ 
 const toRow = m => ({ id:m.id, tipo:m.type, categoria:m.category, monto:m.amount, fecha:m.date, nota:m.note||'', familiar:!!m.familiar });
 const fromRow = r => ({ id:r.id, type:r.tipo, category:r.categoria, amount:Math.round(+r.monto), date:r.fecha, note:r.nota||'', familiar:!!r.familiar });
 function offline(on){ $('#syncPill').hidden=!on; }
-let loadTries=0;
+let loadTries=0, loadedOnce=false;
 async function loadCloud(){
   let a,b;
   try{ [a,b] = await Promise.all([ sb.from(T_MOV).select('*').order('fecha',{ascending:false}), sb.from(T_BUD).select('*') ]); }
@@ -522,9 +522,12 @@ async function loadCloud(){
     return false; }
   loadTries=0;
   offline(false);
+  const before = JSON.stringify([state.movements,state.budgets]);
   state.movements = a.data.map(fromRow);
   state.budgets = {}; b.data.forEach(r=>{ state.budgets[r.categoria]=Math.round(+r.limite); });
-  save(); renderAll(); return true;
+  save();
+  if(JSON.stringify([state.movements,state.budgets])!==before || !loadedOnce) renderAll();
+  loadedOnce=true; return true;
 }
 async function remote(promise, okMsg){
   const {error} = await promise;
@@ -855,6 +858,20 @@ $('#logoutBtn').addEventListener('click',logout);
 $('#logoutBtn2').addEventListener('click',logout);
 $('#logoutBtn3').addEventListener('click',logout);
 $('#syncPill').addEventListener('click',()=>{ loadTries=0; loadCloud(); });
+let rtChannel=null, pollT=null, syncT=null;
+function scheduleSync(){ clearTimeout(syncT); syncT=setTimeout(()=>{ if(user) loadCloud(); }, 400); }
+function startLive(){
+  stopLive();
+  rtChannel = sb.channel('fin-personal-'+user.id)
+    .on('postgres_changes',{event:'*',schema:'public',table:T_MOV,filter:'user_id=eq.'+user.id},scheduleSync)
+    .on('postgres_changes',{event:'*',schema:'public',table:T_BUD,filter:'user_id=eq.'+user.id},scheduleSync)
+    .subscribe();
+  pollT = setInterval(()=>{ if(user && !document.hidden) loadCloud(); }, 90*1000);
+}
+function stopLive(){ if(rtChannel){ sb.removeChannel(rtChannel); rtChannel=null; } if(pollT){ clearInterval(pollT); pollT=null; } }
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden && user) loadCloud(); });
+window.addEventListener('focus',()=>{ if(user) loadCloud(); });
+window.addEventListener('online',()=>{ if(user) loadCloud(); });
 async function onLogin(){
   const meta=user.user_metadata||{};
   const cached=loadCache();
@@ -862,6 +879,7 @@ async function onLogin(){
   state.name = meta.full_name || meta.name || state.name || (user.email||'').split('@')[0];
   resetForm(); renderAll(); hideAuth();
   if(await loadCloud()) await migrateLocal();
+  startLive();
 }
 if(sb) sb.auth.onAuthStateChange((ev,session)=>{
   if(ev==='PASSWORD_RECOVERY'){ user=session?session.user:user; showAuth('recovery'); return; }
@@ -869,7 +887,7 @@ if(sb) sb.auth.onAuthStateChange((ev,session)=>{
     if(session.user.id!==OWNER_ID){ sb.auth.signOut(); return; }
     if(!user || user.id!==session.user.id){ user=session.user; onLogin(); }
     else if(ev==='USER_UPDATED'){ user=session.user; }
-  } else if(ev!=='INITIAL_SESSION' || !session){ user=null; state={ name:'', movements:[], budgets:{} }; renderAll(); showAuth('login'); }
+  } else if(ev!=='INITIAL_SESSION' || !session){ stopLive(); user=null; state={ name:'', movements:[], budgets:{} }; renderAll(); showAuth('login'); }
 });
 
 /* ---------- otros controles ---------- */
