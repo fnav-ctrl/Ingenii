@@ -155,6 +155,7 @@ label.lbl{display:block;font-size:12px;font-weight:600;color:var(--muted);margin
 .btn{height:46px;border:0;border-radius:14px;font-weight:700;font-size:14px;width:100%;background:var(--accent);color:#fff;box-shadow:0 12px 24px -12px rgba(107,91,224,0.9);transition:transform .12s,background .15s;}
 .btn:hover{background:var(--accent-2);}
 .btn:active{transform:translateY(1px);}
+.btn:disabled{opacity:.6;cursor:default;}
 .btn.ghost{background:var(--ground);color:var(--ink-2);box-shadow:none;margin-top:8px;}
 .btn.ghost:hover{background:var(--line);}
 .form-err{font-size:12.5px;color:var(--coral);min-height:16px;margin-top:8px;}
@@ -431,7 +432,7 @@ body.locked{overflow:hidden;}
   <div class="lock-card">
     <div class="avatar">$</div>
     <h2 id="authTitle">Tus finanzas</h2>
-    <p id="authSub">Entrá con tu mail y contraseña.</p>
+    <p id="authSub">Esta app es solo tuya. Entrá con tu mail y contraseña.</p>
     <form class="lock-form" id="authForm" novalidate>
       <div class="field" id="authNameF" hidden><input id="authName" type="text" placeholder="Tu nombre" autocomplete="name"></div>
       <div class="field" id="authEmailF"><input id="authEmail" type="email" placeholder="Mail" autocomplete="email"></div>
@@ -440,7 +441,7 @@ body.locked{overflow:hidden;}
       <div class="lock-err" id="authErr" aria-live="polite"></div>
       <button class="btn" id="authBtn" type="submit">Entrar</button>
     </form>
-    <div class="lock-links"><button type="button" id="authToggle">Crear una cuenta</button><button type="button" id="authForgot">Olvidé mi contraseña</button></div>
+    <div class="lock-links"><button type="button" id="authBack" hidden>Volver</button><button type="button" id="authForgot">Olvidé mi contraseña</button></div>
   </div>
 </div>
 <div class="tt" id="tt"></div>
@@ -774,44 +775,40 @@ function del(id){
 /* ---------- Sesión ---------- */
 const lockEl=$('#lock');
 let authMode='login', authBusy=false;
+const OWNER_ID='4556dc5a-4c45-45ca-aa01-306cfc62c1e5';
 const AUTH_TXT = {
-  login:   ['Tus finanzas','Entrá con tu mail y contraseña.','Entrar','Crear una cuenta'],
-  signup:  ['Creá tu cuenta','Tus datos van a quedar guardados en tu cuenta y sincronizados en todos tus dispositivos.','Crear cuenta','Ya tengo cuenta'],
+  login:   ['Tus finanzas','Esta app es solo tuya. Entrá con tu mail y contraseña.','Entrar',''],
   forgot:  ['Recuperar contraseña','Te mandamos un mail con un link para elegir una nueva.','Enviar mail','Volver'],
   recovery:['Nueva contraseña','Elegí una contraseña nueva de al menos 6 caracteres.','Guardar contraseña',''],
 };
 function showAuth(mode, okMsg){
   authMode=mode; const t=AUTH_TXT[mode];
   $('#authTitle').textContent=t[0]; $('#authSub').textContent=t[1]; $('#authBtn').textContent=t[2];
-  $('#authToggle').textContent=t[3]; $('#authToggle').hidden=!t[3];
+  $('#authBack').textContent=t[3]; $('#authBack').hidden=!t[3];
   $('#authForgot').hidden = mode!=='login';
-  $('#authNameF').hidden = mode!=='signup';
+  $('#authNameF').hidden = true;
   $('#authEmailF').hidden = mode==='recovery';
   $('#authPassF').hidden = mode==='forgot';
   $('#authPass').autocomplete = mode==='login' ? 'current-password' : 'new-password';
   $('#authPass').value=''; $('#authErr').textContent=''; $('#authOkMsg').textContent=okMsg||'';
   lockEl.hidden=false; document.body.classList.add('locked');
-  setTimeout(()=>{ (mode==='signup'?$('#authName'):mode==='recovery'?$('#authPass'):$('#authEmail')).focus(); },50);
+  setTimeout(()=>{ (mode==='recovery'?$('#authPass'):$('#authEmail')).focus(); },50);
 }
 function hideAuth(){ lockEl.hidden=true; document.body.classList.remove('locked'); }
 function authFail(msg){ $('#authErr').textContent=msg; $('#authOkMsg').textContent=''; lockEl.classList.remove('shake'); void lockEl.offsetWidth; lockEl.classList.add('shake'); }
-$('#authToggle').addEventListener('click',()=>showAuth(authMode==='login'?'signup':'login'));
+$('#authBack').addEventListener('click',()=>showAuth('login'));
 $('#authForgot').addEventListener('click',()=>showAuth('forgot'));
 $('#authForm').addEventListener('submit',async e=>{
   e.preventDefault(); if(authBusy) return;
-  const email=$('#authEmail').value.trim().toLowerCase(), pass=$('#authPass').value, name=$('#authName').value.trim();
+  const email=$('#authEmail').value.trim().toLowerCase(), pass=$('#authPass').value;
   if(authMode!=='recovery' && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ authFail('Escribí un mail válido.'); return; }
   if(authMode!=='forgot' && pass.length<6){ authFail('La contraseña tiene que tener al menos 6 caracteres.'); return; }
-  if(authMode==='signup' && !name){ authFail('Contanos tu nombre.'); return; }
   authBusy=true; $('#authBtn').disabled=true; $('#authErr').textContent='';
   try{
     if(authMode==='login'){
-      const {error}=await sb.auth.signInWithPassword({email,password:pass});
-      if(error){ authFail(/confirm/i.test(error.message)?'Todavía no confirmaste tu mail. Revisá tu casilla.':'Mail o contraseña incorrectos.'); }
-    } else if(authMode==='signup'){
-      const {data,error}=await sb.auth.signUp({email,password:pass,options:{data:{full_name:name}}});
-      if(error){ authFail(/registered|exists/i.test(error.message)?'Ese mail ya tiene cuenta. Probá entrar.':'No pudimos crear la cuenta: '+error.message); }
-      else if(!data.session){ showAuth('login','Te mandamos un mail para confirmar la cuenta. Cuando lo confirmes, entrá acá con tu contraseña.'); $('#authEmail').value=email; }
+      const {data,error}=await sb.auth.signInWithPassword({email,password:pass});
+      if(error){ authFail('Mail o contraseña incorrectos.'); }
+      else if(data.user && data.user.id!==OWNER_ID){ await sb.auth.signOut(); authFail('Esta app es personal: solo su dueña puede entrar.'); }
     } else if(authMode==='forgot'){
       const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});
       if(error) authFail('No pudimos enviar el mail: '+error.message);
@@ -837,6 +834,7 @@ async function onLogin(){
 if(sb) sb.auth.onAuthStateChange((ev,session)=>{
   if(ev==='PASSWORD_RECOVERY'){ user=session?session.user:user; showAuth('recovery'); return; }
   if(session && session.user){
+    if(session.user.id!==OWNER_ID){ sb.auth.signOut(); return; }
     if(!user || user.id!==session.user.id){ user=session.user; onLogin(); }
     else if(ev==='USER_UPDATED'){ user=session.user; }
   } else if(ev!=='INITIAL_SESSION' || !session){ user=null; state={ name:'', movements:[], budgets:{} }; renderAll(); showAuth('login'); }
