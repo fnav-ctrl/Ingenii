@@ -756,8 +756,14 @@ function renderBudgets(){
     </div>`;
   }).join('');
   box.querySelectorAll('input').forEach(inp=>{
-    inp.addEventListener('input',()=>{ const d=inp.value.replace(/\D/g,''); inp.value = d?nf.format(+d):''; });
-    inp.addEventListener('change',()=>{ const d=+inp.value.replace(/\D/g,''); const cat=inp.dataset.b; if(d>0){ state.budgets[cat]=d; remote(sb.from(T_BUD).upsert({categoria:cat,limite:d})); } else { delete state.budgets[cat]; remote(sb.from(T_BUD).delete().eq('categoria',cat)); } save(); renderBudgets(); });
+    // Safari no dispara 'change' si el valor se reformatea por código, así que guardamos en blur/Enter.
+    inp.addEventListener('input',()=>{ const d=inp.value.replace(/\D/g,'').slice(0,12); const f=d?nf.format(+d):''; if(f!==inp.value) inp.value=f; });
+    const commit=()=>{ const d=+inp.value.replace(/\D/g,''); const cat=inp.dataset.b; const cur=state.budgets[cat]||0;
+      if(d===cur){ inp.value = d?nf.format(d):''; return; }
+      if(d>0){ state.budgets[cat]=d; remote(sb.from(T_BUD).upsert({categoria:cat,limite:d}), 'Límite guardado'); } else { delete state.budgets[cat]; remote(sb.from(T_BUD).delete().eq('categoria',cat), 'Límite quitado'); }
+      save(); renderBudgets(); };
+    inp.addEventListener('blur',commit);
+    inp.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); inp.blur(); } });
   });
 }
 
