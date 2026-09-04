@@ -7,5 +7,5 @@
   "background_color": "#F6F5FB",
   "theme_color": "#6B5BE0",
   "lang": "es",
-  "icons": [{ "src": "/finanzas-icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }]
+  "icons": [{ "src": "/finanzas-icon.png", "sizes": "256x256", "type": "image/png", "purpose": "any maskable" }]
 }
