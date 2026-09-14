@@ -935,7 +935,7 @@ function renderFamily(){
 /* ---------- movimientos ---------- */
 function renderMovs(){
   const sel = $('#filter');
-  if(sel.options.length===3){ ALL.forEach(c=>{ const o=document.createElement('option'); o.value=c.id; o.textContent=c.name; sel.appendChild(o); }); }
+  if(sel.options.length===5){ ALL.forEach(c=>{ const o=document.createElement('option'); o.value=c.id; o.textContent=c.name; sel.appendChild(o); }); }
   let mv = monthMovs().slice().sort((a,b)=> b.date.localeCompare(a.date) || (b.id>a.id?1:-1));
   const all = mv.length;
   if(filter==='__fam') mv = mv.filter(isFam);
