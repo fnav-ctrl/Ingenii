@@ -194,17 +194,37 @@ label.lbl{display:block;font-size:12px;font-weight:600;color:var(--muted);margin
 .fam-card .fbal small{display:block;font-size:12px;color:var(--muted);margin-top:2px;}
 .fam-card .fbal .btn{width:auto;height:38px;padding:0 16px;font-size:13px;margin:0;}
 .fam-card .fcats{list-style:none;display:flex;flex-direction:column;}
-.fam-card .fcats li{display:grid;grid-template-columns:10px minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:8px 4px;border-bottom:1px solid var(--line);font-size:13px;}
+.fam-card .fcats li{border-bottom:1px solid var(--line);font-size:13px;}
 .fam-card .fcats li:last-child{border-bottom:0;}
+.fam-card .frow{display:grid;grid-template-columns:10px minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:8px 4px;width:100%;border:0;background:transparent;text-align:left;font:inherit;border-radius:10px;}
+.fam-card li.head .frow{padding-bottom:6px;cursor:default;}
+.fam-card li:not(.head) .frow{cursor:pointer;}
+.fam-card li:not(.head) .frow:hover{background:var(--ground);}
 .fam-card .fcats i{width:10px;height:10px;border-radius:50%;background:var(--c);}
-.fam-card .fcats .n{color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.fam-card .fcats .n{color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:8px;min-width:0;}
+.fam-card .fcats .n .cnt{font-size:11px;color:var(--faint);font-weight:500;flex:none;}
+.fam-card .fcats .n .chev{width:14px;height:14px;color:var(--faint);flex:none;transition:transform .15s;}
+.fam-card li.open .n .chev{transform:rotate(90deg);}
+.fam-card .fnotes{list-style:none;padding:2px 4px 8px 24px;display:flex;flex-direction:column;gap:2px;}
+.fam-card .fnotes[hidden]{display:none;}
+.fam-card .fnotes li{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:5px 6px;border:0;border-radius:8px;font-size:12.5px;background:var(--ground);}
+.fam-card .fnotes .nn{color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.fam-card .fnotes .nn small{color:var(--faint);font-size:11px;margin-left:6px;}
+.fam-card .fnotes .nn.none{color:var(--faint);font-style:italic;}
+.fam-card .fnotes .v{font-weight:600;font-size:12.5px;}
 .fam-card .fcats .v{font-variant-numeric:tabular-nums;font-weight:600;min-width:86px;text-align:right;}
 .fam-card .fcats .v small{display:block;font-size:10.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--faint);}
 .fam-card .fcats .v.mine{color:var(--accent-2);}
 .fam-card .fcats .v.his{color:#9A5E06;}
-.fam-card .fcats li.head{border-bottom:1px solid var(--line-2);padding-bottom:6px;}
+.fam-card .fcats li.head{border-bottom:1px solid var(--line-2);}
 .fam-card .fcats li.head .v{font-size:10.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--faint);}
 .stmt-tools .seg.small{min-width:150px;}
+.inc-card .fstat.tot b{color:var(--mint);}
+.inc-card .fbar i{min-width:2px;}
+.inc-card .fcats .v.amt{color:var(--mint);}
+.inc-card .fnotes .nn small{margin-left:8px;}
+.tile.in{cursor:pointer;transition:transform .12s;}
+.tile.in:hover{transform:translateY(-1px);}
 @media (max-width:560px){
   .fam-card .fstats{grid-template-columns:minmax(0,1fr);}
   .fam-card .fcats .v{min-width:70px;}
@@ -455,6 +475,7 @@ body.locked{overflow:hidden;}
       <a href="#cargar" data-nav><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Cargar movimiento</a>
       <a href="#categorias" data-nav><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.2 15.9A10 10 0 1 1 8.1 2.8"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>Categorías</a>
       <a href="#familia" data-nav><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 20h6a5 5 0 0 0-4-4.9"/></svg>Familia</a>
+      <a href="#ingresos" data-nav><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg>Ingresos</a>
       <a href="#presupuestos" data-nav><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 10h18"/></svg>Presupuestos</a>
       <a href="#movimientos" data-nav><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Movimientos</a>
     </nav>
@@ -488,7 +509,7 @@ body.locked{overflow:hidden;}
     </header>
 
     <section class="tiles">
-      <div class="tile in">
+      <div class="tile in" id="tInTile" title="Ver el detalle de ingresos" role="link" tabindex="0">
         <div class="row"><span class="eyebrow">Ingresos del mes</span><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg></span></div>
         <div class="big" id="tIn">$0</div>
         <div class="foot" id="tInFoot">—</div>
@@ -558,6 +579,13 @@ body.locked{overflow:hidden;}
       <div class="card fam-card" id="familia">
         <div class="card-head"><h2>Gastos familiares</h2><span class="hint">Se dividen 50 y 50 con Ezequiel</span></div>
         <div id="famBox"></div>
+      </div>
+    </section>
+
+    <section class="grid" style="margin-bottom:18px">
+      <div class="card fam-card inc-card" id="ingresos">
+        <div class="card-head"><h2>Ingresos del mes</h2><span class="hint">Todo lo que entró, con su detalle</span></div>
+        <div id="incBox"></div>
       </div>
     </section>
 
@@ -644,9 +672,9 @@ const GASTOS = [
 ];
 const INGRESOS = [
   {id:'sueldo',   name:'Sueldo',        c:'#16A37A'},
-  {id:'freelance',name:'Freelance',     c:'#16A37A'},
-  {id:'ventas',   name:'Ventas',        c:'#16A37A'},
-  {id:'otros-in', name:'Otros ingresos',c:'#16A37A'},
+  {id:'freelance',name:'Freelance',     c:'#2a78d6'},
+  {id:'ventas',   name:'Ventas',        c:'#eda100'},
+  {id:'otros-in', name:'Otros ingresos',c:'#5c6478'},
 ];
 const ALL = [...GASTOS, ...INGRESOS];
 const FAM_TAG = `<span class="tag" title="Gasto familiar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg>Familiar</span>`;
@@ -900,13 +928,30 @@ function famCalc(){
   const total = me+him, half = total/2, diff = Math.round(me-half); // >0: Eze me debe
   return { mv, me, him, total, half, diff };
 }
+// categorías con subtotales, y dentro de cada una los gastos agrupados por nota
+function famGroups(){
+  const by = {};
+  famCalc().mv.forEach(x=>{
+    const b = by[x.category] || (by[x.category]={me:0,him:0,n:0,notes:{}});
+    const key = (x.note||'').trim().toLowerCase();
+    const nt = b.notes[key] || (b.notes[key]={label:(x.note||'').trim(),me:0,him:0,n:0});
+    const amt = x.amount; if(paidByHim(x)){ b.him+=amt; nt.him+=amt; } else { b.me+=amt; nt.me+=amt; }
+    b.n++; nt.n++;
+  });
+  return Object.entries(by).map(([id,b])=>({cat:catOf(id), me:b.me, him:b.him, n:b.n,
+      notes:Object.values(b.notes).sort((a,c)=>(c.me+c.him)-(a.me+a.him))}))
+    .sort((a,c)=>(c.me+c.him)-(a.me+a.him));
+}
 function famText(){
   const f = famCalc(); const first = (state.name||'').trim().split(' ')[0] || 'Flor';
   const lines = [`Cierre familiar · ${MESES[view.m]} ${view.y}`, `Total: ${money(f.total)}`, `Pagó ${first}: ${money(f.me)}`, `Pagó ${PARTNER}: ${money(f.him)}`, `Mitad cada uno: ${money(Math.round(f.half))}`];
   lines.push(f.diff>0 ? `→ ${PARTNER} le debe ${money(f.diff)} a ${first}` : f.diff<0 ? `→ ${first} le debe ${money(-f.diff)} a ${PARTNER}` : '→ Están a mano');
-  const by = {}; f.mv.forEach(x=>{ const b=by[x.category]||(by[x.category]={me:0,him:0}); if(paidByHim(x)) b.him+=x.amount; else b.me+=x.amount; });
-  const cats = Object.entries(by).sort((a,b)=>(b[1].me+b[1].him)-(a[1].me+a[1].him));
-  if(cats.length){ lines.push(''); cats.forEach(([id,b])=>lines.push(`${catOf(id).name}: ${first} ${money(b.me)} · ${PARTNER} ${money(b.him)}`)); }
+  const cats = famGroups();
+  if(cats.length){ lines.push('');
+    cats.forEach(c=>{
+      lines.push(`${c.cat.name}: ${first} ${money(c.me)} · ${PARTNER} ${money(c.him)}`);
+      c.notes.forEach(nt=>{ const who = nt.me&&nt.him ? `${first} ${money(nt.me)} · ${PARTNER} ${money(nt.him)}` : nt.him ? `${money(nt.him)} (${PARTNER})` : money(nt.me); lines.push(`   - ${nt.label||'Sin detalle'}${nt.n>1?' ×'+nt.n:''}: ${who}`); });
+    }); }
   return lines.join('\n');
 }
 function renderFamily(){
@@ -914,8 +959,7 @@ function renderFamily(){
   if(!f.mv.length){ box.innerHTML = `<div class="empty">Todavía no hay gastos familiares en ${MESES[view.m]}. Marcá "Gasto familiar" al cargar uno y elegí quién lo pagó.</div>`; return; }
   const pa = f.total ? Math.round(f.me/f.total*100) : 0;
   const bal = f.diff>0 ? `<b class="big pos">${PARTNER} te debe ${money(f.diff)}</b>` : f.diff<0 ? `<b class="big neg">Le debés ${money(-f.diff)} a ${PARTNER}</b>` : `<b class="big">Están a mano</b>`;
-  const by = {}; f.mv.forEach(x=>{ const b=by[x.category]||(by[x.category]={me:0,him:0}); if(paidByHim(x)) b.him+=x.amount; else b.me+=x.amount; });
-  const cats = Object.entries(by).map(([id,b])=>({cat:catOf(id),...b})).sort((a,b)=>(b.me+b.him)-(a.me+a.him));
+  const cats = famGroups();
   box.innerHTML = `
     <div class="fstats">
       <div class="fstat"><span class="eyebrow">Total familiar</span><b>${money(f.total)}</b><small style="color:var(--muted);font-size:12px">${f.mv.length} gasto${f.mv.length>1?'s':''} · mitad ${money(Math.round(f.half))}</small></div>
@@ -924,13 +968,53 @@ function renderFamily(){
     </div>
     <div class="fbar" role="img" aria-label="Vos ${pa}%, ${PARTNER} ${100-pa}%"><i class="a" style="width:${pa}%"></i><i class="b" style="width:${100-pa}%"></i></div>
     <div class="fbal"><div>${bal}<small>Cierre de ${MESES[view.m]}: cada uno pone la mitad de ${money(f.total)}.</small></div><button type="button" class="btn ghost" id="famShare">Compartir cierre</button></div>
-    <ul class="fcats"><li class="head"><i style="visibility:hidden"></i><span class="n"></span><span class="v">Vos</span><span class="v">${PARTNER}</span></li>${cats.map(c=>`<li style="--c:${c.cat.c}"><i></i><span class="n">${esc(c.cat.name)}</span><span class="v mine">${c.me?money(c.me):'—'}</span><span class="v his">${c.him?money(c.him):'—'}</span></li>`).join('')}</ul>`;
+    <ul class="fcats"><li class="head"><div class="frow"><i style="visibility:hidden"></i><span class="n"></span><span class="v">Vos</span><span class="v">${PARTNER}</span></div></li>${cats.map(c=>`<li style="--c:${c.cat.c}">
+      <button type="button" class="frow" aria-expanded="false"><i></i><span class="n"><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>${esc(c.cat.name)}<span class="cnt">${c.n} gasto${c.n>1?'s':''}</span></span><span class="v mine">${c.me?money(c.me):'—'}</span><span class="v his">${c.him?money(c.him):'—'}</span></button>
+      <ul class="fnotes" hidden>${c.notes.map(nt=>`<li><span class="nn ${nt.label?'':'none'}">${nt.label?esc(nt.label):'Sin detalle'}${nt.n>1?`<small>×${nt.n}</small>`:''}</span><span class="v mine">${nt.me?money(nt.me):'—'}</span><span class="v his">${nt.him?money(nt.him):'—'}</span></li>`).join('')}</ul>
+    </li>`).join('')}</ul>
+    <p class="hint" style="margin-top:10px;font-size:12px;color:var(--muted)">Tocá una categoría para ver el detalle por nota.</p>`;
+  box.querySelectorAll('.fcats li:not(.head) .frow').forEach(b=>b.addEventListener('click',()=>{ const li=b.parentElement; const open=li.classList.toggle('open'); b.setAttribute('aria-expanded',String(open)); li.querySelector('.fnotes').hidden=!open; }));
   $('#famShare').addEventListener('click', async()=>{
     const text = famText();
     try{ if(navigator.share){ await navigator.share({text}); return; } }catch(e){ if(e && e.name==='AbortError') return; }
     try{ await navigator.clipboard.writeText(text); toast('Cierre copiado, pegalo donde quieras'); }catch(e){ prompt('Copiá el cierre:', text); }
   });
 }
+
+/* ---------- ingresos ---------- */
+function incGroups(){
+  const by = {};
+  monthMovs().filter(x=>x.type==='ingreso').forEach(x=>{
+    const b = by[x.category] || (by[x.category]={sum:0,n:0,notes:{}});
+    const key = (x.note||'').trim().toLowerCase();
+    const nt = b.notes[key] || (b.notes[key]={label:(x.note||'').trim(),sum:0,n:0,dates:[]});
+    b.sum+=x.amount; b.n++; nt.sum+=x.amount; nt.n++; nt.dates.push(x.date);
+  });
+  return Object.entries(by).map(([id,b])=>({cat:catOf(id), sum:b.sum, n:b.n, notes:Object.values(b.notes).sort((a,c)=>c.sum-a.sum)})).sort((a,c)=>c.sum-a.sum);
+}
+function renderIncome(){
+  const box = $('#incBox'); const cats = incGroups();
+  const total = cats.reduce((a,c)=>a+c.sum,0), n = cats.reduce((a,c)=>a+c.n,0);
+  if(!n){ box.innerHTML = `<div class="empty">Todavía no hay ingresos en ${MESES[view.m]}. Cargalos desde "Cargar movimiento" eligiendo Ingreso.</div>`; return; }
+  let sum6=0; for(let i=5;i>=0;i--){ const d=new Date(view.y, view.m-i, 1); const k=d.getFullYear()+'-'+p2(d.getMonth()+1); sum6 += state.movements.filter(x=>x.type==='ingreso'&&ymOf(x.date)===k).reduce((a,x)=>a+x.amount,0); }
+  const top = cats[0];
+  const fmtDates = ds => { const u=[...new Set(ds)].sort(); return u.slice(0,3).map(fmtDay).join(', ') + (u.length>3?` +${u.length-3}`:''); };
+  box.innerHTML = `
+    <div class="fstats">
+      <div class="fstat tot"><span class="eyebrow">Total del mes</span><b>${money(total)}</b><small style="color:var(--muted);font-size:12px">${n} ingreso${n>1?'s':''}</small></div>
+      <div class="fstat"><span class="eyebrow">Principal fuente</span><b>${esc(top.cat.name)}</b><small style="color:var(--muted);font-size:12px">${money(top.sum)} · ${Math.round(top.sum/total*100)}% del total</small></div>
+      <div class="fstat"><span class="eyebrow">Promedio 6 meses</span><b>${money(sum6/6)}</b><small style="color:var(--muted);font-size:12px">${total>=sum6/6?'este mes por encima':'este mes por debajo'} del promedio</small></div>
+    </div>
+    <div class="fbar" role="img" aria-label="Ingresos por fuente">${cats.map(c=>`<i style="width:${c.sum/total*100}%;background:${c.cat.c}" title="${esc(c.cat.name)}"></i>`).join('')}</div>
+    <ul class="fcats"><li class="head"><div class="frow"><i style="visibility:hidden"></i><span class="n"></span><span class="v">Monto</span></div></li>${cats.map(c=>`<li style="--c:${c.cat.c}">
+      <button type="button" class="frow" aria-expanded="false"><i></i><span class="n"><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>${esc(c.cat.name)}<span class="cnt">${c.n} ingreso${c.n>1?'s':''}</span></span><span class="v amt">${money(c.sum)}</span></button>
+      <ul class="fnotes" hidden>${c.notes.map(nt=>`<li><span class="nn ${nt.label?'':'none'}">${nt.label?esc(nt.label):'Sin detalle'}${nt.n>1?`<small>×${nt.n}</small>`:''}<small>${fmtDates(nt.dates)}</small></span><span class="v amt">${money(nt.sum)}</span></li>`).join('')}</ul>
+    </li>`).join('')}</ul>
+    <p class="hint" style="margin-top:10px;font-size:12px;color:var(--muted)">Tocá una fuente para ver el detalle por nota.</p>`;
+  box.querySelectorAll('.fcats li:not(.head) .frow').forEach(b=>b.addEventListener('click',()=>{ const li=b.parentElement; const open=li.classList.toggle('open'); b.setAttribute('aria-expanded',String(open)); li.querySelector('.fnotes').hidden=!open; }));
+}
+$('#tInTile').addEventListener('click',()=>{ document.getElementById('ingresos').scrollIntoView({behavior:'smooth',block:'start'}); });
+$('#tInTile').addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); $('#tInTile').click(); } });
 
 /* ---------- movimientos ---------- */
 function renderMovs(){
@@ -1334,7 +1418,7 @@ $('#resetBtn').addEventListener('click',async()=>{
 });
 function setNav(href){ document.querySelectorAll('[data-nav]').forEach(b=>b.classList.toggle('active', b.getAttribute('href')===href)); }
 document.querySelectorAll('[data-nav]').forEach(a=>a.addEventListener('click',()=>setNav(a.getAttribute('href'))));
-const SECTIONS=['cargar','categorias','familia','presupuestos','movimientos'];
+const SECTIONS=['cargar','categorias','familia','ingresos','presupuestos','movimientos'];
 let spyT=null;
 window.addEventListener('scroll',()=>{ if(spyT) return; spyT=requestAnimationFrame(()=>{ spyT=null;
   const line = window.innerHeight*0.38; let cur='#inicio';
@@ -1345,7 +1429,7 @@ window.addEventListener('scroll',()=>{ if(spyT) return; spyT=requestAnimationFra
 let toastT; function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2200); }
 
 function renderAll(){
-  renderHeader(); renderTiles(); renderDonut(); renderBars(); renderFamily(); renderBudgets(); renderMovs();
+  renderHeader(); renderTiles(); renderDonut(); renderBars(); renderFamily(); renderIncome(); renderBudgets(); renderMovs();
 }
 $('#date').value = todayISO();
 renderChips();
