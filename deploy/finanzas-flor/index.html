@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finanzas de Flor</title>
+<meta name="theme-color" content="#6B5BE0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Finanzas">
+<link rel="apple-touch-icon" href="/finanzas-icon.png">
+<link rel="icon" type="image/png" href="/finanzas-icon.png">
+<link rel="manifest" href="/finanzas.webmanifest">
+<style>
+html,body{height:100%;margin:0;background:#F6F5FB;color:#7B7797;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;}
+.ld{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;font-size:14px;}
+.ld i{width:22px;height:22px;border:3px solid #E1DEF0;border-top-color:#6B5BE0;border-radius:50%;animation:s .8s linear infinite;}
+@keyframes s{to{transform:rotate(360deg)}}
+.ld button{margin-top:6px;border:0;background:#6B5BE0;color:#fff;border-radius:12px;padding:10px 18px;font:inherit;font-weight:600;cursor:pointer;}
+</style>
+</head>
+<body>
+<div class="ld" id="ld"><i></i><span>Cargando tus finanzas…</span></div>
+<script>
+// La app vive en el repositorio (public/finanzas.html). Esta página la trae y la muestra;
+// si no hay conexión, usa la última copia guardada en este navegador.
+(async()=>{
+  const SRC='https://raw.githubusercontent.com/fnav-ctrl/Ingenii/claude/personal-finance-app-epee5z/public/finanzas.html';
+  const K='freelo-finanzas-app';
+  const ld=document.getElementById('ld');
+  let html=null;
+  try{ const r=await fetch(SRC,{cache:'no-store'}); if(r.ok){ const t=await r.text(); if(t.includes('</html>')){ html=t; try{ localStorage.setItem(K,t); }catch(e){} } } }catch(e){}
+  if(!html){ try{ html=localStorage.getItem(K); }catch(e){} }
+  if(!html){ ld.innerHTML='<span>No pude cargar la app. Revisá la conexión.</span><button onclick="location.reload()">Reintentar</button>'; return; }
+  document.open(); document.write(html); document.close();
+})();
+</script>
+</body>
+</html>
