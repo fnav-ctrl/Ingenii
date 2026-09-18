@@ -23,7 +23,7 @@ const FROM = process.env.NOTIFY_FROM || "Piazza en Obra <onboarding@resend.dev>"
 
 const TIERS = [
   { name: "Bronce", min: 0 }, { name: "Plata", min: 100 },
-  { name: "Oro", min: 200 }, { name: "Platinium", min: 300 },
+  { name: "Oro", min: 150 }, { name: "Platinium", min: 350 },
 ];
 function tierName(pts) { let n = "Bronce"; for (const t of TIERS) if (pts >= t.min) n = t.name; return n; }
 

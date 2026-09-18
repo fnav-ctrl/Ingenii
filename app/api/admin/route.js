@@ -20,7 +20,7 @@ const PLATFORM = process.env.NOTIFY_PLATFORM_URL || "https://piazza-en-obra.verc
 
 const PTS_POR_FOTO = 10;
 const PTS_VIDEO = 30;
-const TIERS = [{ name: "Bronce", min: 0 }, { name: "Plata", min: 100 }, { name: "Oro", min: 200 }, { name: "Platinium", min: 300 }];
+const TIERS = [{ name: "Bronce", min: 0 }, { name: "Plata", min: 100 }, { name: "Oro", min: 150 }, { name: "Platinium", min: 350 }];
 function tierName(pts) { let n = "Bronce"; for (const t of TIERS) if (pts >= t.min) n = t.name; return n; }
 
 function J(o, s = 200) { return new Response(JSON.stringify(o), { status: s, headers: { "Content-Type": "application/json" } }); }
@@ -64,7 +64,7 @@ export async function POST(req) {
       for (const p of (f.paths || [])) { const u = await signed(p); if (u) urls.push(u); }
       fotos.push({ id: f.id, tipo: f.tipo || "foto", video_url: f.video_url || "", miembro_email: f.miembro_email, miembro_nombre: f.miembro_nombre, nombre_carga: f.nombre_carga, descripcion: f.descripcion, cantidad: f.cantidad, created_at: f.created_at, urls });
     }
-    const canjes = await sbGet("canjes?estado=eq.pendiente&select=*&order=created_at.desc&limit=200");
+    const canjes = await sbGet("canjes?estado=not.in.(rechazado)&select=*&order=created_at.desc&limit=200");
     return J({ ok: true, miembros, fotos, canjes });
   }
 
@@ -121,16 +121,20 @@ export async function POST(req) {
 
   if (action === "canje") {
     const id = String(d.id || "");
-    const estado = ["pendiente", "entregado", "rechazado"].indexOf(String(d.estado)) >= 0 ? String(d.estado) : "";
+    const allowed = ["pendiente", "contactado", "enviado", "entregado", "rechazado"];
+    const estado = allowed.indexOf(String(d.estado)) >= 0 ? String(d.estado) : "";
+    const responsable = String(d.responsable || "").trim().slice(0, 80);
     if (!id || !estado) return J({ ok: false, error: "bad" }, 400);
     const rows = await sbGet("canjes?id=eq." + enc(id) + "&select=*&limit=1");
     const c = rows[0];
     if (!c) return J({ ok: false, error: "no_canje" }, 404);
-    const r = await sbPatch("canjes?id=eq." + enc(id), { estado });
+    const r = await sbPatch("canjes?id=eq." + enc(id), { estado, responsable, estado_fecha: new Date().toISOString() });
     if (!r.ok) return J({ ok: false, error: "update" }, 500);
     const esBeneficio = c.tipo === "beneficio" || c.tipo === "sorteo";
-    if (estado === "entregado") {
-      sendEmail(c.miembro_email, "Tu solicitud en Piazza en Obra ya está lista", frame("¡Listo! Preparamos tu " + (esBeneficio ? "beneficio" : "canje") + ". Nos pondremos en contacto para coordinar la entrega.", [["Ítem", c.producto], ["Estado", "Entregado"]], { label: "Ir a la plataforma", url: PLATFORM }));
+    if (estado === "enviado") {
+      sendEmail(c.miembro_email, "Tu solicitud en Piazza en Obra fue enviada", frame("¡Buenas noticias! Tu " + (esBeneficio ? "beneficio" : "canje") + " ya está en camino.", [["Ítem", c.producto], ["Estado", "Enviado"]], { label: "Ir a la plataforma", url: PLATFORM }));
+    } else if (estado === "entregado") {
+      sendEmail(c.miembro_email, "Tu solicitud en Piazza en Obra ya está lista", frame("¡Listo! Preparamos y coordinamos la entrega de tu " + (esBeneficio ? "beneficio" : "canje") + ".", [["Ítem", c.producto], ["Estado", "Entregado"]], { label: "Ir a la plataforma", url: PLATFORM }));
     } else if (estado === "rechazado" && !esBeneficio && (c.costo || 0) > 0) {
       // Devuelve los puntos de un canje de producto rechazado.
       const mr = await sbGet("miembros?email=eq." + enc(c.miembro_email) + "&select=*&limit=1");

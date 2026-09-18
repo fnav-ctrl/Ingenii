@@ -36,7 +36,7 @@ input{font-family:inherit;}
 /* wordmark */
 .brand{display:inline-flex;align-items:center;user-select:none;color:var(--ink);}
 .brand .p{font-weight:800;letter-spacing:-0.03em;line-height:1;font-size:1em;}
-.brand .eo{display:inline-flex;flex-direction:column;line-height:0.92;margin-left:0.42em;font-weight:700;letter-spacing:0.06em;}
+.brand .eo{display:inline-flex;flex-direction:column;align-items:flex-start;text-align:left;line-height:0.92;margin-left:0.42em;font-weight:700;letter-spacing:0.06em;}
 .brand .eo i{font-style:normal;font-size:0.30em;}
 .brand.on-dark{color:#fff;}
 
@@ -257,6 +257,8 @@ input{font-family:inherit;}
 .bene-done{font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:5px 9px;flex-shrink:0;white-space:nowrap;color:var(--green);border:0.5px solid rgba(74,122,90,0.5);}
 .bene-done.no{color:var(--red);border-color:rgba(162,67,56,0.5);}
 .rung.current .bene-done{color:#fff;border-color:rgba(255,255,255,0.4);}
+.bene-inc{font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:5px 9px;flex-shrink:0;white-space:nowrap;color:var(--gray);border:0.5px dashed var(--line);}
+.rung.current .bene-inc{color:#e6e2d8;border-color:rgba(255,255,255,0.28);}
 .bene-lock{font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray-soft);flex-shrink:0;}
 
 /* CANJE catalog */
@@ -303,8 +305,9 @@ input{font-family:inherit;}
 .fbadge.no{color:var(--red);border-color:rgba(162,67,56,0.5);}
 .fbadge.pend{color:var(--gold);border-color:rgba(200,149,42,0.5);}
 /* modal de carga de fotos */
-#photoModal,#videoModal,#photoNotice,#addrModal{position:fixed;inset:0;z-index:520;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(26,26,24,0.6);backdrop-filter:blur(4px);overflow-y:auto;}
-#photoModal.show,#videoModal.show,#photoNotice.show,#addrModal.show{display:flex;}
+#photoModal,#videoModal,#photoNotice,#addrModal,#sorteoPop{position:fixed;inset:0;z-index:520;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(26,26,24,0.6);backdrop-filter:blur(4px);overflow-y:auto;}
+#photoModal.show,#videoModal.show,#photoNotice.show,#addrModal.show,#sorteoPop.show{display:flex;}
+.ad-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .notice-text{font-size:14px;line-height:1.6;color:var(--ink);margin-bottom:22px;}
 .notice-text b{font-weight:700;}
 .pm-card{position:relative;width:100%;max-width:460px;background:var(--white);padding:34px 30px 30px;box-shadow:0 40px 100px -30px rgba(26,26,24,0.7);max-height:92vh;overflow-y:auto;}
@@ -714,11 +717,31 @@ input{font-family:inherit;}
     <button class="pm-x" id="addrClose" type="button">×</button>
     <span class="eyebrow" style="display:block;margin-bottom:10px">Kit de bienvenida</span>
     <h2 style="font-size:22px;font-weight:800;letter-spacing:-0.01em;margin-bottom:6px">¿A dónde te lo enviamos?</h2>
-    <p style="font-size:13px;color:var(--gray);line-height:1.5;margin-bottom:20px">Dejanos tu domicilio para coordinar el envío del kit de bienvenida.</p>
-    <label class="field-label" for="addrInput">Domicilio *</label>
-    <div class="field"><input id="addrInput" type="text" placeholder="Calle, número, piso/depto, localidad, provincia y CP" maxlength="200"></div>
+    <p style="font-size:13px;color:var(--gray);line-height:1.5;margin-bottom:20px">Completá tu domicilio para coordinar el envío del kit de bienvenida.</p>
+    <div class="ad-row">
+      <div><label class="field-label" for="adCalle">Calle *</label><div class="field"><input id="adCalle" type="text" maxlength="80"></div></div>
+      <div><label class="field-label" for="adNumero">Número *</label><div class="field"><input id="adNumero" type="text" maxlength="24" placeholder="Nº, piso, depto"></div></div>
+    </div>
+    <label class="field-label" for="adBarrio">Barrio / localidad</label>
+    <div class="field"><input id="adBarrio" type="text" maxlength="80"></div>
+    <div class="ad-row">
+      <div><label class="field-label" for="adCp">Código postal *</label><div class="field"><input id="adCp" type="text" maxlength="12"></div></div>
+      <div><label class="field-label" for="adProv">Provincia *</label><div class="field"><input id="adProv" type="text" maxlength="40"></div></div>
+    </div>
+    <label class="field-label" for="adObs">Observaciones</label>
+    <div class="field"><textarea id="adObs" rows="2" placeholder="Entre calles, referencias, horario de entrega…" maxlength="200" style="width:100%;border:none;outline:none;background:transparent;font-family:inherit;font-size:14px;resize:vertical"></textarea></div>
     <div class="auth-err" id="addrErr"></div>
     <button class="btn-primary" id="addrSubmit"><span>Solicitar kit</span><span class="arw">→</span></button>
+  </div>
+</div>
+<div id="sorteoPop">
+  <div class="pm-card">
+    <button class="pm-x" id="spClose" type="button">×</button>
+    <span class="eyebrow" style="display:block;margin-bottom:10px">Sorteo del trimestre</span>
+    <h2 style="font-size:22px;font-weight:800;letter-spacing:-0.01em;margin-bottom:10px">¡Este mes hay sorteo! 🎉</h2>
+    <p id="spBody" style="font-size:14px;color:var(--ink);line-height:1.6;margin-bottom:22px"></p>
+    <button class="btn-primary" id="spApply"><span>Aplicar al sorteo</span><span class="arw">→</span></button>
+    <div class="auth-alt" style="margin-top:12px"><button id="spLater">Ahora no</button></div>
   </div>
 </div>
 <div id="toasts"></div>
@@ -753,12 +776,23 @@ input{font-family:inherit;}
   ];
 
   var SORTEOS = [
-    { q:"Q1 · Ene–Mar", prize:"Sin sorteo",       who:"Lanzamiento del programa", tiersAllowed:[],      active:false },
-    { q:"Q2 · Abr–Jun", prize:"2 baños completos", who:"Plata, Oro y Platinium",   tiersAllowed:[1,2,3], active:true  },
-    { q:"Q3 · Jul–Sep", prize:"2 baños completos", who:"Oro y Platinium",          tiersAllowed:[2,3],   active:true  },
-    { q:"Q4 · Oct–Dic", prize:"2 baños completos", who:"Plata, Oro y Platinium",   tiersAllowed:[1,2,3], active:true  }
+    { fecha:"15 de marzo",      mes:2,  prize:"2 baños completos", who:"Plata, Oro y Platinium", tiersAllowed:[1,2,3] },
+    { fecha:"15 de junio",      mes:5,  prize:"2 baños completos", who:"Plata, Oro y Platinium", tiersAllowed:[1,2,3] },
+    { fecha:"15 de septiembre", mes:8,  prize:"2 baños completos", who:"Plata, Oro y Platinium", tiersAllowed:[1,2,3] },
+    { fecha:"15 de diciembre",  mes:11, prize:"2 baños completos", who:"Plata, Oro y Platinium", tiersAllowed:[1,2,3] }
   ];
-  var CURRENT_Q = 2; // Q3 (demo) resaltado
+  // Índice del próximo sorteo (según la fecha de hoy).
+  function nextSorteoIndex(){
+    var now=new Date(), y=now.getFullYear(), best=-1, bt=Infinity;
+    for(var i=0;i<SORTEOS.length;i++){
+      var t=new Date(y,SORTEOS[i].mes,15,23,59).getTime();
+      if(t>=now.getTime() && t<bt){ bt=t; best=i; }
+    }
+    return best<0?0:best;
+  }
+  function nextSorteoFecha(){ return SORTEOS[nextSorteoIndex()].fecha; }
+  // Primer día hábil (lun–vie) del mes.
+  function firstBusinessDay(y,m){ var d=new Date(y,m,1); while(d.getDay()===0||d.getDay()===6){ d.setDate(d.getDate()+1); } return d.getDate(); }
 
   // Catálogo (muestra representativa de los 472 productos, con costo en puntos)
   var CATALOG = [
@@ -1268,11 +1302,12 @@ input{font-family:inherit;}
   function mapCanje(c){
     var esBene = c.tipo==="beneficio"||c.tipo==="sorteo";
     var est = c.estado||"pendiente";
-    var tag = est==="entregado"?"Entregado":(est==="rechazado"?"Rechazado":"Pendiente");
+    var TAG={pendiente:"Pendiente",contactado:"Contactado",enviado:"Enviado",entregado:"Entregado",rechazado:"Rechazado"};
+    var IC={pendiente:"◷",contactado:"☎",enviado:"↗",entregado:"✓",rechazado:"×"};
     var pref = c.tipo==="sorteo" ? "Sorteo: " : (c.tipo==="beneficio" ? "Beneficio: " : "Canje: ");
     return { label: pref+(c.producto||""),
-             delta: (esBene||est==="rechazado") ? 0 : -(c.costo||0), tag: tag,
-             icon: est==="entregado"?"✓":(est==="rechazado"?"×":"◷"), ts:new Date(c.created_at).getTime() };
+             delta: (esBene||est==="rechazado") ? 0 : -(c.costo||0), tag: TAG[est]||est,
+             icon: IC[est]||"◷", ts:new Date(c.created_at).getTime() };
   }
   function loadMe(){
     return api("me").then(function(j){
@@ -1305,10 +1340,11 @@ input{font-family:inherit;}
       lv.appendChild(d);
     });
     var sr=$("introSorteos"); sr.innerHTML="";
+    var nq=nextSorteoIndex();
     SORTEOS.forEach(function(s,i){
-      var d=document.createElement("div"); d.className="sorteo-card"+(i===CURRENT_Q?" active":"");
-      var st=!s.active?"No activo":(i===CURRENT_Q?"Trimestre actual":"Activo");
-      d.innerHTML='<div class="sorteo-q">'+s.q+'</div><div class="sorteo-prize">'+s.prize+'</div><div class="sorteo-who">'+s.who+'</div><span class="sorteo-state">'+st+'</span>';
+      var d=document.createElement("div"); d.className="sorteo-card"+(i===nq?" active":"");
+      var st=(i===nq?"Próximo":"Programado");
+      d.innerHTML='<div class="sorteo-q">'+s.fecha+'</div><div class="sorteo-prize">'+s.prize+'</div><div class="sorteo-who">'+s.who+'</div><span class="sorteo-state">'+st+'</span>';
       sr.appendChild(d);
     });
   }
@@ -1328,6 +1364,12 @@ input{font-family:inherit;}
     renderLadder(); renderCatalog(); renderSorteos(); renderGallery(); renderActivity();
   }
 
+  // Clasifica cada beneficio: sorteo -> aplicar; kit/muestra a pedido -> solicitar; el resto -> incluido (permanente).
+  function beneAction(b){
+    if(/sorteo/i.test(b)) return "aplicar";
+    if(/kit de bienvenida|kit pileta/i.test(b)) return "solicitar";
+    return "incluido";
+  }
   function renderLadder(){
     var el=$("ladder"); el.innerHTML="";
     TIERS.forEach(function(t,i){
@@ -1338,14 +1380,16 @@ input{font-family:inherit;}
       var unlocked=i<=state.tier;
       var range=t.name==="Platinium"?(t.min+"+ pts"):(t.min+" – "+(TIERS[i+1].min-1)+" pts");
       var benes=t.benefits.map(function(b){
-        var right;
+        var right, act=beneAction(b);
         if(!unlocked){ right='<span class="bene-lock">Bloqueado</span>'; }
+        else if(act==="incluido"){ right='<span class="bene-inc">Incluido</span>'; }
+        else if(act==="aplicar"){ right='<button class="bene-req" data-act="aplicar">Aplicar</button>'; }
         else if(state.requested && state.requested[b]){
           var st=state.requested[b];
-          var lbl=st==="entregado"?"Entregado ✓":(st==="rechazado"?"No disponible":"Solicitado");
+          var lbl=st==="entregado"?"Entregado ✓":(st==="enviado"?"Enviado":(st==="contactado"?"En proceso":(st==="rechazado"?"No disponible":"Solicitado")));
           right='<span class="bene-done'+(st==="rechazado"?" no":"")+'">'+lbl+'</span>';
         } else {
-          right='<button class="bene-req" data-bene="'+encodeURIComponent(b)+'" data-tier="'+t.name+'">Solicitar</button>';
+          right='<button class="bene-req" data-bene="'+encodeURIComponent(b)+'" data-tier="'+t.name+'" data-act="solicitar">Solicitar</button>';
         }
         return '<div class="bene"><span class="bene-txt">'+b+'</span>'+right+'</div>';
       }).join("");
@@ -1353,7 +1397,7 @@ input{font-family:inherit;}
       d.innerHTML='<span class="rung-state">'+label+'</span><div class="rung-top"><div class="rung-badge" style="background:'+t.color+'">'+badgeTxt(t)+'</div><div class="rung-name">'+t.name+'</div></div><div class="rung-range">'+range+'</div><div class="rung-benes">'+benes+'</div>';
       el.appendChild(d);
     });
-    Array.prototype.forEach.call(el.querySelectorAll("[data-bene]"),function(b){ b.addEventListener("click",function(){ requestBenefit(decodeURIComponent(b.getAttribute("data-bene")), b.getAttribute("data-tier")); }); });
+    Array.prototype.forEach.call(el.querySelectorAll(".bene-req"),function(b){ b.addEventListener("click",function(){ if(b.getAttribute("data-act")==="aplicar"){ enterSorteo(nextSorteoFecha()); return; } requestBenefit(decodeURIComponent(b.getAttribute("data-bene")), b.getAttribute("data-tier")); }); });
   }
 
   function renderCatalog(){
@@ -1391,18 +1435,21 @@ input{font-family:inherit;}
 
   function renderSorteos(){
     var el=$("sorteosApp"); el.innerHTML="";
+    var nq=nextSorteoIndex(), now=Date.now(), y=new Date().getFullYear();
     SORTEOS.forEach(function(s,i){
-      var active=i===CURRENT_Q;
-      var d=document.createElement("div"); d.className="srt"+(active?" active":"");
+      var isNext=(i===nq);
+      var dt=new Date(y,s.mes,15,23,59).getTime();
+      var past=dt<now && !isNext;
+      var d=document.createElement("div"); d.className="srt"+(isNext?" active":"");
+      var sname="Sorteo "+s.fecha;
+      var eligible=s.tiersAllowed.indexOf(state.tier)>=0;
       var foot;
-      if(!s.active){ foot='<div class="srt-note">No activo</div>'; }
-      else if(active){
-        var sname="Sorteo "+s.q;
-        if(state.requested && state.requested[sname]){ foot='<div class="srt-note">Anotado ✓</div>'; }
-        else { var q=s.tiersAllowed.indexOf(state.tier)>=0; foot=q?'<button class="srt-btn" data-sorteo="'+s.q+'">Participar</button>':'<div class="srt-note">Requiere nivel '+TIERS[s.tiersAllowed[0]].name+'</div>'; }
-      }
-      else { foot='<div class="srt-note">'+(state.tier>=(s.tiersAllowed[0]||99)?"Participás":"Activo")+'</div>'; }
-      d.innerHTML='<div class="q">'+s.q+(active?' · actual':'')+'</div><div class="prize">'+s.prize+'</div><div class="who">'+s.who+'</div>'+foot;
+      if(past){ foot='<div class="srt-note">Finalizado</div>'; }
+      else if(!eligible){ foot='<div class="srt-note">Requiere nivel '+TIERS[s.tiersAllowed[0]].name+'</div>'; }
+      else if(state.requested && state.requested[sname]){ foot='<div class="srt-note">Anotado ✓</div>'; }
+      else if(isNext){ foot='<button class="srt-btn" data-sorteo="'+esc(s.fecha)+'">Aplicar</button>'; }
+      else { foot='<div class="srt-note">Próximamente</div>'; }
+      d.innerHTML='<div class="q">'+s.fecha+(isNext?' · próximo':'')+'</div><div class="prize">'+s.prize+'</div><div class="who">'+s.who+'</div>'+foot;
       el.appendChild(d);
     });
     Array.prototype.forEach.call(el.querySelectorAll("[data-sorteo]"),function(b){ b.addEventListener("click",function(){ enterSorteo(b.getAttribute("data-sorteo")); }); });
@@ -1472,11 +1519,12 @@ input{font-family:inherit;}
       else { toast("!","No se pudo solicitar","Reintentá en un momento"); }
     });
   }
-  function openAddrModal(){ $("addrInput").value=""; $("addrErr").textContent=""; $("addrModal").classList.add("show"); setTimeout(function(){ $("addrInput").focus(); },250); }
+  function openAddrModal(){ ["adCalle","adNumero","adBarrio","adCp","adProv","adObs"].forEach(function(id){ $(id).value=""; }); $("addrErr").textContent=""; $("addrModal").classList.add("show"); setTimeout(function(){ $("adCalle").focus(); },250); }
   function closeAddrModal(){ $("addrModal").classList.remove("show"); }
   function submitAddr(){
-    var dom=$("addrInput").value.trim();
-    if(dom.length<6){ $("addrErr").textContent="Ingresá tu domicilio completo (calle, número, localidad y CP)."; return; }
+    var calle=$("adCalle").value.trim(), numero=$("adNumero").value.trim(), barrio=$("adBarrio").value.trim(), cp=$("adCp").value.trim(), prov=$("adProv").value.trim(), obs=$("adObs").value.trim();
+    if(!calle||!numero||!cp||!prov){ $("addrErr").textContent="Completá calle, número, código postal y provincia."; return; }
+    var dom=calle+" "+numero+(barrio?(", "+barrio):"")+" · CP "+cp+" · "+prov+(obs?(" · Obs: "+obs):"");
     var b=pendingBenefit; if(!b){ closeAddrModal(); return; }
     closeAddrModal(); pendingBenefit=null;
     submitBenefit(b.name,b.tier,dom);
@@ -1492,6 +1540,24 @@ input{font-family:inherit;}
       } else if(j&&j.error==="no_aprobado"){ toast("!","Tu alta no está aprobada aún",""); }
       else { toast("!","No se pudo anotar","Reintentá en un momento"); }
     });
+  }
+  var pendingSorteoFecha=null;
+  function maybeShowSorteoPopup(){
+    try{
+      if(!state || state.estado!=="aprobado") return;
+      var now=new Date(), y=now.getFullYear(), m=now.getMonth();
+      var s=null; for(var i=0;i<SORTEOS.length;i++){ if(SORTEOS[i].mes===m){ s=SORTEOS[i]; break; } }
+      if(!s) return;                                    // no es mes de sorteo
+      if(now.getDate()!==firstBusinessDay(y,m)) return; // no es el 1er día hábil del mes
+      if(s.tiersAllowed.indexOf(state.tier)<0) return;  // el nivel no participa
+      if(state.requested && state.requested["Sorteo "+s.fecha]) return; // ya aplicó
+      var key="piazza_sorteo_pop_"+y+"_"+m;
+      if(localStorage.getItem(key)) return;             // ya se mostró este mes
+      pendingSorteoFecha=s.fecha;
+      $("spBody").innerHTML="Este mes se realiza el sorteo del <b>"+esc(s.fecha)+"</b> y tu nivel participa. ¡Aplicá para entrar!";
+      $("sorteoPop").classList.add("show");
+      localStorage.setItem(key,"1");
+    }catch(e){}
   }
 
   /* ===== Carga de fotos (modal + Supabase) ===== */
@@ -1627,7 +1693,7 @@ input{font-family:inherit;}
   var appActive=false;
   function show(id){ ["cover","intro","register","auth","pending","app"].forEach(function(s){ var el=$(s); if(s===id){ el.classList.remove("hide"); if(s==="app")el.classList.add("show"); } else { el.classList.add("hide"); if(s==="app")el.classList.remove("show"); } }); }
   function showCover(){ show("cover"); window.scrollTo(0,0); }
-  function showApp(){ appActive=true; show("app"); buildEarnCards(); render(); $("balanceNum").textContent=fmt(state.points); }
+  function showApp(){ appActive=true; show("app"); buildEarnCards(); render(); $("balanceNum").textContent=fmt(state.points); setTimeout(maybeShowSorteoPopup,700); }
   function showPending(msg){
     $("codeErr").textContent = msg || "";
     show("pending"); window.scrollTo(0,0);
@@ -1734,8 +1800,12 @@ input{font-family:inherit;}
   // domicilio (kit de bienvenida)
   $("addrClose").addEventListener("click",closeAddrModal);
   $("addrSubmit").addEventListener("click",submitAddr);
-  $("addrInput").addEventListener("keydown",function(e){ if(e.key==="Enter")submitAddr(); });
   $("addrModal").addEventListener("click",function(e){ if(e.target.id==="addrModal") closeAddrModal(); });
+  // pop-up de sorteo
+  $("spClose").addEventListener("click",function(){ $("sorteoPop").classList.remove("show"); });
+  $("spLater").addEventListener("click",function(){ $("sorteoPop").classList.remove("show"); });
+  $("spApply").addEventListener("click",function(){ $("sorteoPop").classList.remove("show"); if(pendingSorteoFecha) enterSorteo(pendingSorteoFecha); });
+  $("sorteoPop").addEventListener("click",function(e){ if(e.target.id==="sorteoPop") $("sorteoPop").classList.remove("show"); });
   $("howBtn").addEventListener("click",showIntro);
   $("logoutBtn").addEventListener("click",function(){ appActive=false; state=null; clearSess(); showCover(); });
   $("msClose").addEventListener("click",function(){ $("milestone").classList.remove("show"); });
