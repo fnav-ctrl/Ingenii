@@ -3,6 +3,7 @@
     { "path": "/api/cron", "schedule": "0 12 1 * *" }
   ],
   "rewrites": [
+    { "source": "/", "has": [{ "type": "host", "value": "admin.piazzaenobra.com" }], "destination": "/admin.html" },
     { "source": "/", "has": [{ "type": "host", "value": "admin.piazzaenobra.com.ar" }], "destination": "/admin.html" }
   ]
 }
