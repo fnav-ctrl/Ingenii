@@ -277,6 +277,8 @@ input{font-family:inherit;}
 .prod-cost small{font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;opacity:.85;margin-top:2px;}
 .prod-name{font-size:13px;font-weight:600;line-height:1.4;flex:1;margin-bottom:16px;}
 .prod-name .mk{display:inline-block;background:var(--sand-soft);color:var(--gray);font-size:9px;padding:1px 6px;border-radius:2px;margin-left:4px;text-transform:uppercase;letter-spacing:0.04em;vertical-align:middle;}
+.prod-link{display:inline-block;font-size:11px;font-weight:600;color:var(--gray);text-decoration:none;margin:-6px 0 14px;transition:color .2s;}
+.prod-link:hover{color:var(--gold);text-decoration:underline;}
 .prod-foot{margin-top:auto;}
 .redeem-btn{width:100%;border:0.5px solid var(--ink);background:var(--ink);color:#fff;padding:11px;font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;transition:background .2s,opacity .2s;}
 .redeem-btn:hover{background:var(--ink-2);}
@@ -1368,9 +1370,12 @@ input{font-family:inherit;}
       var can=state.points>=p.cost, col=costColor(p.cost);
       var i=CATALOG.indexOf(p);
       var mk=p.mk?'<span class="mk">'+p.mk+'</span>':'';
+      var q=encodeURIComponent(String(p.name).replace(/[\/.]/g," ").replace(/\s+/g," ").trim());
+      var webUrl="https://www.piazzagriferia.com/?s="+q+"&post_type=product";
       var d=document.createElement("div"); d.className="prod"+(can?" ok":"");
       d.innerHTML='<div class="prod-top"><div class="prod-cat">'+p.cat+'</div><div class="prod-cost" style="background:'+col+'"><b>'+p.cost+'</b><small>pts</small></div></div>'+
         '<div class="prod-name">'+p.name+mk+'</div>'+
+        '<a class="prod-link" href="'+webUrl+'" target="_blank" rel="noopener">Ver en piazzagriferia.com ↗</a>'+
         '<div class="prod-foot"><button class="redeem-btn" data-prod="'+i+'"'+(can?'':' disabled')+'>'+(can?'Canjear':'Faltan '+fmt(p.cost-state.points)+' pts')+'</button></div>';
       el.appendChild(d);
     });
