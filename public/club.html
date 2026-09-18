@@ -301,8 +301,8 @@ input{font-family:inherit;}
 .fbadge.no{color:var(--red);border-color:rgba(162,67,56,0.5);}
 .fbadge.pend{color:var(--gold);border-color:rgba(200,149,42,0.5);}
 /* modal de carga de fotos */
-#photoModal,#videoModal,#photoNotice{position:fixed;inset:0;z-index:520;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(26,26,24,0.6);backdrop-filter:blur(4px);overflow-y:auto;}
-#photoModal.show,#videoModal.show,#photoNotice.show{display:flex;}
+#photoModal,#videoModal,#photoNotice,#addrModal{position:fixed;inset:0;z-index:520;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(26,26,24,0.6);backdrop-filter:blur(4px);overflow-y:auto;}
+#photoModal.show,#videoModal.show,#photoNotice.show,#addrModal.show{display:flex;}
 .notice-text{font-size:14px;line-height:1.6;color:var(--ink);margin-bottom:22px;}
 .notice-text b{font-weight:700;}
 .pm-card{position:relative;width:100%;max-width:460px;background:var(--white);padding:34px 30px 30px;box-shadow:0 40px 100px -30px rgba(26,26,24,0.7);max-height:92vh;overflow-y:auto;}
@@ -705,6 +705,18 @@ input{font-family:inherit;}
     <div class="field"><textarea id="vmDesc" rows="3" placeholder="Contanos la dirección, los m² y qué ambiente se ve. Ej: Av. Corrientes 1234, CABA · 45 m² · Cocina." maxlength="300" style="width:100%;border:none;outline:none;background:transparent;font-family:inherit;font-size:14px;resize:vertical"></textarea></div>
     <div class="auth-err" id="vmErr"></div>
     <button class="btn-primary" id="vmSubmit"><span>Enviar para validar</span><span class="arw">→</span></button>
+  </div>
+</div>
+<div id="addrModal">
+  <div class="pm-card">
+    <button class="pm-x" id="addrClose" type="button">×</button>
+    <span class="eyebrow" style="display:block;margin-bottom:10px">Kit de bienvenida</span>
+    <h2 style="font-size:22px;font-weight:800;letter-spacing:-0.01em;margin-bottom:6px">¿A dónde te lo enviamos?</h2>
+    <p style="font-size:13px;color:var(--gray);line-height:1.5;margin-bottom:20px">Dejanos tu domicilio para coordinar el envío del kit de bienvenida.</p>
+    <label class="field-label" for="addrInput">Domicilio *</label>
+    <div class="field"><input id="addrInput" type="text" placeholder="Calle, número, piso/depto, localidad, provincia y CP" maxlength="200"></div>
+    <div class="auth-err" id="addrErr"></div>
+    <button class="btn-primary" id="addrSubmit"><span>Solicitar kit</span><span class="arw">→</span></button>
   </div>
 </div>
 <div id="toasts"></div>
@@ -1438,8 +1450,14 @@ input{font-family:inherit;}
       else { toast("!","No se pudo canjear","Reintentá en un momento"); }
     });
   }
+  var pendingBenefit=null;
   function requestBenefit(name,tierName){
-    api("beneficio",{ itemName:name, tier:tierName, kind:"beneficio" }).then(function(j){
+    // El Kit de bienvenida se envía a domicilio: pedimos la dirección antes de confirmar.
+    if(/kit de bienvenida/i.test(name)){ pendingBenefit={name:name,tier:tierName}; openAddrModal(); return; }
+    submitBenefit(name,tierName,"");
+  }
+  function submitBenefit(name,tierName,domicilio){
+    api("beneficio",{ itemName:name, tier:tierName, kind:"beneficio", domicilio:domicilio }).then(function(j){
       if(j&&j.ok){
         burstConfetti(0.3,55);
         state.requested=state.requested||{}; state.requested[name]="pendiente";
@@ -1448,6 +1466,15 @@ input{font-family:inherit;}
       } else if(j&&j.error==="no_aprobado"){ toast("!","Tu alta no está aprobada aún",""); }
       else { toast("!","No se pudo solicitar","Reintentá en un momento"); }
     });
+  }
+  function openAddrModal(){ $("addrInput").value=""; $("addrErr").textContent=""; $("addrModal").classList.add("show"); setTimeout(function(){ $("addrInput").focus(); },250); }
+  function closeAddrModal(){ $("addrModal").classList.remove("show"); }
+  function submitAddr(){
+    var dom=$("addrInput").value.trim();
+    if(dom.length<6){ $("addrErr").textContent="Ingresá tu domicilio completo (calle, número, localidad y CP)."; return; }
+    var b=pendingBenefit; if(!b){ closeAddrModal(); return; }
+    closeAddrModal(); pendingBenefit=null;
+    submitBenefit(b.name,b.tier,dom);
   }
   function enterSorteo(q){
     var name="Sorteo "+q;
@@ -1699,6 +1726,11 @@ input{font-family:inherit;}
   $("vmClose").addEventListener("click",closeVideoModal);
   $("vmSubmit").addEventListener("click",submitVideo);
   $("videoModal").addEventListener("click",function(e){ if(e.target.id==="videoModal") closeVideoModal(); });
+  // domicilio (kit de bienvenida)
+  $("addrClose").addEventListener("click",closeAddrModal);
+  $("addrSubmit").addEventListener("click",submitAddr);
+  $("addrInput").addEventListener("keydown",function(e){ if(e.key==="Enter")submitAddr(); });
+  $("addrModal").addEventListener("click",function(e){ if(e.target.id==="addrModal") closeAddrModal(); });
   $("howBtn").addEventListener("click",showIntro);
   $("logoutBtn").addEventListener("click",function(){ appActive=false; state=null; clearSess(); showCover(); });
   $("msClose").addEventListener("click",function(){ $("milestone").classList.remove("show"); });

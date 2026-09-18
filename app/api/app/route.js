@@ -127,14 +127,16 @@ export async function POST(req) {
     const nombre = String(d.itemName || "").trim();
     const tier = String(d.tier || "");
     const kind = String(d.kind || "beneficio");
+    const domicilio = String(d.domicilio || "").trim();
     if (!nombre) return J({ ok: false, error: "item" }, 400);
     // Evita duplicados: si ya lo solicitó, no lo registra de nuevo.
     const ex = await sbGet("canjes?miembro_email=eq." + enc(email) + "&tipo=eq." + enc(kind) + "&producto=eq." + enc(nombre) + "&select=id&limit=1");
     if (ex.length) return J({ ok: true, already: true });
-    const cr = await sbPost("canjes", { miembro_email: email, miembro_nombre: m.nombre || "", producto: nombre, detalle: tier, costo: 0, tipo: kind, estado: "pendiente" }, "return=minimal");
+    const detalle = domicilio ? ("Nivel " + tier + " · Domicilio: " + domicilio) : tier;
+    const cr = await sbPost("canjes", { miembro_email: email, miembro_nombre: m.nombre || "", producto: nombre, detalle, costo: 0, tipo: kind, estado: "pendiente" }, "return=minimal");
     if (!cr.ok) { const t = await cr.text(); return J({ ok: false, error: "db", detail: t.slice(0, 160) }, 500); }
     const asunto = kind === "sorteo" ? "Participación en sorteo" : "Solicitud de beneficio";
-    sendEmail(NOTIFY, asunto + " — " + (m.nombre || email), frame("Un miembro registró una solicitud. Marcá su estado desde el panel /admin.", [["Miembro", m.nombre], ["Email", email], [kind === "sorteo" ? "Sorteo" : "Beneficio", nombre], ["Nivel", tier]]));
+    sendEmail(NOTIFY, asunto + " — " + (m.nombre || email), frame("Un miembro registró una solicitud. Marcá su estado desde el panel /admin.", [["Miembro", m.nombre], ["Email", email], [kind === "sorteo" ? "Sorteo" : "Beneficio", nombre], ["Nivel", tier], ["Domicilio", domicilio]]));
     return J({ ok: true });
   }
 

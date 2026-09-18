@@ -195,11 +195,11 @@ h2{font-size:20px;font-weight:800;letter-spacing:-0.01em;margin:8px 0 16px;}
       var esBene = c.tipo==="beneficio"||c.tipo==="sorteo";
       var tag = c.tipo==="sorteo" ? "Sorteo" : (c.tipo==="beneficio" ? "Beneficio de nivel" : "Canje de producto");
       var costo = esBene ? "Sin costo en puntos" : ((c.costo||0)+" pts");
-      var nivel = c.detalle ? (" · Nivel "+esc(c.detalle)) : "";
+      var extra = c.detalle ? ('<br>'+esc(c.detalle)) : "";
       var d=document.createElement("div"); d.className="card";
       d.innerHTML='<div class="card-head"><div><div class="who">'+esc(c.producto||"(sin nombre)")+'</div>'+
         '<div class="meta"><b>'+esc(c.miembro_nombre||c.miembro_email)+'</b> · '+esc(c.miembro_email)+'<br>'+
-        '<b>'+tag+'</b> · '+costo+nivel+' · '+fdate(c.created_at)+'</div></div>'+
+        '<b>'+tag+'</b> · '+costo+' · '+fdate(c.created_at)+extra+'</div></div>'+
         '<span class="statepill">Pendiente</span></div>'+
         '<div class="actions" style="margin-top:10px">'+
         '<button class="btn ok sm" data-c="'+esc(c.id)+'" data-est="entregado">Marcar entregado</button>'+
