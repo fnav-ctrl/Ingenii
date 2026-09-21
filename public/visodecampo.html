@@ -231,6 +231,8 @@ section{position:relative;}
 .minimap .eyebrow{color:rgba(255,255,255,.6);font-size:9px;margin-bottom:8px;}
 .minimap svg{width:100%;height:auto;display:block;overflow:visible;}
 .minimap .plan path,.minimap .plan rect{fill:none;stroke:rgba(255,255,255,.55);stroke-width:1.2;vector-effect:non-scaling-stroke;}
+.minimap .plan image{opacity:.92;filter:invert(1) contrast(1.15) brightness(.9);}
+.minimap .plan rect.img-bg{fill:rgba(255,255,255,.06);stroke:none;}
 .minimap .plan .fill{fill:rgba(255,255,255,.06);}
 .minimap .plan .water{fill:rgba(181,138,99,.28);stroke:rgba(217,194,168,.6);}
 .minimap .plan text{font-family:'Inter',sans-serif;font-size:7px;fill:rgba(255,255,255,.7);letter-spacing:.08em;text-transform:uppercase;}
@@ -293,7 +295,17 @@ section{position:relative;}
 .predio-panel li{display:flex;justify-content:space-between;gap:20px;font-size:13.5px;padding-bottom:10px;border-bottom:1px solid var(--line);}
 .predio-panel li b{font-weight:500;}
 .predio-panel .actions{margin-top:auto;padding-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
-.predio-legend{margin-top:18px;display:flex;flex-wrap:wrap;gap:8px;}
+.predio-view{margin-top:22px;display:inline-flex;border:1px solid var(--ink);}
+.predio-view button{height:38px;padding:0 18px;border:0;background:transparent;font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:var(--ink);transition:all .25s;}
+.predio-view button.on{background:var(--ink);color:#fff;}
+.plano-tec{background:#fff;border:1px solid var(--line);padding:14px;box-shadow:var(--shadow);}
+.plano-tec img{width:100%;height:auto;cursor:zoom-in;}
+.plano-tec span{display:block;margin-top:10px;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gray);text-align:center;}
+.predio-legend{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px;}
+.lightbox{position:fixed;inset:0;z-index:900;background:rgba(30,27,23,.92);display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;visibility:hidden;transition:opacity .35s,visibility .35s;cursor:zoom-out;}
+.lightbox.open{opacity:1;visibility:visible;}
+.lightbox img{max-width:100%;max-height:100%;background:#fff;padding:12px;box-shadow:var(--shadow);}
+.lightbox .x{position:absolute;top:18px;right:18px;width:44px;height:44px;border:1px solid rgba(255,255,255,.4);background:transparent;color:#fff;font-size:20px;}
 .predio-legend button{height:34px;padding:0 14px;border:1px solid var(--line);background:transparent;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gray);transition:all .25s;}
 .predio-legend button.on,.predio-legend button:hover{background:var(--ink);color:#fff;border-color:var(--ink);}
 @media (max-width:960px){.predio-grid{grid-template-columns:1fr}}
@@ -332,6 +344,8 @@ section{position:relative;}
 .unit .badge{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;padding:6px 10px;border:1px solid var(--line);color:var(--gray);}
 .unit .plan{margin:22px 0 18px;aspect-ratio:16/10;background:var(--paper);border:1px solid var(--line-soft);display:flex;align-items:center;justify-content:center;transform:translateZ(24px);position:relative;overflow:hidden;}
 .unit .plan svg{width:88%;height:88%;overflow:visible;}
+.unit .plan.real{background:#fff;}
+.unit .plan.real img{width:100%;height:100%;object-fit:contain;padding:8px 8px 20px;cursor:zoom-in;}
 .unit .plan svg *{fill:none;stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;}
 .unit .plan svg .soft{stroke:var(--gray-soft);stroke-dasharray:3 3;}
 .unit .plan svg .fillp{fill:var(--sand-soft);stroke:none;}
@@ -429,6 +443,18 @@ footer p{margin-top:12px;max-width:60ch;line-height:1.6;color:rgba(255,255,255,.
 footer .right{text-align:right;}
 footer .right a{display:block;margin-top:6px;}
 
+/* ---------- INGENII ---------- */
+:root{--ingenii:#174A7C;--ingenii-soft:#A9C6DD;}
+.ingenii{display:inline-block;height:1em;width:auto;vertical-align:middle;}
+.ingenii .k{fill:var(--ingenii);}
+.ingenii .a{fill:var(--ingenii-soft);}
+.ingenii.on-dark .k{fill:#fff;}
+.by{display:inline-flex;align-items:center;gap:10px;font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--gray);}
+.by .ingenii{font-size:14px;}
+.dev-logo{aspect-ratio:auto;padding:clamp(36px,5vw,64px) clamp(24px,4vw,48px);background:#fff;border:1px solid var(--line);}
+.dev-logo .ingenii{font-size:clamp(44px,6vw,84px);}
+.dev-logo .eyebrow{color:var(--gray-soft);}
+
 /* ---------- WHATSAPP ---------- */
 .wa{position:fixed;right:22px;bottom:22px;z-index:450;width:54px;height:54px;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);transition:transform .3s,background .3s;}
 .wa:hover{transform:translateY(-3px);background:var(--wood-deep);}
@@ -472,7 +498,7 @@ footer .right a{display:block;margin-top:6px;}
   <div class="scroll-hint"><i></i> Deslizá</div>
   <div class="hero-inner">
     <div>
-      <span class="eyebrow light rv">Del Viso · Pilar · Desarrollo en pozo</span>
+      <span class="eyebrow light rv">Del Viso · Pilar · Un desarrollo de Ingenii</span>
       <h1 class="rv d1">Más que un lugar <em>para vivir</em></h1>
       <p class="hero-sub rv d2">Un desarrollo multifamiliar de 72 viviendas en cuatro bloques de tres plantas, con pileta climatizada, SUM y un área central peatonal rodeada de arboleda.</p>
       <div class="hero-actions rv d3">
@@ -533,7 +559,7 @@ footer .right a{display:block;margin-top:6px;}
       <div class="tl rv d3"><span class="n">04</span><h3>Obra</h3><p>Inicio de obras estimado para diciembre de 2025. Finalización del primer módulo estimada para diciembre de 2026.</p><span class="state"><i></i>Planificado</span></div>
     </div>
     <div class="trust-row">
-      <div class="rv"><h4>Fideicomiso</h4><p>Inversión estructurada como adherente al fideicomiso, con los beneficios impositivos que implica y equivalencia en m² del monto invertido.</p></div>
+      <div class="rv"><h4>Fideicomiso</h4><p>Desarrollado por Ingenii. Inversión estructurada como adherente al fideicomiso, con los beneficios impositivos que implica y equivalencia en m² del monto invertido.</p></div>
       <div class="rv d1"><h4>Avance de obra</h4><p>Este espacio se actualizará con fotos y reportes de obra a medida que avance cada módulo.</p></div>
       <div class="rv d2"><h4>Renders y planos</h4><p>Todo lo que ves en este sitio (recorrido, plantas y superficies) responde al anteproyecto presentado.</p></div>
     </div>
@@ -572,7 +598,7 @@ footer .right a{display:block;margin-top:6px;}
       </div>
       <div class="minimap" id="minimap">
         <div class="eyebrow" id="mmLabel">Plano</div>
-        <svg viewBox="0 0 200 120" id="mmSvg">
+        <svg viewBox="0 0 200 120" id="mmSvg" preserveAspectRatio="xMidYMid meet">
           <defs><radialGradient id="coneGrad" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(0 0) scale(40)"><stop offset="0" stop-color="#fff" stop-opacity=".6"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient></defs>
           <g class="plan" id="mmPlan"></g>
           <g class="cam" id="mmCam"><path class="cone" d="M0 0 L-16 -34 A38 38 0 0 1 16 -34 Z"/><circle class="ring" r="6"/><circle r="3"/></g>
@@ -604,11 +630,13 @@ footer .right a{display:block;margin-top:6px;}
     <div class="sec-head">
       <span class="eyebrow rv">El predio</span>
       <h2 class="rv d1">Masterplan <em>interactivo</em></h2>
-      <p class="rv d2">Un predio de 8.500 m² con acceso privado por calle Jorge Isaac. Hacé clic en cada bloque o espacio para conocerlo, o pasá el mouse para girar el plano.</p>
+      <p class="rv d2">Un predio de 8.500 m² con acceso privado por calle Jorge Isaac. Hacé clic en cada bloque o espacio para conocerlo, o pasá el mouse para girar el plano. La vista 3D mira el predio desde el norte, con el ingreso al fondo.</p>
     </div>
     <div class="predio-grid">
       <div class="iso-wrap rv" id="isoWrap">
         <div class="iso" id="iso"></div>
+        <div class="plano-tec" id="planoTec" hidden><img src="/img/visodecampo/plano-masterplan.webp" alt="Masterplan técnico de Viso de Campo" loading="lazy" decoding="async" data-lightbox="/img/visodecampo/plano-masterplan.webp"><span>Planta de techos del anteproyecto · clic para ampliar</span></div>
+        <div class="predio-view" id="predioView"><button class="on" data-view="iso">Vista 3D</button><button data-view="plano">Plano técnico</button></div>
         <div class="predio-legend" id="predioLegend"></div>
       </div>
       <div class="predio-panel rv d2" id="predioPanel">
@@ -650,7 +678,7 @@ footer .right a{display:block;margin-top:6px;}
       <div class="filters rv d3" id="unitFilters"></div>
     </div>
     <div class="units" id="units"></div>
-    <div class="unit-notes rv"><span>Superficie cubierta</span><span class="s2">Semicubierta y descubierta</span><span style="margin-left:auto">Superficies según anteproyecto. Planos de cada tipología disponibles a pedido.</span></div>
+    <div class="unit-notes rv"><span>Superficie cubierta</span><span class="s2">Semicubierta y descubierta</span><span style="margin-left:auto">Superficies según anteproyecto. Las tipologías sin plano cargado muestran un esquema proporcional.</span></div>
   </div>
 </section>
 
@@ -692,20 +720,15 @@ footer .right a{display:block;margin-top:6px;}
 <section class="sec" id="desarrollador">
   <div class="wrap dev-grid">
     <div class="dev-logo rv">
-      <span class="eyebrow">Presenta</span>
-      <span class="serif">Desarrolladora</span>
-      <span style="font-size:12px">Logo e identidad del desarrollador</span>
+      <span class="eyebrow" style="margin-bottom:26px">Presenta</span>
+      <svg class="ingenii" viewBox="0 0 388 60" role="img" aria-label="Ingenii"><text class="k" x="0" y="52" font-family="Inter, Helvetica, Arial, sans-serif" font-weight="400" font-size="58" textLength="320" lengthAdjust="spacing">INGENI</text><rect class="k" x="352" y="8" width="8" height="46"/><rect class="a" x="330" y="27" width="16" height="8"/><rect class="a" x="366" y="27" width="16" height="8"/></svg>
     </div>
     <div class="dev-copy">
       <span class="eyebrow rv">Quién desarrolla</span>
-      <h2 class="rv d1" style="font-size:clamp(34px,4.6vw,60px);margin-top:18px">Respaldo y <em style="color:var(--wood-deep)">trayectoria</em></h2>
-      <p class="rv d2">Aquí va la presentación del desarrollador: su historia, los proyectos entregados y el equipo profesional detrás de Viso de Campo. Es la sección que más confianza genera en una compra en pozo.</p>
-      <p class="rv d3">Sumá también el estudio de arquitectura, la constructora y el fiduciario si corresponde.</p>
-      <div class="dev-marks rv d4">
-        <div><b>—</b><span>Años de trayectoria</span></div>
-        <div><b>—</b><span>Proyectos entregados</span></div>
-        <div><b>—</b><span>m² construidos</span></div>
-      </div>
+      <h2 class="rv d1" style="font-size:clamp(34px,4.6vw,60px);margin-top:18px">Un proyecto de <em style="color:var(--wood-deep)">Ingenii</em></h2>
+      <p class="rv d2">Ingenii es la desarrolladora detrás de Viso de Campo: la empresa que concibe el proyecto, estructura el fideicomiso y acompaña cada etapa, desde el anteproyecto hasta la entrega de las unidades.</p>
+      <p class="rv d3">Comprar en pozo es confiar en quien construye. Por eso este sitio muestra el proyecto completo, las superficies del anteproyecto y el estado de cada etapa, y se va a ir actualizando con el avance de obra.</p>
+      <div class="rv d4" style="margin-top:30px"><a href="#contacto" class="btn ghost">Hablar con Ingenii</a></div>
     </div>
   </div>
 </section>
@@ -758,15 +781,17 @@ footer .right a{display:block;margin-top:6px;}
   <div class="wrap">
     <div>
       <div class="brand">Viso de Campo <small>Del Viso · Pilar</small></div>
+      <div class="by" style="margin-top:16px;color:rgba(255,255,255,.6)">Un desarrollo de <svg class="ingenii on-dark" viewBox="0 0 388 60" role="img" aria-label="Ingenii"><text class="k" x="0" y="52" font-family="Inter, Helvetica, Arial, sans-serif" font-weight="400" font-size="58" textLength="320" lengthAdjust="spacing">INGENI</text><rect class="k" x="352" y="8" width="8" height="46"/><rect class="a" x="330" y="27" width="16" height="8"/><rect class="a" x="366" y="27" width="16" height="8"/></svg></div>
       <p>Las imágenes, planos y superficies son ilustrativos y corresponden al anteproyecto. Pueden sufrir modificaciones por razones técnicas, municipales o de diseño. Los valores de inversión son estimaciones y no constituyen oferta.</p>
     </div>
     <div class="right">
-      <span>© 2026 Viso de Campo</span>
+      <span>© 2026 Viso de Campo · Ingenii</span>
       <a href="#top">Volver arriba ↑</a>
     </div>
   </div>
 </footer>
 
+<div class="lightbox" id="lightbox"><button class="x" aria-label="Cerrar">×</button><img alt=""></div>
 <a class="wa" href="https://wa.me/5491100000000?text=Hola%2C%20quiero%20m%C3%A1s%20informaci%C3%B3n%20sobre%20Viso%20de%20Campo" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 1.8a8.2 8.2 0 1 1-4.2 15.3l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 0 1 12 3.8zm-3.1 4.4c-.2 0-.5 0-.7.3-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3.2 5 4.4 2.5 1 3 .8 3.5.7.5-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.1-.3-.2-.6-.3l-2-1c-.3-.1-.5-.2-.7.2l-.9 1.1c-.2.2-.3.2-.6.1-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.5-.5.3-.5c.1-.2 0-.4 0-.5L9.5 8.6c-.2-.4-.4-.4-.6-.4z"/></svg></a>
 
 <script>
@@ -782,17 +807,17 @@ const TOURS = [
   {
     id:'predio', name:'El predio', map:'predio',
     scenes:[
-      {id:'calle', img:IMG+'ext-08.webp', title:'Desde la calle', text:'Frente del complejo sobre la zona residencial de Del Viso: reja perimetral, arboleda y los bloques retirados de la línea municipal.', cam:{x:100,y:118,r:0}, hotspots:[{x:50,y:62,to:'ingreso',label:'Ir al ingreso'}]},
-      {id:'ingreso', img:IMG+'ext-07.webp', title:'Ingreso privado', text:'Portón de acceso con techo verde y control de seguridad las 24 horas. Desde acá se abre el paseo central entre los bloques.', cam:{x:100,y:110,r:0}, hotspots:[{x:50,y:62,to:'acceso',label:'Entrar'},{x:50,y:38,to:'paseo',label:'Paseo central'}]},
-      {id:'acceso', img:IMG+'ext-01.webp', title:'Acceso y estacionamiento', text:'Estacionamiento vehicular propio en planta baja, con cocheras de cortesía para visitas.', cam:{x:28,y:100,r:-20}, hotspots:[{x:62,y:60,to:'fachada',label:'Recorrer la fachada'},{x:90,y:56,to:'paseo',label:'Paseo central'}]},
-      {id:'fachada', img:IMG+'ext-02.webp', title:'Fachada de los bloques', text:'Hormigón visto, madera y grandes paños vidriados. Balcones aterrazados en cada unidad con parrilla propia.', cam:{x:60,y:104,r:-35}, hotspots:[{x:28,y:52,to:'paseo',label:'Entrar al paseo central'},{x:5,y:58,to:'acceso',label:'Volver al acceso',left:true}]},
-      {id:'paseo', img:IMG+'ext-03.webp', title:'Paseo central peatonal', text:'El corazón del predio: un área central de usos múltiples con circulación exclusivamente peatonal entre los bloques.', cam:{x:100,y:74,r:-90}, hotspots:[{x:50,y:52,to:'aereo',label:'Ver desde arriba'},{x:80,y:56,to:'parque',label:'Ir al parque'},{x:14,y:44,to:'unidad-ingreso',label:'Entrar a una unidad',left:true}]},
-      {id:'aereo', img:IMG+'ext-09.webp', title:'El predio desde arriba', text:'Cuatro bloques de tres plantas con terrazas escalonadas, cocheras cubiertas con techo verde y el corazón peatonal en el centro.', cam:{x:100,y:60,r:0}, hotspots:[{x:50,y:40,to:'parque',label:'Bajar al parque'},{x:30,y:50,to:'fachada',label:'Fachada',left:true}]},
-      {id:'parque', img:IMG+'ext-06.webp', title:'Parque y solárium', text:'Áreas verdes con arboleda, senderos iluminados y reposeras al borde de la pileta. Al fondo, el SUM vidriado.', cam:{x:112,y:96,r:-20}, hotspots:[{x:36,y:52,to:'pileta',label:'Ir a la pileta'},{x:30,y:60,to:'sum-gym',label:'Entrar al SUM'}]},
-      {id:'pileta', img:IMG+'ext-05.webp', title:'Pileta climatizada', text:'Piscina climatizada con solárium, rodeada de arboleda y con el SUM vidriado al fondo.', cam:{x:104,y:58,r:-100}, hotspots:[{x:57,y:52,to:'sum-gym',label:'Entrar al SUM'},{x:12,y:64,to:'parque',label:'Volver al parque',left:true}]},
-      {id:'sum-gym', img:IMG+'sum-03.webp', title:'SUM · Gym con vista a la pileta', text:'Espacio de entrenamiento con cinta, bicicletas y banco, abierto al parque y la pileta a través de paños vidriados de piso a techo.', cam:{x:116,y:40,r:150}, hotspots:[{x:70,y:56,to:'sum-comedor',label:'Ir al comedor'},{x:16,y:52,to:'pileta',label:'Salir a la pileta',left:true}]},
-      {id:'sum-comedor', img:IMG+'sum-01.webp', title:'SUM · Comedor', text:'Una mesa larga para reuniones de vecinos y celebraciones, con vista al parque y la cocina integrada.', cam:{x:128,y:50,r:60}, hotspots:[{x:55,y:52,to:'sum-cocina',label:'Cocina'},{x:88,y:52,to:'sum-gym',label:'Gym',left:true}]},
-      {id:'sum-cocina', img:IMG+'sum-02.webp', title:'SUM · Cocina y estar', text:'Cocina con barra, estantería iluminada y espacio para eventos. Desde aquí se conecta con el gym y el exterior.', cam:{x:124,y:60,r:20}, hotspots:[{x:66,y:56,to:'sum-gym',label:'Gym'},{x:22,y:66,to:'sum-comedor',label:'Comedor',left:true},{x:44,y:60,to:'unidad-ingreso',label:'Visitar una unidad'}]},
+      {id:'calle', img:IMG+'ext-08.webp', title:'Desde la calle', text:'Frente del complejo sobre la zona residencial de Del Viso: reja perimetral, arboleda y los bloques retirados de la línea municipal.', cam:{x:100,y:168,r:0}, hotspots:[{x:50,y:62,to:'ingreso',label:'Ir al ingreso'}]},
+      {id:'ingreso', img:IMG+'ext-07.webp', title:'Ingreso privado', text:'Portón de acceso con techo verde y control de seguridad las 24 horas. Desde acá se abre el paseo central entre los bloques.', cam:{x:100,y:158,r:0}, hotspots:[{x:50,y:62,to:'acceso',label:'Entrar'},{x:50,y:38,to:'paseo',label:'Paseo central'}]},
+      {id:'acceso', img:IMG+'ext-01.webp', title:'Acceso y estacionamiento', text:'Estacionamiento vehicular propio en planta baja, con cocheras de cortesía para visitas.', cam:{x:158,y:150,r:-50}, hotspots:[{x:62,y:60,to:'fachada',label:'Recorrer la fachada'},{x:90,y:56,to:'paseo',label:'Paseo central'}]},
+      {id:'fachada', img:IMG+'ext-02.webp', title:'Fachada de los bloques', text:'Hormigón visto, madera y grandes paños vidriados. Balcones aterrazados en cada unidad con parrilla propia.', cam:{x:60,y:112,r:40}, hotspots:[{x:28,y:52,to:'paseo',label:'Entrar al paseo central'},{x:5,y:58,to:'acceso',label:'Volver al acceso',left:true}]},
+      {id:'paseo', img:IMG+'ext-03.webp', title:'Paseo central peatonal', text:'El corazón del predio: un área central de usos múltiples con circulación exclusivamente peatonal entre los bloques.', cam:{x:100,y:122,r:0}, hotspots:[{x:50,y:52,to:'aereo',label:'Ver desde arriba'},{x:80,y:56,to:'parque',label:'Ir al parque'},{x:14,y:44,to:'unidad-ingreso',label:'Entrar a una unidad',left:true}]},
+      {id:'aereo', img:IMG+'ext-09.webp', title:'El predio desde arriba', text:'Cuatro bloques de tres plantas con terrazas escalonadas, cocheras cubiertas con techo verde y el corazón peatonal en el centro.', cam:{x:100,y:96,r:0}, hotspots:[{x:50,y:40,to:'parque',label:'Bajar al parque'},{x:30,y:50,to:'fachada',label:'Fachada',left:true}]},
+      {id:'parque', img:IMG+'ext-06.webp', title:'Parque y solárium', text:'Áreas verdes con arboleda, senderos iluminados y reposeras al borde de la pileta. Al fondo, el SUM vidriado.', cam:{x:100,y:84,r:0}, hotspots:[{x:36,y:52,to:'pileta',label:'Ir a la pileta'},{x:30,y:60,to:'sum-gym',label:'Entrar al SUM'}]},
+      {id:'pileta', img:IMG+'ext-05.webp', title:'Pileta climatizada', text:'Piscina climatizada con solárium, rodeada de arboleda y con el SUM vidriado al fondo.', cam:{x:100,y:78,r:0}, hotspots:[{x:57,y:52,to:'sum-gym',label:'Entrar al SUM'},{x:12,y:64,to:'parque',label:'Volver al parque',left:true}]},
+      {id:'sum-gym', img:IMG+'sum-03.webp', title:'SUM · Gym con vista a la pileta', text:'Espacio de entrenamiento con cinta, bicicletas y banco, abierto al parque y la pileta a través de paños vidriados de piso a techo.', cam:{x:100,y:44,r:180}, hotspots:[{x:70,y:56,to:'sum-comedor',label:'Ir al comedor'},{x:16,y:52,to:'pileta',label:'Salir a la pileta',left:true}]},
+      {id:'sum-comedor', img:IMG+'sum-01.webp', title:'SUM · Comedor', text:'Una mesa larga para reuniones de vecinos y celebraciones, con vista al parque y la cocina integrada.', cam:{x:94,y:30,r:90}, hotspots:[{x:55,y:52,to:'sum-cocina',label:'Cocina'},{x:88,y:52,to:'sum-gym',label:'Gym',left:true}]},
+      {id:'sum-cocina', img:IMG+'sum-02.webp', title:'SUM · Cocina y estar', text:'Cocina con barra, estantería iluminada y espacio para eventos. Desde aquí se conecta con el gym y el exterior.', cam:{x:106,y:30,r:-90}, hotspots:[{x:66,y:56,to:'sum-gym',label:'Gym'},{x:22,y:66,to:'sum-comedor',label:'Comedor',left:true},{x:44,y:60,to:'unidad-ingreso',label:'Visitar una unidad'}]},
     ]
   },
   {
@@ -812,20 +837,15 @@ const TOURS = [
 
 /* Planos esquemáticos para el minimapa (viewBox 200x120) */
 const MAPS = {
-  predio: `<rect x="6" y="6" width="188" height="108" class="fill"/>
-    <rect x="14" y="14" width="44" height="26"/><rect x="14" y="80" width="44" height="26"/>
-    <rect x="70" y="14" width="44" height="26"/><rect x="70" y="80" width="44" height="26"/>
-    <path d="M14 46 H114 M14 74 H114" stroke-dasharray="2 3"/>
-    <rect x="128" y="34" width="24" height="46" class="water"/>
-    <rect x="160" y="30" width="28" height="44"/>
-    <path d="M6 96 H12 M6 24 H12"/>
-    <text x="16" y="24">Bloque A</text><text x="72" y="24">Bloque B</text><text x="16" y="90">Bloque C</text><text x="72" y="90">Bloque D</text>
-    <text x="127" y="90">Pileta</text><text x="164" y="52">SUM</text><text x="40" y="62">Paseo central</text>`,
-  unidad: `<rect x="20" y="10" width="160" height="100" class="fill"/>
+  /* plano real del masterplan (imagen 2401x2048) escalado a 200x171 */
+  predio: {vb:'0 0 200 171', svg:`<image href="${IMG}plano-masterplan-mini.webp" x="0" y="0" width="200" height="171" preserveAspectRatio="none"/>
+    <text x="30" y="24">A</text><text x="164" y="24">B</text><text x="30" y="98">C</text><text x="164" y="98">D</text>
+    <text x="92" y="28">SUM</text><text x="90" y="58">Pileta</text><text x="86" y="164">Ingreso</text>`},
+  unidad: {vb:'0 0 200 120', svg:`<rect x="20" y="10" width="160" height="100" class="fill"/>
     <rect x="20" y="10" width="90" height="70"/><rect x="20" y="10" width="40" height="30"/><rect x="110" y="10" width="70" height="40"/><rect x="110" y="50" width="40" height="30"/><rect x="150" y="50" width="30" height="30"/>
     <rect x="20" y="80" width="160" height="30" stroke-dasharray="2 3"/>
     <rect x="130" y="82" width="12" height="12"/>
-    <text x="24" y="26">Toil.</text><text x="26" y="58">Estar · cocina</text><text x="116" y="32">Suite</text><text x="114" y="68">Baño</text><text x="153" y="68">Vest.</text><text x="26" y="98">Terraza · parrilla</text>`
+    <text x="24" y="26">Toil.</text><text x="26" y="58">Estar · cocina</text><text x="116" y="32">Suite</text><text x="114" y="68">Baño</text><text x="153" y="68">Vest.</text><text x="26" y="98">Terraza · parrilla</text>`}
 };
 
 /* ============================================================
@@ -871,7 +891,7 @@ function renderStops(tourId){
   const t = TOURS.find(x => x.id === tourId);
   stopsEl.innerHTML = t.scenes.map((s, i) => `<button class="stop ${s.img ? '' : 'pending'}" data-id="${s.id}" title="${s.title}">${s.img ? `<img src="${s.img}" alt="" loading="lazy" onerror="this.parentNode.classList.add('pending');this.remove()">` : ''}<span>${String(i+1).padStart(2,'0')} · ${s.title}</span></button>`).join('');
   stopsEl.querySelectorAll('.stop').forEach(b => b.addEventListener('click', () => goTo(b.dataset.id)));
-  mmPlan.innerHTML = MAPS[t.map] || '';
+  const mp = MAPS[t.map]; mmPlan.innerHTML = mp ? mp.svg : ''; document.getElementById('mmSvg').setAttribute('viewBox', mp ? mp.vb : '0 0 200 120');
   mmLabel.textContent = t.map === 'predio' ? 'Plano del predio' : 'Planta de la unidad';
   tabsEl.querySelectorAll('.tab').forEach(b => b.classList.toggle('on', b.dataset.tour === tourId));
 }
@@ -990,52 +1010,50 @@ const PLACES = {
   acceso:{eyebrow:'Ingreso', title:'Acceso por calle Jorge Isaac', text:'Ingreso privado con control de seguridad las 24 horas. Estacionamiento vehicular propio en planta baja y cocheras de cortesía para visitas.', list:[['Acceso','Privado'],['Seguridad','24 hs'],['Cocheras','Propias + cortesía']], actions:[['Ver el acceso en 3D','acceso']]},
 };
 (function buildIso(){
-  const W = 1000, H = 640, OX = 500, OY = 130, S = 1;
-  const p = (x, y, z=0) => [OX + (x - y) * 0.866 * S, OY + (x + y) * 0.5 * S - z];
-  const poly = pts => pts.map(q => q.join(',')).join(' ');
+  // Proyección oblicua vista desde el norte (lado del SUM), levemente desde el este:
+  // así la pileta, el SUM y el paseo central quedan a la vista entre los bloques.
+  const W = 1000, H = 640, OX = 150, OY = 40, DEPTH = 470;
+  const p = (x, y, z=0) => { const yy = DEPTH - y; return [OX + x + yy * 0.32, OY + yy * 0.62 - z + 60]; };
+  const poly = pts => pts.map(q => q.map(v => v.toFixed(1)).join(',')).join(' ');
   let out = '';
-  // terreno
-  const G = [p(0,0), p(560,0), p(560,420), p(0,420)];
-  out += `<polygon class="ground draw" points="${poly(G)}" style="--len:2600"/>`;
-  // césped central y bordes
-  out += `<polygon class="lawn" points="${poly([p(40,40), p(520,40), p(520,380), p(40,380)])}"/>`;
-  // calle de acceso (abajo)
-  out += `<polygon class="road" points="${poly([p(0,420), p(560,420), p(560,470), p(0,470)])}"/>`;
-  out += `<polygon class="road" points="${poly([p(20,300), p(200,300), p(200,420), p(20,420)])}"/>`;
-  // paseo central
-  out += `<polygon class="road" points="${poly([p(250,40), p(310,40), p(310,380), p(250,380)])}"/>`;
-  out += `<polygon class="road" points="${poly([p(40,190), p(520,190), p(520,230), p(40,230)])}"/>`;
-  // pileta
-  out += `<g class="pin-area" data-place="pileta" style="cursor:pointer"><polygon class="pool draw" points="${poly([p(360,250), p(500,250), p(500,300), p(360,300)])}" style="--len:600"/><polygon class="road" points="${poly([p(350,240), p(510,240), p(510,250), p(350,250)])}"/></g>`;
-  // SUM (caja vidriada)
+  // terreno y anillo perimetral (circulación vehicular y cocheras)
+  out += `<polygon class="ground draw" points="${poly([p(0,0), p(560,0), p(560,DEPTH), p(0,DEPTH)])}" style="--len:2800"/>`;
+  out += `<polygon class="lawn" points="${poly([p(40,40), p(520,40), p(520,430), p(40,430)])}"/>`;
+  out += `<polygon class="road" points="${poly([p(0,430), p(560,430), p(560,DEPTH), p(0,DEPTH)])}"/>`;
+  out += `<polygon class="road" points="${poly([p(0,0), p(40,0), p(40,430), p(0,430)])}"/>`;
+  out += `<polygon class="road" points="${poly([p(520,0), p(560,0), p(560,430), p(520,430)])}"/>`;
+  // ingreso (sur, al fondo) y paseo central peatonal
+  out += `<polygon class="road" points="${poly([p(245,400), p(315,400), p(315,DEPTH), p(245,DEPTH)])}"/>`;
+  out += `<polygon class="road" points="${poly([p(250,200), p(310,200), p(310,400), p(250,400)])}"/>`;
+  out += `<polygon class="road" points="${poly([p(40,215), p(520,215), p(520,250), p(40,250)])}"/>`;
+  // pileta entre los bloques A y B, con solárium
+  out += `<g data-place="pileta" style="cursor:pointer"><polygon class="road" points="${poly([p(240,90), p(320,90), p(320,205), p(240,205)])}"/><polygon class="pool draw" points="${poly([p(258,100), p(302,100), p(302,195), p(258,195)])}" style="--len:600"/></g>`;
+  // cajas: cara frontal = lado norte (y), cara lateral = este (x+w)
   const box = (x, y, w, d, h, cls, extra='') => {
     const a = p(x,y,h), b = p(x+w,y,h), c = p(x+w,y+d,h), dd = p(x,y+d,h);
-    const b0 = p(x+w,y,0), c0 = p(x+w,y+d,0), d0 = p(x,y+d,0);
-    let s = `<g class="${cls}" ${extra}><polygon class="l" points="${poly([dd,c,c0,d0])}"/><polygon class="r" points="${poly([c,b,b0,c0])}"/><polygon class="top" points="${poly([a,b,c,dd])}"/>`;
-    // ventanas por planta
+    const a0 = p(x,y,0), b0 = p(x+w,y,0), c0 = p(x+w,y+d,0);
+    let s = `<g class="${cls}" ${extra}><polygon class="r" points="${poly([b,c,c0,b0])}"/><polygon class="l" points="${poly([a,b,b0,a0])}"/><polygon class="top" points="${poly([a,b,c,dd])}"/>`;
     const floors = Math.round(h/34);
     for(let f=0; f<floors; f++){
       const z = f*34 + 8;
-      for(let i=0;i<Math.floor(w/28);i++){ const x1 = x + 6 + i*28, q1 = p(x1, y+d, z), q2 = p(x1+18, y+d, z), q3 = p(x1+18, y+d, z+18), q4 = p(x1, y+d, z+18); s += `<polygon class="win" points="${poly([q1,q2,q3,q4])}" fill="rgba(30,27,23,.12)"/>`; }
-      for(let i=0;i<Math.floor(d/28);i++){ const y1 = y + 6 + i*28, q1 = p(x+w, y1, z), q2 = p(x+w, y1+18, z), q3 = p(x+w, y1+18, z+18), q4 = p(x+w, y1, z+18); s += `<polygon class="win" points="${poly([q1,q2,q3,q4])}" fill="rgba(30,27,23,.2)"/>`; }
+      for(let i=0;i<Math.floor(w/28);i++){ const x1 = x + 6 + i*28; s += `<polygon class="win" points="${poly([p(x1,y,z), p(x1+18,y,z), p(x1+18,y,z+18), p(x1,y,z+18)])}" fill="rgba(30,27,23,.14)"/>`; }
+      for(let i=0;i<Math.floor(d/28);i++){ const y1 = y + 6 + i*28; s += `<polygon class="win" points="${poly([p(x+w,y1,z), p(x+w,y1+18,z), p(x+w,y1+18,z+18), p(x+w,y1,z+18)])}" fill="rgba(30,27,23,.22)"/>`; }
     }
     return s + '</g>';
   };
-  // bloques: A (arriba izq), B (arriba der), C (abajo izq), D (abajo der)
-  const blocks = [['A',60,50],['B',330,50],['C',60,250],['D',330,250]];
-  blocks.forEach(([n,x,y]) => { out += box(x, y, 170, 120, 102, 'b', `data-place="bloque" data-n="${n}"`); });
-  // SUM
-  out += box(370, 320, 130, 60, 30, 'b sum', 'data-place="sum"');
-  // árboles
-  const trees = [[30,20],[120,20],[230,15],[470,20],[540,60],[540,150],[540,240],[540,330],[20,120],[20,200],[230,300],[330,400],[440,400],[520,400],[260,120],[300,260],[240,260]];
-  trees.forEach(([x,y]) => { const [tx0, ty0] = p(x,y); out += `<g><ellipse cx="${tx0}" cy="${ty0}" rx="9" ry="4.5" fill="rgba(30,27,23,.08)"/><circle class="tree" cx="${tx0}" cy="${ty0-12}" r="11"/><circle class="tree" cx="${tx0-6}" cy="${ty0-8}" r="7"/><circle class="tree" cx="${tx0+7}" cy="${ty0-7}" r="7"/></g>`; });
-  // pins y etiquetas
-  const pin = (x, y, z, label, place, n='') => { const [ax, ay] = p(x,y,z); return `<g class="pin" data-place="${place}" ${n?`data-n="${n}"`:''} transform="translate(${ax} ${ay})"><line x1="0" y1="0" x2="0" y2="-28" stroke="var(--ink)" stroke-width="1"/><circle cx="0" cy="-36" r="10"/><text x="0" y="-32.5" text-anchor="middle">${label}</text></g>`; };
-  out += pin(145,110,102,'A','bloque','A') + pin(415,110,102,'B','bloque','B') + pin(145,310,102,'C','bloque','C') + pin(415,310,102,'D','bloque','D');
-  out += pin(430,275,0,'P','pileta') + pin(435,350,30,'S','sum') + pin(280,210,0,'✦','paseo') + pin(110,440,0,'↓','acceso');
-  const [lx, ly] = p(300,470); out += `<text class="lbl soft" x="${lx}" y="${ly+24}" text-anchor="middle">Calle Jorge Isaac · acceso privado</text>`;
-  const [nx, ny] = p(560,0); out += `<g transform="translate(${nx+30} ${ny+10})"><circle r="14" fill="none" stroke="var(--ink)" stroke-width=".8"/><path d="M0 -10 L4 4 L0 1 L-4 4 Z" fill="var(--ink)"/><text class="lbl" y="-18" text-anchor="middle">N</text></g>`;
-  document.getElementById('iso').innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Masterplan esquemático de Viso de Campo">${out}</svg>`;
+  // orden de dibujo: primero lo que está al fondo (sur), después lo del frente (norte)
+  const blocks = [['C',60,270],['D',330,270],['A',60,60],['B',330,60]];
+  blocks.forEach(([n,x,y]) => { out += box(x, y, 170, 130, 102, 'b', `data-place="bloque" data-n="${n}"`); });
+  out += box(245, 20, 70, 55, 30, 'b sum', 'data-place="sum"');
+  // árboles (los del norte al final para que queden delante)
+  const trees = [[60,440],[140,445],[420,440],[500,445],[200,440],[360,440],[230,380],[330,380],[230,300],[330,300],[60,230],[130,240],[430,232],[500,238],[230,180],[330,180],[230,120],[330,120],[50,15],[120,12],[440,15],[500,12]];
+  trees.sort((u,v) => v[1]-u[1]).forEach(([x,y]) => { const [tx0, ty0] = p(x,y); out += `<g><ellipse cx="${tx0}" cy="${ty0}" rx="9" ry="4" fill="rgba(30,27,23,.08)"/><circle class="tree" cx="${tx0}" cy="${ty0-12}" r="11"/><circle class="tree" cx="${tx0-6}" cy="${ty0-8}" r="7"/><circle class="tree" cx="${tx0+7}" cy="${ty0-7}" r="7"/></g>`; });
+  const pin = (x, y, z, label, place, n='') => { const [ax, ay] = p(x,y,z); return `<g class="pin" data-place="${place}" ${n?`data-n="${n}"`:''} transform="translate(${ax.toFixed(1)} ${ay.toFixed(1)})"><line x1="0" y1="0" x2="0" y2="-28" stroke="var(--ink)" stroke-width="1"/><circle cx="0" cy="-36" r="10"/><text x="0" y="-32.5" text-anchor="middle">${label}</text></g>`; };
+  out += pin(145,125,102,'A','bloque','A') + pin(415,125,102,'B','bloque','B') + pin(145,335,102,'C','bloque','C') + pin(415,335,102,'D','bloque','D');
+  out += pin(280,150,0,'P','pileta') + pin(280,48,30,'S','sum') + pin(280,300,0,'✦','paseo') + pin(280,440,0,'↓','acceso');
+  const [lx, ly] = p(280,DEPTH); out += `<text class="lbl soft" x="${lx.toFixed(1)}" y="${(ly-42).toFixed(1)}" text-anchor="middle">Calle Jorge Isaac · acceso privado (sur)</text>`;
+  const [nx, ny] = p(560,0); out += `<g transform="translate(${(nx+40).toFixed(1)} ${(ny+10).toFixed(1)})"><circle r="14" fill="none" stroke="var(--ink)" stroke-width=".8"/><path d="M0 10 L4 -4 L0 -1 L-4 -4 Z" fill="var(--ink)"/><text class="lbl" y="-18" text-anchor="middle">N</text></g>`;
+  document.getElementById('iso').innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Masterplan esquemático de Viso de Campo visto desde el norte">${out}</svg>`;
 })();
 const iso = document.getElementById('iso'), isoWrap = document.getElementById('isoWrap');
 isoWrap.addEventListener('mousemove', e => { const r = isoWrap.getBoundingClientRect(); const nx = (e.clientX - r.left)/r.width - .5, ny = (e.clientY - r.top)/r.height - .5; iso.style.transform = `rotateX(${8 - ny*10}deg) rotateY(${nx*12}deg)`; });
@@ -1061,6 +1079,15 @@ const legend = document.getElementById('predioLegend');
 legend.innerHTML = [['complejo','','Todo el predio'],['bloque','A','Bloque A'],['bloque','B','Bloque B'],['bloque','C','Bloque C'],['bloque','D','Bloque D'],['paseo','','Paseo'],['pileta','','Pileta'],['sum','','SUM'],['acceso','','Acceso']].map(([k,n,l]) => `<button data-place="${k}" data-n="${n}" class="${k==='complejo'?'on':''}">${l}</button>`).join('');
 legend.querySelectorAll('button').forEach(b => b.addEventListener('click', () => showPlace(b.dataset.place, b.dataset.n)));
 showPlace('complejo');
+document.querySelectorAll('#predioView button').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('#predioView button').forEach(x => x.classList.toggle('on', x === b));
+  const plano = b.dataset.view === 'plano'; isoWrap.querySelector('#iso').hidden = plano; document.getElementById('planoTec').hidden = !plano;
+}));
+const lb = document.getElementById('lightbox');
+function openLightbox(src, alt){ lb.querySelector('img').src = src; lb.querySelector('img').alt = alt || ''; lb.classList.add('open'); document.body.style.overflow = 'hidden'; }
+lb.addEventListener('click', () => { lb.classList.remove('open'); document.body.style.overflow = ''; });
+document.addEventListener('keydown', e => { if(e.key === 'Escape' && lb.classList.contains('open')) lb.click(); });
+document.addEventListener('click', e => { const t = e.target.closest('[data-lightbox]'); if(t){ e.preventDefault(); openLightbox(t.dataset.lightbox, t.alt); } });
 
 /* ============================================================
    AMENITIES
@@ -1081,7 +1108,7 @@ document.getElementById('amenGrid').innerHTML = AMEN.map(([t, s, ic], i) => `<di
    UNIDADES
    ============================================================ */
 const UNITS = [
-  {code:'1',v:'A',dorm:1,cub:57.22,semi:9.40,desc:21.24,tag:'Con patio / terraza'},
+  {code:'1',v:'A',dorm:1,cub:57.22,semi:9.40,desc:21.24,tag:'Con patio / terraza',plan:IMG+'plano-1a.webp'},
   {code:'1',v:'B',dorm:1,cub:75.88,semi:18.63,desc:0,tag:'Terraza semicubierta'},
   {code:'2',v:'A',dorm:2,cub:86.59,semi:9.40,desc:35.23,tag:'Con patio / terraza'},
   {code:'2',v:'B',dorm:2,cub:82.21,semi:9.40,desc:21.24,tag:'Con patio / terraza'},
@@ -1107,7 +1134,7 @@ function renderUnits(filter){
     const total = u.cub + u.semi + u.desc; const hidden = filter !== 'all' && u.dorm !== Number(filter);
     return `<article class="unit rv d${i%3} ${hidden?'hidden':''}" data-tilt>
       <div class="top"><div class="code">${u.code}<small>${u.v}</small></div><span class="badge">${u.dorm} dorm.</span></div>
-      <div class="plan">${planSvg(u)}<span class="note">Esquema</span></div>
+      <div class="plan ${u.plan ? 'real' : ''}">${u.plan ? `<img src="${u.plan}" alt="Plano de la tipología ${u.code}${u.v}" loading="lazy" decoding="async" data-lightbox="${u.plan}">` : planSvg(u)}<span class="note">${u.plan ? 'Plano · clic para ampliar' : 'Esquema'}</span></div>
       <h4>Tipología ${u.code}${u.v ? ' ' + u.v : ''} · ${u.tag}</h4>
       <dl><dt>Superficie cubierta</dt><dd>${fmt(u.cub)} m²</dd><dt>Semicubierta</dt><dd>${fmt(u.semi)} m²</dd><dt>Descubierta</dt><dd>${u.desc ? fmt(u.desc) + ' m²' : '—'}</dd></dl>
       <div class="total"><span>Total construida</span><b>${fmt(total)} m²</b></div>

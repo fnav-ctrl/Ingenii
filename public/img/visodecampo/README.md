@@ -13,6 +13,8 @@ Si un archivo falta, el visor muestra una tarjeta "Render en preparación" en es
 | ext-05 | Pileta climatizada | Pileta con el SUM vidriado al fondo |
 | ext-06 | Parque y solárium | Parque con árboles, reposeras y pileta |
 | ext-07 | Ingreso privado · **hero** | Vista aérea del portón con techo verde |
+
+Desarrollador: **Ingenii** (logo recreado en SVG dentro de la web; si se quiere usar el archivo original, guardarlo como `ingenii.svg` o `ingenii.png` acá y reemplazar el SVG inline).
 | ext-08 | Desde la calle | Frente del complejo desde la vereda, con reja |
 | ext-09 | El predio desde arriba | Vista aérea con la cochera central y los bloques |
 
@@ -37,3 +39,13 @@ Si un archivo falta, el visor muestra una tarjeta "Render en preparación" en es
 
 Formato recomendado: WebP, 1920 px de ancho, calidad 80. Para agregar o
 reordenar paradas, editar el objeto `TOURS` al inicio del `<script>` de la web.
+
+## Planos (`plano-*.webp`)
+| Archivo | Uso |
+|---|---|
+| plano-masterplan.webp | Vista "Plano técnico" de la sección Predio (planta de techos) |
+| plano-masterplan-mini.webp | Fondo del minimapa del recorrido virtual |
+| plano-1a.webp | Plano de la tipología 1A en la tarjeta de unidades |
+
+Para sumar el plano de otra tipología: guardar `plano-1b.webp`, `plano-2a.webp`, etc.
+y agregar `plan:IMG+'plano-1b.webp'` en el objeto `UNITS` del script de la web.
