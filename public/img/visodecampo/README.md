@@ -30,12 +30,9 @@ Mientras no haya renders interiores, el recorrido de la unidad usa recortes por 
 del plano de la tipología 1A (cocina, estar, semicubierto, descubierto, suite, baño, toilette)
 y `plano-1a-mini.webp` como minimapa. Se generan desde el PDF del plano.
 
-## Recorrido de la unidad (`plano-1a-*.webp`)
-Mientras no haya renders interiores, el recorrido de la unidad usa recortes por ambiente
-del plano de la tipología 1A (cocina, estar, semicubierto, descubierto, suite, baño, toilette)
-y `plano-1a-mini.webp` como minimapa. Se generan desde el PDF del plano.
-
-## Interiores de la unidad (`int-XX.webp`) — cuando existan — cuando existan
+## Interiores de la unidad (`int-XX.webp`) — cargados
+El minimapa del recorrido de la unidad usa `plano-1a-mini.webp` (planta de la tipología 1A).
+Los recortes `plano-1a-<ambiente>.webp` quedan disponibles por si se quieren usar en las tarjetas. — cuando existan
 | Archivo | Parada | Descripción del render |
 |---|---|---|
 | int-01 | Toilette de cortesía | Toilette angosto con bacha y espejo |

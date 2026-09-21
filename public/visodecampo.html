@@ -582,7 +582,7 @@ footer .right a{display:block;margin-top:6px;}
     <div class="sec-head">
       <span class="eyebrow rv">Recorrido virtual 3D</span>
       <h2 class="rv d1">Caminá el predio <em>antes de que exista</em></h2>
-      <p class="rv d2">Movete con el mouse para mirar alrededor y hacé clic en los puntos para avanzar de un espacio a otro. El predio se recorre sobre los renders del anteproyecto; la unidad, ambiente por ambiente sobre la planta de la tipología 1A.</p>
+      <p class="rv d2">Movete con el mouse para mirar alrededor, hacé clic en los puntos para avanzar de un espacio a otro, o dejá que el recorrido te lleve. El minimapa te muestra en qué parte del predio o de la unidad estás.</p>
       <div class="tour-tabs rv d3" id="tourTabs"></div>
     </div>
   </div>
@@ -628,7 +628,7 @@ footer .right a{display:block;margin-top:6px;}
   <div class="tour-foot">
     <div class="wrap">
       <div class="rv"><span class="k">Cómo se navega</span><h4>Mirar, avanzar, entrar</h4><p>Cada render es una parada. Los puntos marcan hacia dónde podés seguir: del acceso al paseo central, de la pileta al SUM, y del SUM a la unidad.</p></div>
-      <div class="rv d1"><span class="k">Dos recorridos</span><h4>El predio y la unidad</h4><p>Un recorrido exterior por el complejo, con sus renders, y otro por la planta de la tipología 1A, con las medidas reales de cada ambiente. Ambos se conectan entre sí.</p></div>
+      <div class="rv d1"><span class="k">Dos recorridos</span><h4>El predio y la unidad</h4><p>Un recorrido exterior por el complejo y otro interior por los ambientes de la vivienda, del ingreso al patio con parrilla. Ambos se conectan entre sí.</p></div>
       <div class="rv d2"><span class="k">Sin descargas</span><h4>Funciona en cualquier pantalla</h4><p>Se ve en el celular, la tablet o la computadora, sin instalar nada. En el celular podés mirar alrededor moviendo el teléfono.</p></div>
     </div>
   </div>
@@ -673,7 +673,7 @@ footer .right a{display:block;margin-top:6px;}
       <figure class="rv d1 open" data-scene="sum-gym"><img src="/img/visodecampo/sum-03.webp" alt="Gimnasio del SUM con vista a la pileta" loading="lazy" decoding="async"><figcaption>SUM · Gym</figcaption></figure>
       <figure class="rv d2 open" data-scene="sum-comedor"><img src="/img/visodecampo/sum-01.webp" alt="Comedor del SUM" loading="lazy" decoding="async"><figcaption>SUM · Comedor</figcaption></figure>
       <figure class="rv d3 open" data-scene="pileta"><img src="/img/visodecampo/ext-05.webp" data-fallback="/img/visodecampo/sum-02.webp" alt="Pileta climatizada" loading="lazy" decoding="async"><figcaption>Pileta climatizada</figcaption></figure>
-      <figure class="rv d4 open" data-scene="fachada"><img src="/img/visodecampo/ext-02.webp" data-fallback="/img/visodecampo/sum-01.webp" alt="Balcones aterrazados" loading="lazy" decoding="async"><figcaption>Terrazas con parrilla</figcaption></figure>
+      <figure class="rv d4 open" data-scene="unidad-patio"><img src="/img/visodecampo/int-05.webp" alt="Patio con parrilla de una unidad" loading="lazy" decoding="async"><figcaption>Patio con parrilla</figcaption></figure>
     </div>
   </div>
 </section>
@@ -686,6 +686,13 @@ footer .right a{display:block;margin-top:6px;}
       <h2 class="rv d1">Seis tipologías, <em>uno a tres dormitorios</em></h2>
       <p class="rv d2">Cocina y estar-comedor unificados en un espacio amplio y moderno. Dormitorio principal en suite con vestidor y baño privado, toilette de cortesía y amplias terrazas semicubiertas con parrilla propia.</p>
       <div class="filters rv d3" id="unitFilters"></div>
+    </div>
+    <div class="amen-gallery" style="margin:0 0 clamp(30px,4vw,54px)">
+      <figure class="rv open" data-scene="unidad-estar"><img src="/img/visodecampo/int-08.webp" alt="Estar comedor con salida al patio" loading="lazy" decoding="async"><figcaption>Estar comedor</figcaption></figure>
+      <figure class="rv d1 open" data-scene="unidad-ingreso"><img src="/img/visodecampo/int-06.webp" alt="Cocina y comedor integrados" loading="lazy" decoding="async"><figcaption>Cocina integrada</figcaption></figure>
+      <figure class="rv d2 open" data-scene="unidad-suite"><img src="/img/visodecampo/int-04.webp" alt="Dormitorio en suite con vestidor" loading="lazy" decoding="async"><figcaption>Suite con vestidor</figcaption></figure>
+      <figure class="rv d3 open" data-scene="unidad-bano"><img src="/img/visodecampo/int-02.webp" alt="Baño en suite" loading="lazy" decoding="async"><figcaption>Baño en suite</figcaption></figure>
+      <figure class="rv d4 open" data-scene="unidad-bano-completo"><img src="/img/visodecampo/int-03.webp" alt="Baño completo con ducha" loading="lazy" decoding="async"><figcaption>Baño completo</figcaption></figure>
     </div>
     <div class="units" id="units"></div>
     <div class="unit-notes rv"><span>Superficie cubierta</span><span class="s2">Semicubierta y descubierta</span><span style="margin-left:auto">Superficies según anteproyecto. Las tipologías sin plano cargado muestran un esquema proporcional.</span></div>
@@ -836,15 +843,16 @@ const TOURS = [
     ]
   },
   {
-    id:'unidad', name:'La unidad · planta 1A', map:'unidad',
+    id:'unidad', name:'La unidad', map:'unidad',
     scenes:[
-      {id:'unidad-ingreso', plan:true, img:IMG+'plano-1a-cocina.webp', title:'Ingreso y cocina', text:'Se entra por la cocina, integrada al estar comedor en un único espacio. Heladera, lavarropas y mesada en L de 1,30 m con barra hacia el comedor.', cam:{x:29.5,y:34,r:90}, hotspots:[{x:78,y:50,to:'unidad-estar',label:'Pasar al estar comedor'},{x:40,y:74,to:'unidad-toilette',label:'Toilette',left:true}]},
-      {id:'unidad-estar', plan:true, img:IMG+'plano-1a-estar.webp', title:'Estar comedor', text:'Cocina y estar comedor unificados en un espacio amplio y luminoso, con mesa para seis, living y salida directa a la expansión privada.', cam:{x:64.7,y:39.5,r:90}, hotspots:[{x:90,y:40,to:'unidad-terraza',label:'Salir al semicubierto'},{x:14,y:44,to:'unidad-ingreso',label:'Cocina',left:true},{x:52,y:76,to:'unidad-suite',label:'Ir a la suite'}]},
-      {id:'unidad-terraza', plan:true, img:IMG+'plano-1a-semicubierto.webp', title:'Semicubierto con parrilla', text:'Terraza semicubierta de 4,00 × 2,60 m con parrilla privada y mesa para seis. Es la expansión privada de la unidad.', cam:{x:148.8,y:26.4,r:180}, hotspots:[{x:50,y:76,to:'unidad-patio',label:'Bajar al patio'},{x:8,y:50,to:'unidad-estar',label:'Volver al estar',left:true}]},
-      {id:'unidad-patio', plan:true, img:IMG+'plano-1a-descubierto.webp', title:'Patio descubierto', text:'Superficie descubierta de 21,24 m² como expansión privada: las unidades de planta baja tienen su propio patio.', cam:{x:152.8,y:92.2,r:180}, hotspots:[{x:50,y:22,to:'unidad-terraza',label:'Volver al semicubierto'},{x:10,y:50,to:'unidad-suite',label:'Dormitorio',left:true},{x:82,y:72,to:'paseo',label:'Salir al predio'}]},
-      {id:'unidad-suite', plan:true, img:IMG+'plano-1a-suite.webp', title:'Dormitorio en suite', text:'Dormitorio principal de 3,20 × 2,95 m pensado en suite, con vestidor de 2,06 m y baño privado. Salida directa al patio.', cam:{x:99,y:93.4,r:90}, hotspots:[{x:12,y:74,to:'unidad-bano',label:'Vestidor y baño',left:true},{x:56,y:22,to:'unidad-estar',label:'Volver al estar'},{x:92,y:50,to:'unidad-patio',label:'Patio'}]},
-      {id:'unidad-bano', plan:true, img:IMG+'plano-1a-bano.webp', title:'Baño en suite', text:'Baño completo privado de la suite, con ducha, vanitory, inodoro y bidet, al que se llega a través del vestidor.', cam:{x:27.4,y:104.7,r:0}, hotspots:[{x:88,y:40,to:'unidad-suite',label:'Volver a la suite'},{x:50,y:22,to:'unidad-toilette',label:'Toilette'}]},
-      {id:'unidad-toilette', plan:true, img:IMG+'plano-1a-toilette.webp', title:'Toilette de cortesía', text:'Toilette para invitados junto al ingreso, separado del baño de la suite.', cam:{x:28.2,y:79,r:0}, hotspots:[{x:60,y:24,to:'unidad-ingreso',label:'Volver al ingreso'},{x:56,y:76,to:'unidad-bano',label:'Baño suite'}]},
+      {id:'unidad-ingreso', img:IMG+'int-06.webp', title:'Ingreso · Cocina y comedor integrados', text:'Se entra por la cocina, unificada con el estar comedor en un único espacio amplio y moderno. Muebles de madera clara, mesada en L con barra e iluminación cálida bajo alacena.', cam:{x:40,y:24,r:150}, hotspots:[{x:50,y:66,to:'unidad-estar',label:'Ir al estar'},{x:22,y:56,to:'unidad-cocina',label:'Ver la cocina',left:true},{x:16,y:74,to:'unidad-toilette',label:'Toilette',left:true}]},
+      {id:'unidad-cocina', img:IMG+'int-07.webp', title:'Cocina equipada', text:'Heladera, anafe, horno, lavarropas integrado y bacha bajo ventana. Alacenas con nichos de madera y luz LED bajo mueble.', cam:{x:29.5,y:34,r:0}, hotspots:[{x:88,y:64,to:'unidad-estar',label:'Volver al estar',left:true}]},
+      {id:'unidad-estar', img:IMG+'int-08.webp', title:'Estar comedor con salida al patio', text:'Excelente iluminación natural y salida directa a la expansión privada a través de un gran paño vidriado. Un espacio pensado para compartir.', cam:{x:64.7,y:39.5,r:90}, hotspots:[{x:36,y:44,to:'unidad-patio',label:'Salir al patio'},{x:82,y:56,to:'unidad-suite',label:'Ir a la suite'},{x:8,y:60,to:'unidad-ingreso',label:'Cocina',left:true}]},
+      {id:'unidad-patio', img:IMG+'int-05.webp', title:'Patio con parrilla', text:'Terraza semicubierta con parrilla privada y mesa para seis. Las unidades de planta baja suman su propio patio de césped.', cam:{x:150,y:60,r:180}, hotspots:[{x:60,y:56,to:'unidad-estar',label:'Volver al estar',left:true},{x:30,y:60,to:'unidad-suite',label:'Dormitorio'}]},
+      {id:'unidad-suite', img:IMG+'int-04.webp', title:'Dormitorio principal en suite', text:'Suite con vestidor iluminado y baño privado. Cielorraso de hormigón visto, luz cálida indirecta y salida al patio.', cam:{x:99,y:93.4,r:90}, hotspots:[{x:36,y:52,to:'unidad-bano',label:'Vestidor y baño'},{x:58,y:58,to:'unidad-estar',label:'Volver al estar'},{x:90,y:70,to:'unidad-patio',label:'Patio',left:true}]},
+      {id:'unidad-bano', img:IMG+'int-02.webp', title:'Baño en suite', text:'Vanitory de madera con bacha de apoyo, espejo retroiluminado y revestimientos en tonos arena.', cam:{x:27.4,y:104.7,r:0}, hotspots:[{x:8,y:50,to:'unidad-bano-completo',label:'Ducha',left:true},{x:88,y:56,to:'unidad-suite',label:'Volver a la suite',left:true}]},
+      {id:'unidad-bano-completo', img:IMG+'int-03.webp', title:'Baño completo', text:'Box de ducha vidriado, inodoro, bidet y estante iluminado. Cada unidad suma además un toilette de cortesía.', cam:{x:24,y:112,r:-90}, hotspots:[{x:12,y:60,to:'unidad-toilette',label:'Toilette',left:true},{x:50,y:72,to:'unidad-bano',label:'Volver'}]},
+      {id:'unidad-toilette', img:IMG+'int-01.webp', title:'Toilette de cortesía', text:'Toilette para invitados junto al ingreso, con el mismo lenguaje de materiales: madera clara, luz cálida y detalles cuidados.', cam:{x:28.2,y:79,r:0}, hotspots:[{x:82,y:60,to:'unidad-ingreso',label:'Volver al ingreso',left:true},{x:50,y:78,to:'paseo',label:'Salir al predio'}]},
     ]
   }
 ];
@@ -1149,7 +1157,7 @@ function renderUnits(filter){
       <h4>Tipología ${u.code}${u.v ? ' ' + u.v : ''} · ${u.tag}</h4>
       <dl><dt>Superficie cubierta</dt><dd>${fmt(u.cub)} m²</dd><dt>Semicubierta</dt><dd>${fmt(u.semi)} m²</dd><dt>Descubierta</dt><dd>${u.desc ? fmt(u.desc) + ' m²' : '—'}</dd></dl>
       <div class="total"><span>Total construida</span><b>${fmt(total)} m²</b></div>
-      <div class="cta"><a class="btn" href="#contacto" data-unit="${u.code}${u.v}">Consultar</a><button class="btn ghost" data-scene="unidad-estar">Recorrer la planta</button></div>
+      <div class="cta"><a class="btn" href="#contacto" data-unit="${u.code}${u.v}">Consultar</a><button class="btn ghost" data-scene="unidad-ingreso">Recorrer en 3D</button></div>
     </article>`;
   }).join('');
   document.querySelectorAll('#units [data-scene]').forEach(el => el.addEventListener('click', () => openScene(el.dataset.scene)));
