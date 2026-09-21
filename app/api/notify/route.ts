@@ -32,6 +32,8 @@ export async function POST(req: NextRequest): Promise<Response> {
   }
 
   const kind = String(data.kind || "actividad");
+  // Consultas de la web de Viso de Campo (o de otro proyecto que indique `project`).
+  const project = esc(data.project || "");
   const member = esc(data.memberName || "Miembro");
   const memberEmail = String(data.memberEmail || "");
   const item = esc(data.itemName || "");
@@ -44,6 +46,7 @@ export async function POST(req: NextRequest): Promise<Response> {
     foto: `Nueva foto de obra — ${member}`,
     video: `Nuevo video de obra — ${member}`,
     sorteo: `Inscripción a sorteo — ${member}`,
+    consulta: `Consulta ${project || "web"} — ${member}`,
   };
   const subject = subjects[kind] || `Actividad en Piazza en Obra — ${member}`;
 
@@ -53,6 +56,7 @@ export async function POST(req: NextRequest): Promise<Response> {
     foto: "Un miembro cargó una nueva foto de obra (para validar).",
     video: "Un miembro cargó un nuevo video de obra (para validar).",
     sorteo: "Un miembro se inscribió a un sorteo.",
+    consulta: `Nueva consulta desde la web${project ? " de " + project : ""}.`,
   };
 
   const rows: [string, string][] = [
@@ -70,10 +74,14 @@ export async function POST(req: NextRequest): Promise<Response> {
     }
   }
 
+  const headerTitle = kind === "consulta" && project
+    ? `${project}`
+    : `Piazza <span style="font-size:11px;letter-spacing:0.06em">EN OBRA</span>`;
+  const headerSub = kind === "consulta" ? "Consulta desde la web · aviso automático" : "Programa de beneficios · aviso automático";
   const html = `<div style="font-family:Arial,Helvetica,sans-serif;color:#1e1e1e;max-width:540px;margin:0 auto">
     <div style="background:#303030;color:#fff;padding:22px 26px">
-      <div style="font-size:20px;font-weight:800;letter-spacing:-0.02em">Piazza <span style="font-size:11px;letter-spacing:0.06em">EN OBRA</span></div>
-      <div style="font-size:12px;color:#E4D3C1;margin-top:6px;letter-spacing:0.03em">Programa de beneficios · aviso automático</div>
+      <div style="font-size:20px;font-weight:800;letter-spacing:-0.02em">${headerTitle}</div>
+      <div style="font-size:12px;color:#E4D3C1;margin-top:6px;letter-spacing:0.03em">${headerSub}</div>
     </div>
     <div style="padding:26px;border:1px solid #ececec;border-top:none">
       <p style="font-size:15px;margin:0 0 18px;line-height:1.5">${esc(intro[kind] || "Se registró una nueva actividad en el programa.")}</p>
@@ -85,7 +93,7 @@ export async function POST(req: NextRequest): Promise<Response> {
           )
           .join("")}
       </table>
-      <p style="font-size:12px;color:#8a8a8a;margin:22px 0 0">Enviado automáticamente desde Piazza en Obra.</p>
+      <p style="font-size:12px;color:#8a8a8a;margin:22px 0 0">Enviado automáticamente desde ${kind === "consulta" && project ? "la web de " + project : "Piazza en Obra"}.</p>
     </div>
   </div>`;
 
@@ -123,7 +131,7 @@ export async function POST(req: NextRequest): Promise<Response> {
   // Mientras Resend esté en modo prueba (sin dominio verificado), solo se puede
   // enviar al email de la cuenta de Resend (flor@freeloagencia.com).
   const to = process.env.NOTIFY_EMAIL || "flor@freeloagencia.com";
-  const from = process.env.NOTIFY_FROM || "Piazza en Obra <onboarding@resend.dev>";
+  const from = process.env.NOTIFY_FROM || (kind === "consulta" && project ? `${project} <onboarding@resend.dev>` : "Piazza en Obra <onboarding@resend.dev>");
 
   // Sin clave configurada: respondemos OK pero avisamos que no se envió (modo no configurado).
   if (!key) {
