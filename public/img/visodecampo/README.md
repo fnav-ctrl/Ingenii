@@ -1,58 +1,40 @@
 # Renders de Viso de Campo
 
-La web (`/visodecampo.html`) busca los renders en esta carpeta con estos nombres.
-Si un archivo falta, el visor muestra una tarjeta "Render en preparación" en esa parada.
+La web (`/visodecampo`) toma los renders de esta carpeta. Fuente: carpetas de Drive
+"Unidades", "Sum" y "Exteriores" (set de septiembre 2026). Formato WebP, 1672 px, calidad 84.
 
-## Exteriores (`ext-XX.webp`)
-| Archivo | Parada del recorrido | Descripción del render |
+## Exteriores
+| Archivo | Origen en Drive | Uso |
 |---|---|---|
-| ext-01 | Acceso y estacionamiento | Cocheras con auto gris, esquina del bloque |
-| ext-02 | Balcones aterrazados | Recorte en alta resolución de ext-09 (bloque izquierdo) |
-| ext-03 | Senderos peatonales | Recorte de ext-06 (sendero con luminarias) |
-| ext-04 | (libre) | Reservado para el render del paseo central entre bloques |
-| ext-05 | Piscina climatizada | Recorte de ext-06 (pileta y SUM) |
-| ext-06 | Parque y solárium | Parque con árboles, reposeras y pileta |
-| ext-07 | Ingreso privado · **hero** | Vista aérea del portón con techo verde |
+| ext-ingreso | Exterior_ingreso | Portada · parada 1 del predio |
+| ext-unidades | Exterior_unidades | Parada 2 (bloques y estacionamiento) · galería |
+| ext-parque | Exterior_parquecentral | Parada 3 · sección Proyecto · galería |
+| ext-pileta | Exterior_piletasum (= Sum_exteriorpileta) | Parada 4 · galería |
 
-Desarrollador: **Ingenii** (logo recreado en SVG dentro de la web; si se quiere usar el archivo original, guardarlo como `ingenii.svg` o `ingenii.png` acá y reemplazar el SVG inline).
-| ext-08 | Desde la calle | Frente del complejo desde la vereda, con reja |
-| ext-09 | El predio desde arriba | Vista aérea con la cochera central y los bloques |
-
-## SUM (`sum-XX.webp`) — ya cargados
-| Archivo | Parada |
-|---|---|
-| sum-01 | SUM · Comedor |
-| sum-02 | SUM · Cocina y estar |
-| sum-03 | SUM · Gym con vista a la pileta |
-
-## Recorrido de la unidad (`plano-1a-*.webp`)
-Mientras no haya renders interiores, el recorrido de la unidad usa recortes por ambiente
-del plano de la tipología 1A (cocina, estar, semicubierto, descubierto, suite, baño, toilette)
-y `plano-1a-mini.webp` como minimapa. Se generan desde el PDF del plano.
-
-## Interiores de la unidad (`int-XX.webp`) — cargados
-El minimapa del recorrido de la unidad usa `plano-1a-mini.webp` (planta de la tipología 1A).
-Los recortes `plano-1a-<ambiente>.webp` quedan disponibles por si se quieren usar en las tarjetas. — cuando existan
-| Archivo | Parada | Descripción del render |
+## SUM
+| Archivo | Origen | Uso |
 |---|---|---|
-| int-01 | Toilette de cortesía | Toilette angosto con bacha y espejo |
-| int-02 | Baño en suite | Vanitory ancho de madera, espejo retroiluminado |
-| int-03 | Baño completo | Inodoro, bidet y box de ducha |
-| int-04 | Dormitorio en suite | Cama, vestidor iluminado y TV |
-| int-05 | Patio con parrilla | Patio de planta baja con mesa y parrilla |
-| int-06 | Ingreso · Cocina y comedor | Puerta de entrada, cocina con barra y mesa |
-| int-07 | Cocina equipada | Detalle de cocina con lavarropas |
-| int-08 | Estar comedor al atardecer | Estar con salida al patio, cielo naranja |
+| sum-gym | Sum_interior1-1 (con personas) | Parada 5 · galería |
+| sum-gym-b | Sum_interior1 (sin personas) | Alternativa, no usada |
+| sum-comedor | Sum_interior2 (con personas) | Parada 6 · galería |
+| sum-comedor-b | Sum_interior2-2 (sin personas) | Alternativa, no usada |
 
-Formato recomendado: WebP, 1920 px de ancho, calidad 80. Para agregar o
-reordenar paradas, editar el objeto `TOURS` al inicio del `<script>` de la web.
+## Unidad de 3 dormitorios (`un-*`)
+| Archivo | Origen | Parada |
+|---|---|---|
+| un-living | 4amb_living | 1 · Estar comedor |
+| un-cocina | 4amb_cocina | 2 · Cocina integrada |
+| un-suite | 4amb_dormppal | 3 · Suite |
+| un-bano | 4amb_baño | 4 · Baño completo |
+| un-dorm2 | 4amb_dorm2 | 5 · Dormitorio al jardín |
 
-## Planos (`plano-*.webp`)
+## Planos
 | Archivo | Uso |
 |---|---|
-| plano-masterplan.webp | Vista "Plano técnico" de la sección Predio (planta de techos) |
-| plano-masterplan-mini.webp | Fondo del minimapa del recorrido virtual |
-| plano-1a.webp | Plano de la tipología 1A en la tarjeta de unidades |
+| plano-masterplan | Vista "Plano técnico" de la sección Predio |
+| plano-masterplan-mini | Fondo del minimapa del recorrido del predio |
+| plano-1a | Plano de la tipología 1A en su tarjeta |
+| plano-1a-mini | Disponible (el minimapa de la unidad usa un esquema de 3 dormitorios) |
 
-Para sumar el plano de otra tipología: guardar `plano-1b.webp`, `plano-2a.webp`, etc.
-y agregar `plan:IMG+'plano-1b.webp'` en el objeto `UNITS` del script de la web.
+Para agregar o reordenar paradas, editar el objeto `TOURS` al inicio del `<script>` de la web.
+Para sumar el plano de otra tipología: guardar `plano-1b.webp`, etc. y agregar `plan:IMG+'plano-1b.webp'` en `UNITS`.
