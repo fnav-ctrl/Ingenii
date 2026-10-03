@@ -33,4 +33,4 @@ Set final (octubre 2026), según el brochure `Brochure_VisodeCampo.pdf`. WebP, h
 
 Fuentes de marca en `/public/fonts`: La Centa (títulos) y Copperplate Gothic (etiquetas y logotipo).
 
-Hay dos versiones de la web: `/visodecampo` (diseño clásico, principal) y `/visodecampo-moderna` (diseño moderno). Ambas comparten estos archivos.
+La versión de diseño moderno se retiró; está en el historial de git (commit e2d89ed, archivo public/visodecampo-moderna.html).
