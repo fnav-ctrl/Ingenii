@@ -29,7 +29,8 @@ Set final (octubre 2026), según el brochure `Brochure_VisodeCampo.pdf`. WebP, h
 |---|---|
 | plano-masterplan | Vista "Plano técnico" del masterplan |
 | plano-masterplan-mini | Minimapa del recorrido del predio |
-| plano-1a | Tarjeta de la tipología 1A |
+| plano-1a, plano-1b, plano-2a, plano-2b, plano-2c, plano-3 | Tarjetas de las seis tipologías |
 
-Para sumar el plano de otra tipología: guardar `plano-1b.webp` (etc.) y agregar `plan:IMG+'plano-1b.webp'` en `UNITS`.
 Fuentes de marca en `/public/fonts`: La Centa (títulos) y Copperplate Gothic (etiquetas y logotipo).
+
+Hay dos versiones de la web: `/visodecampo` (diseño clásico, principal) y `/visodecampo-moderna` (diseño moderno). Ambas comparten estos archivos.
