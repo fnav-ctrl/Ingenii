@@ -21,7 +21,7 @@
    VISO DE CAMPO · Del Viso, Pilar
    Dos colores cálidos: arena (#F3EFE7) y tinta (#1E1B17). Madera (#B58A63) solo como acento.
    ============================================================ */
-:root{--display:'Clash Display','Inter',sans-serif; --label:'Copperplate',Georgia,serif; --green:#045A51; --green-2:#063F41; --green-light:#7FB8AD;
+:root{--display:'Clash Display','Inter',sans-serif; --label:'Copperplate',Georgia,serif; --accent:#A45040; --accent-light:#D98E7C;
   --paper:#F3EFE7; --paper-2:#FAF8F3; --sand:#E7DDCC; --sand-soft:#EFE8DC;
   --ink:#1E1B17; --ink-2:#2B2722; --ink-soft:#4A453E;
   --gray:#6F6A62; --gray-soft:#A39D93;
@@ -47,7 +47,7 @@ section{position:relative;}
 .sec{padding:clamp(72px,10vw,140px) 0;}
 .sec-head{max-width:760px;margin-bottom:clamp(36px,5vw,64px);}
 .sec-head h2{font-size:clamp(34px,4.6vw,60px);margin-top:18px;}
-.sec-head h2 em{color:var(--green);}
+.sec-head h2 em{color:var(--accent);}
 .sec-head p{margin-top:18px;font-size:clamp(15px,1.6vw,18px);color:var(--ink-soft);max-width:60ch;}
 .lead{font-family:var(--display);font-weight:500;font-size:clamp(20px,2vw,25px);line-height:1.35;letter-spacing:-0.01em;color:var(--ink-2);}
 
@@ -107,7 +107,7 @@ section{position:relative;}
 .hero-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(30,27,23,.35) 0%,rgba(30,27,23,.05) 35%,rgba(30,27,23,.15) 60%,rgba(30,27,23,.82) 100%);}
 .hero-inner{position:absolute;left:0;right:0;bottom:0;padding:0 clamp(20px,5vw,64px) clamp(36px,6vw,72px);display:grid;grid-template-columns:1.3fr 1fr;gap:40px;align-items:end;max-width:1240px;margin:0 auto;}
 .hero h1{font-family:var(--display);font-weight:500;letter-spacing:-0.025em;font-size:clamp(44px,7.4vw,108px);line-height:.96;max-width:11ch;}
-.hero h1 em{color:var(--green);text-shadow:0 0 2px rgba(255,255,255,.5),0 0 22px rgba(243,239,231,.75),0 0 46px rgba(243,239,231,.45);}
+.hero h1 em{color:var(--accent-hero,#E0A08E);text-shadow:0 2px 24px rgba(30,27,23,.35);}
 .hero .eyebrow{display:block;margin-bottom:22px;}
 .hero-sub{margin-top:24px;font-size:clamp(15px,1.5vw,18px);max-width:46ch;color:rgba(255,255,255,.82);}
 .hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:32px;}
@@ -571,7 +571,7 @@ footer .right a{display:block;margin-top:6px;}
   <div class="wrap proyecto-grid">
     <div class="proyecto-copy">
       <span class="eyebrow rv">Un nuevo horizonte en Del Viso</span>
-      <h2 class="rv d1" style="font-size:clamp(34px,4.4vw,58px);margin-top:18px">Modernidad y <em style="color:var(--green)">naturaleza</em></h2>
+      <h2 class="rv d1" style="font-size:clamp(34px,4.4vw,58px);margin-top:18px">Modernidad y <em style="color:var(--accent)">naturaleza</em></h2>
       <p class="lead rv d2" style="margin-top:26px">Viso de Campo combina lo mejor de ambos mundos: la frescura del entorno campestre, con la funcionalidad de espacios modernos y bien pensados.</p>
       <div class="body rv d3">
         <p>Con diseño contemporáneo, ambientes amplios y luminosos, y una distribución que prioriza el confort, este es el lugar donde los sueños cobran vida.</p>
@@ -598,7 +598,7 @@ footer .right a{display:block;margin-top:6px;}
   <div class="wrap">
     <div class="sec-head">
       <span class="eyebrow rv">Composición</span>
-      <h2 class="rv d1">El proyecto, <em style="color:var(--green-light)">en números</em></h2>
+      <h2 class="rv d1">El proyecto, <em style="color:var(--accent-light)">en números</em></h2>
       <p class="rv d2">Un complejo de cuatro módulos de vivienda en Del Viso, Partido de Pilar, con ingreso por calle Jorge Isaac.</p>
     </div>
     <div class="timeline">
@@ -738,7 +738,7 @@ footer .right a{display:block;margin-top:6px;}
   <div class="wrap">
     <div class="sec-head">
       <span class="eyebrow rv">Detalles de construcción</span>
-      <h2 class="rv d1">Lo que no se ve, <em style="color:var(--green-light)">también cuenta</em></h2>
+      <h2 class="rv d1">Lo que no se ve, <em style="color:var(--accent-light)">también cuenta</em></h2>
       <p class="rv d2">Terminaciones y equipamiento previstos para cada unidad.</p>
     </div>
     <div class="spec-grid">
@@ -771,7 +771,7 @@ footer .right a{display:block;margin-top:6px;}
     </div>
     <div class="dev-copy">
       <span class="eyebrow rv">Quién desarrolla</span>
-      <h2 class="rv d1" style="font-size:clamp(34px,4.6vw,60px);margin-top:18px">Ingenii presenta <em style="color:var(--green)">Viso de Campo</em></h2>
+      <h2 class="rv d1" style="font-size:clamp(34px,4.6vw,60px);margin-top:18px">Ingenii presenta <em style="color:var(--accent)">Viso de Campo</em></h2>
       <p class="rv d2">Un desarrollo de Ingenii en Del Viso, Partido de Pilar: 72 unidades funcionales de 2, 3 y 4 ambientes en cuatro módulos de vivienda, con ingreso por calle Jorge Isaac.</p>
       <p class="rv d3">Un proyecto que redefine el concepto de vivir en Zona Norte, con diseño contemporáneo y un equilibrio entre modernidad y naturaleza.</p>
       <div class="dev-marks rv d4">
@@ -789,7 +789,7 @@ footer .right a{display:block;margin-top:6px;}
   <div class="wrap ubi-grid">
     <div>
       <span class="eyebrow rv">Ubicación</span>
-      <h2 class="rv d1" style="font-size:clamp(34px,4.6vw,60px);margin-top:18px">Del Viso, <em style="color:var(--green)">Pilar</em></h2>
+      <h2 class="rv d1" style="font-size:clamp(34px,4.6vw,60px);margin-top:18px">Del Viso, <em style="color:var(--accent)">Pilar</em></h2>
       <p class="rv d2" style="margin-top:22px;font-size:16px;color:var(--ink-soft)">En una zona residencial de Zona Norte, a 600 metros de la estación Del Viso, con colegios, universidades, salud y compras a pocos minutos.</p>
       <div class="ubi-tabs rv d3" id="ubiCats"></div>
       <ul class="ubi-list rv d3" id="ubiList"></ul>
@@ -804,7 +804,7 @@ footer .right a{display:block;margin-top:6px;}
   <div class="wrap contact-grid">
     <div class="contact-aside">
       <span class="eyebrow rv">Contacto</span>
-      <h2 class="rv d1" style="font-size:clamp(34px,4.6vw,60px);margin-top:18px">Conocé <em style="color:var(--green)">Viso de Campo</em></h2>
+      <h2 class="rv d1" style="font-size:clamp(34px,4.6vw,60px);margin-top:18px">Conocé <em style="color:var(--accent)">Viso de Campo</em></h2>
       <p class="rv d2">Dejanos tus datos y te enviamos el brochure completo, las plantas de cada tipología y las condiciones vigentes.</p>
       <div class="big rv d3">Coordinemos una reunión.</div>
       <div class="links rv d4">
